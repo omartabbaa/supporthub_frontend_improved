@@ -1,0 +1,671 @@
+/* Home Banner Styles */
+
+.home-banner {
+  padding: 235px 0px 165px 0px;
+  background-color: var(--bg-hero);
+  background-image: url('../../assets/images/bg/wave-line.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 0px 0px 50px 50px;
+  color: #000000;
+}
+  
+.home-banner .shape-img {
+  position: absolute;
+  z-index: -1;
+}
+
+.home-banner .shape-img.img-1 {
+  top: 25%;
+  left: 0;
+}
+
+.home-banner .shape-img.img-2 {
+  bottom: 0;
+  left: 40%;
+}
+
+.home-banner .shape-img.img-3 {
+  bottom: 0;
+  right: 12%;
+}
+
+/*-- hero-content style --*/
+.home-banner .hero-content-text {
+  margin-bottom: 48px;
+}
+
+.home-banner .hero-content-text .uig-banner-title {
+  line-height: 1.35;
+}
+
+.home-banner .hero-content-text h1 {
+  color: #000000 !important;
+}
+
+.home-banner .hero-content-text p {
+  margin-top: 18px;
+  font-size: 18px;
+  line-height: 36px;
+  color: #000000 !important;
+}
+
+.home-banner .hero-content-list {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-banner .hero-content-list .list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.home-banner .hero-content-list .list-item svg {
+  font-size: 18px;
+  color: var(--white-color);
+  position: relative;
+  top: -6px;
+}
+
+.home-banner .hero-content-list .list-item p {
+  font-size: 14px;
+  color: #000000 !important;
+}
+
+/*-- hero-img style --*/
+.home-banner .hero-img {
+  text-align: right;
+  position: relative;
+}
+
+.home-banner .hero-img::before {
+  position: absolute;
+  content: "";
+  background-image: url('../../assets/images/shape/curve-line.png');
+  background-repeat: no-repeat;
+  bottom: 50px;
+  left: 60px;
+}
+
+.home-banner .hero-img img {
+  width: 400px;
+  height: 500px;
+  border-radius: 200px;
+}
+
+.home-banner .hero-img .overlay {
+  position: absolute;
+  top: -25px;
+  left: 50px;
+}
+
+.home-banner .hero-img .overlay img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+}
+
+.home-banner .get-demo-btn {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background-color: var(--badge-color-2);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-banner .get-demo-btn > img {
+  width: 120px !important;
+  height: 120px !important;
+  animation: rotateImg 15s infinite linear;
+}
+
+.home-banner .get-demo-btn .icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-banner .get-demo-btn .icon img {
+  transition: 0.3s;
+}
+
+.home-banner .get-demo-btn:hover .icon img {
+  transform: rotate(45deg);
+}
+
+@keyframes rotateImg {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/*-- Hero-Section2 --*/
+.home-banner .hero-section2 {
+  min-height: 681px;
+  padding-top: 245px;
+}
+
+.home-banner .new-hoogle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 9px;
+  margin-bottom: 27px;
+}
+
+.home-banner .new-hoogle span {
+  font-family: var(--font-plus-jakarta-sans);
+  font-weight: 700;
+  line-height: 14px;
+  background: var(--badge-color);
+  border-radius: 15px;
+  color: var(--white-color);
+  padding: 8px 12px;
+}
+
+.home-banner .new-hoogle p {
+  font-family: var(--font-dm-sans);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 36px;
+  color: var(--title-color);
+  margin-top: 0px;
+  position: relative;
+}
+
+.home-banner .new-hoogle p:after {
+  content: "";
+  background-image: url('../../assets/images/icons/hoogle-icon.svg');
+  background-repeat: no-repeat;
+  position: absolute;
+  right: -20px;
+  top: -14px;
+  animation: badgeAnimate 2s infinite linear;
+}
+
+.home-banner .hero-content2-text .banner-title {
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.home-banner .hero-content2-text .banner-title .hero-badge {
+  background: var(--badge-color-2);
+  border-radius: 0px 20px 0px 0px;
+  margin-left: 7px;
+  color: #000000 !important;
+  background: rgba(56, 178, 172, 0.15);
+}
+
+.home-banner .hero-content2-text ul {
+  padding: 0;
+  list-style: none;
+  margin-bottom: 49px;
+}
+
+.home-banner .hero-content2-text ul li {
+  font-weight: 900;
+  line-height: 36px;
+  color: var(--title-color);
+}
+
+.home-banner .hero-content2-text ul li svg {
+  font-size: 18px;
+  margin-right: 10px;
+}
+
+.home-banner .hero2-img {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.home-banner .hero2-img .hero2-image1 {
+  position: absolute;
+  left: 20px;
+  top: -56px;
+  background: var(--heroimg1-bg);
+  border-radius: 85px 85px 0px 85px;
+  padding: 17px;
+  overflow: hidden;
+}
+
+.home-banner .hero2-img .hero2-image1 img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+}
+
+.home-banner .hero2-img .hero2-image2 {
+  position: absolute;
+  left: 50px;
+  top: 35%;
+  background: var(--badge-color);
+  border-radius: 85px 85px 0px 85px;
+  transform: rotate(-75deg);
+  padding: 8px;
+  overflow: hidden;
+}
+
+.home-banner .hero2-img .hero2-image2 img {
+  height: 100%;
+  width: 100%;
+  border-radius: 50%;
+  transform: rotate(75deg);
+}
+
+.home-banner .hero2-img .hero2-image3 {
+  position: absolute;
+  top: -50px;
+  left: 60%;
+  animation: jumpingDown 4.5s infinite;
+}
+
+.home-banner .hero2-img .hero2-image4 {
+  position: absolute;
+  bottom: 100px;
+  left: 100px;
+  animation: jumpingUp 5s infinite;
+}
+
+/*-- Responsive Styles --*/
+@media screen and (max-width: 1199px) {
+  .home-banner .hero-content-text .uig-banner-title {
+    font-size: 55px;
+  }
+  
+  .home-banner .hero-content-text h2 {
+    font-size: 55px;
+    font-weight: 700;
+    line-height: 80px;
+  }
+  
+  .home-banner .hero-img::before {
+    left: 0;
+  }
+  
+  .home-banner .hero-img .overlay {
+    left: 0px;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .home-banner .hero-content {
+    text-align: center;
+  }
+  
+  .home-banner .hero-content-text p {
+    max-width: 500px;
+    margin: auto;
+    margin-top: 15px;
+  }
+  
+  .home-banner .hero-img {
+    text-align: center;
+    max-width: 350px;
+    margin: auto;
+    margin-top: 110px;
+  }
+  
+  .home-banner .hero-img img {
+    height: auto;
+    width: 100%;
+  }
+  
+  .home-banner .hero-img .overlay {
+    top: -13%;
+    left: 27%;
+  }
+  
+  .home-banner .hero-content-list {
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .home-banner {
+    padding: 150px 0px 80px;
+    border-radius: 0px 0px 30px 30px;
+  }
+  
+  .home-banner .hero-badge::before {
+    top: -32px;
+  }
+  
+  .home-banner .shape-img {
+    width: 18%;
+  }
+  
+  .home-banner .shape-img.img-2 {
+    bottom: 0;
+    left: -15px;
+    max-width: 190px;
+  }
+  
+  .home-banner .shape-img.img-3 {
+    bottom: 0px;
+    right: -30px;
+    max-width: 200px;
+  }
+
+  /* Center the entire banner title */
+  .uig-banner-title {
+    text-align: center !important;
+  }
+
+  /* Fix typewriter container */
+  .typewriter-container {
+    min-width: 290px; /* Keep the original min-width */
+    width: 100%;
+    max-width: 100%;
+    margin: 10px auto;
+    position: relative;
+    height: 1.6em;
+    left: 0;
+    right: 0;
+  }
+  
+  /* Fix typewriter animations */
+  .typewriter {
+    font-size: 80%;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 576px) {
+  .typewriter-container {
+    min-width: 270px;
+    height: 1.8em;
+    margin: 0 auto;
+  }
+  
+  .typewriter {
+    font-size: 70%;
+  }
+}
+
+@media (max-width: 480px) {
+  .typewriter-container {
+    min-width: 250px;
+    height: 2em;
+  }
+  
+  .typewriter {
+    font-size: 65%;
+  }
+}
+
+/* Adjust the position of the hero CTA button */
+.hero-content-button {
+  margin-top: 30px;
+  margin-bottom: 40px !important; /* Increased margin to move button up */
+}
+
+.hero-btn {
+  margin-top: -10px; /* Additional negative margin to move up */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(to right, #38b2ac, #319795);
+  border-radius: 50px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(56, 178, 172, 0.25);
+  margin-right: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(56, 178, 172, 0.35);
+}
+
+.hero-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s ease;
+}
+
+.hero-btn:hover::after {
+  transform: translate(-50%, -50%) scale(1.5);
+  opacity: 0;
+}
+
+.hero-section .list-item {
+  margin-bottom: 20px;
+}
+
+.hero-img {
+  position: relative;
+}
+
+.hero-img .get-demo-btn {
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  background: white;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.hero-img .get-demo-btn:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Override any other white text in the banner */
+.home-banner {
+  color: #000000;
+}
+
+/* In case there's a class forcing white color on this element */
+.white-color {
+  color: #000000 !important;
+}
+
+/* Typewriter Animation with Multiple Phrases */
+.typewriter-container {
+  display: block;
+  color: #38b2ac;
+  font-weight: 700;
+  position: relative;
+  min-width: 290px;
+  height: 1.4em;
+  margin-top: 10px;
+  width: 100%; /* Make container full width */
+  max-width: 100%; /* Prevent overflow */
+  overflow: hidden; /* Hide overflow on small screens */
+}
+
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  position: absolute;
+  top: 0;
+  animation: 
+    typing 3.5s steps(40, end),
+    blink-caret .75s step-end infinite,
+    phrase-change 28s infinite;
+  border-right: 3px solid #38b2ac; /* Blinking cursor */
+}
+
+/* Create 3 different phrases that rotate */
+.typewriter:nth-child(1) {
+  animation-delay: 0s;
+  opacity: 0;
+}
+
+.typewriter:nth-child(2) {
+  animation-delay: 4s;
+  opacity: 0;
+}
+
+.typewriter:nth-child(3) {
+  animation-delay: 8s;
+  opacity: 0;
+}
+
+.typewriter:nth-child(4) {
+  animation-delay: 12s;
+  opacity: 0;
+}
+
+.typewriter:nth-child(5) {
+  animation-delay: 16s;
+  opacity: 0;
+}
+
+.typewriter:nth-child(6) {
+  animation-delay: 20s;
+  opacity: 0;
+}
+
+.typewriter:nth-child(7) {
+  animation-delay: 24s;
+  opacity: 0;
+}
+
+/* Typing animation */
+@keyframes typing {
+  0% { width: 0; opacity: 1; }
+  80% { width: 100%; opacity: 1; }
+  100% { width: 100%; opacity: 0; }
+}
+
+/* Blinking cursor animation */
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: #38b2ac; }
+}
+
+/* Phrase change animation */
+@keyframes phrase-change {
+  0%, 12% { opacity: 1; }
+  14%, 100% { opacity: 0; }
+}
+
+/* Add a nice highlight under the text */
+.typewriter {
+  border-bottom: 4px solid rgba(56, 178, 172, 0.2);
+}
+
+/* Remove the previous animated text styles */
+.animated-text,
+.typed-cursor,
+.react-typed {
+  display: none !important;
+}
+
+/* Responsive font sizes for typewriter text */
+@media (max-width: 1200px) {
+  .typewriter-container {
+    min-width: 240px;
+    height: 1.6em; /* Slightly taller container for smaller text */
+  }
+  
+  .typewriter {
+    font-size: 90%; /* Scale down text slightly */
+  }
+}
+
+@media (max-width: 991px) {
+  .typewriter-container {
+    min-width: 220px;
+    height: 1.6em;
+  }
+  
+  .typewriter {
+    font-size: 85%;
+  }
+}
+
+@media (max-width: 767px) {
+  .typewriter-container {
+    min-width: 290px; /* Keep the original min-width */
+    width: 100%;
+    max-width: 100%;
+    margin: 10px auto;
+    position: relative;
+    height: 1.6em;
+    left: 0;
+    right: 0;
+  }
+  
+  .typewriter {
+    font-size: 80%;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 576px) {
+  .typewriter-container {
+    min-width: 270px;
+    height: 1.8em;
+    margin: 0 auto;
+  }
+  
+  .typewriter {
+    font-size: 70%;
+  }
+}
+
+@media (max-width: 480px) {
+  .typewriter-container {
+    min-width: 250px;
+    height: 2em;
+  }
+  
+  .typewriter {
+    font-size: 65%;
+  }
+}

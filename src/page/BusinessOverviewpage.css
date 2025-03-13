@@ -1,0 +1,87 @@
+.BusinessCard {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+   
+    color: black;
+   margin-bottom: 20px;
+
+   
+}
+@media (max-width: 768px) {
+    .BusinessCard {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+       
+        color: black;
+      margin: 20%;
+
+    
+       
+    }
+}
+
+.textContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+}
+
+
+.image {
+    width: 500px;
+    height: 300px;
+    background-color: rgb(81, 0, 255);
+    margin-right: 40px;
+    border-radius: 10px;
+    margin-left: 10%;
+
+}
+
+@media (max-width: 768px) {
+    .image {
+        width: 300px;
+        height: 180px;
+        background-color: rgb(81, 0, 255);
+        margin-right: 40px;
+        border-radius: 10px;
+        margin-left: 10%;
+    
+    }
+}
+
+.Title {
+    font-size: 34px;
+    font-weight: bold;
+}
+
+.texting {
+    font-size: 16px;
+}
+
+.mapContainer {
+  margin-top: 120px;
+}
+
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 200px;
+   
+    padding: 50px;
+
+}
+
+.search-input {
+    width: 20%;
+    height: 40px;
+    border-radius: 10px;
+}
+
+

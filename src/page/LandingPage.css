@@ -1,0 +1,254 @@
+/* 
+  Ensure your navbar is fixed and always on top.
+  If you already have a navbar definition, update it accordingly.
+*/
+.navbar {
+    position: fixed; /* Keeps the navbar visible at the top */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;  /* High value so it stacks above other elements */
+  }
+  
+  /* Landing Page & General Styles */
+  .landing-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  .landing-page-header {
+    color: #2a2525;
+    padding: 20px;
+    text-align: center;
+    padding-top: 40px;
+    margin-top: 60px;
+  }
+  
+  .landing-page-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  /* Call-to-Action Button */
+  .cta-button {
+    display: inline-block;
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background-color: #161515;
+    color: #fff;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none !important;
+  }
+  
+  .cta-button:hover {
+    background-color: #2a2525;
+  }
+  
+  /* HERO Section */
+  /* Added margin-top to account for the fixed navbar (adjust as needed) */
+  .hero {
+    position: relative; /* Establishes positioning context for absolute children */
+    margin-top: 20px;   /* Adjust this value to your navbar's height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* If the button should overlay the image */
+  .cta-button {
+    position: absolute;
+    top: 50%;    /* Vertically centers inside the hero section */
+    left: 50%;   /* Horizontally centers */
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border-radius: 4px;
+    font-size: 17px;
+  }
+  
+  /* HERO Image Container */
+  .hero-image-container {
+    background-color: #d0ced2;
+    padding: 20px;
+    margin-right: 90px;
+    margin-left: 90px;
+    width: 50%;
+  }
+  
+  @media (max-width: 768px) {
+    .hero-image-container {
+      width: 100%;
+      margin-right: 60px;
+      margin-left: 60px;
+    }
+  }
+  
+  /* HERO Image */
+  .hero-image {
+    width: 100%;
+    border-radius: 30px;
+  }
+  
+  /* Other Page Elements */
+  .accordion-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  @media (min-width: 1024px) {
+    .main-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-evenly;
+      align-items: center;
+      margin-top: 0px;
+      background-color: transparent;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .main-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 0px;
+      background-color: transparent;
+    }
+  }
+  
+  .main-image {
+    width: 40%;
+    height: 60%;
+    margin-top: 100px;
+    margin-left: 100px;
+    margin-bottom: 100px;
+    background-color: #d0ced2;
+  }
+  
+  @media (max-width: 768px) {
+    .main-image {
+      width: 70%;
+      height: 50%;
+      margin-top: 0px;
+      margin-left: 0px;
+      background-color: #d0ced2;
+      margin-bottom: 100px;
+    }
+  }
+  
+  .accordion-item-content {
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 400px;
+    cursor: pointer;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    word-spacing: 0.2em;
+    font-size: 18px;
+  }
+  
+  .accordion-title {
+    text-align: center;
+    font-size: 36px;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    color: #2a2525;
+  }
+  
+  .accordion-item-title {
+    cursor: pointer;
+    font-size: 20px;
+  }
+  
+  .social-media-link {
+    width: 30px;
+    height: 30px;
+    
+  }
+  
+  .social-media-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: #403f3f;
+    padding: 0px;
+  }
+  
+  .landing-page-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    justify-content: end;
+    background-color: #403f3f;
+    padding: 10px;
+    text-align: center;
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    padding-right: 55px;
+  }
+  
+  .accordion-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: transparent;
+    color: #000000;
+    padding: 10px;
+    max-width: 450px;
+    padding-bottom: 100px;
+    padding-top: 0px;
+    
+
+  }
+  
+  .main-content {
+    /* Add any specific styling if needed */
+  }
+
+  .footer-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-right: 40px;
+
+  }
+  .social-media-link-email {
+    width: 50px;
+    height: 40px;
+    padding-right: 10px;
+
+  }
+
+
+
+
+
+
+
+
+
+  

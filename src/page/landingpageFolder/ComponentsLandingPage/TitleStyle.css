@@ -1,0 +1,53 @@
+.title-with-badge {
+  position: relative;
+  display: inline-block;
+}
+
+.title-with-badge .badge {
+  position: relative;
+  z-index: 2;
+}
+
+.title-with-badge .badge-bg {
+  position: absolute;
+  height: 12px;
+  width: 100%;
+  bottom: 5px;
+  left: 0;
+  z-index: 1;
+  background-color: rgba(0, 206, 201, 0.3);
+}
+
+/* Ensure section titles are properly centered */
+.section-title {
+  text-align: center !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.section-title h2,
+.section-title h3,
+.section-title h4,
+.section-title p {
+  text-align: center !important;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Ensure any container of section titles is full width */
+.features-section .section-title-container,
+.key-features-section .section-title-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Force center alignment for feature titles */
+.home-features .section-title,
+.features-section .section-title {
+  margin-left: auto !important;
+  margin-right: auto !important;
+} 

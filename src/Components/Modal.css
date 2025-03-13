@@ -1,0 +1,156 @@
+/* Modal.css */
+
+/* Reset Box Sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensures modal is on top */
+  padding: 10px; /* Adds padding to prevent content from touching screen edges */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fff;
+  border-radius: 8px;
+
+  width: 100%;
+  max-width: 400px;
+  padding: 20px 25px;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers content horizontally */
+  overflow: hidden; /* Prevents inner content from overflowing */
+}
+
+/* Close Button */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.2s;
+}
+
+.close-button:hover {
+  color: #000;
+}
+
+/* Modal Title */
+.modal-title {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+}
+
+/* Modal Form */
+.modal-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Space between form groups */
+  overflow-y: auto; /* Makes form scrollable if content exceeds modal height */
+  flex-grow: 1; /* Allows form to take up available space */
+}
+
+/* Form Group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Form Labels */
+.form-group label {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Form Inputs */
+.form-group input,
+.form-group textarea {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Submit Button */
+.modal-submit-button {
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #fff;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+/* Add Button */
+.modal-submit-button.add {
+  background-color: #28a745;
+}
+
+.modal-submit-button.add:hover {
+  background-color: #218838;
+}
+
+/* Update Button */
+.modal-submit-button.update {
+  background-color: #007bff;
+}
+
+.modal-submit-button.update:hover {
+  background-color: #0069d9;
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+  .modal-content {
+      padding: 15px 20px;
+  }
+
+  .modal-title {
+      font-size: 18px;
+  }
+
+  .modal-submit-button {
+      font-size: 14px;
+      padding: 8px;
+  }
+}

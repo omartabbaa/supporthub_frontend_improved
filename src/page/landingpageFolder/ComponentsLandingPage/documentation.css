@@ -1,0 +1,285 @@
+/* Documentation Page Styles */
+
+.documentation-page {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  color: #333;
+}
+
+/* Header */
+.doc-header {
+  background: linear-gradient(135deg, #38b2ac, #2c7a7b);
+  padding: 5rem 0 3rem;
+  color: white;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.doc-header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.doc-header p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  opacity: 0.9;
+}
+
+.doc-search {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  position: relative;
+}
+
+.doc-search input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.search-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #38b2ac;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Documentation Layout */
+.doc-content {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+@media (max-width: 768px) {
+  .doc-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sidebar */
+.doc-sidebar {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+}
+
+.doc-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.doc-sidebar li {
+  margin-bottom: 0.5rem;
+}
+
+.doc-sidebar button {
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.doc-sidebar button:hover {
+  background-color: #f1f5f9;
+  color: #38b2ac;
+}
+
+.doc-sidebar li.active button {
+  background-color: #e6fffa;
+  color: #38b2ac;
+  font-weight: 600;
+}
+
+/* Main Content */
+.doc-main {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.doc-section {
+  display: none;
+}
+
+.doc-section.active {
+  display: block;
+}
+
+.doc-section h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #2d3748;
+}
+
+.doc-section h2 {
+  font-size: 1.5rem;
+  margin: 2rem 0 1rem;
+  color: #2d3748;
+}
+
+.doc-section h3 {
+  font-size: 1.25rem;
+  margin: 1.5rem 0 0.75rem;
+  color: #2d3748;
+}
+
+.doc-section p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.doc-section ul, .doc-section ol {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.doc-section li {
+  margin-bottom: 0.5rem;
+}
+
+.doc-section pre {
+  background-color: #f7fafc;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.doc-section code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.9rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.no-results h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #2d3748;
+}
+
+/* Quick Help Section */
+.quick-help {
+  background-color: #edf2f7;
+  padding: 4rem 0;
+  margin-top: 2rem;
+}
+
+.quick-help h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 2.5rem;
+  color: #2d3748;
+}
+
+.help-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.help-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.help-card:hover {
+  transform: translateY(-5px);
+}
+
+.help-card .icon {
+  width: 60px;
+  height: 60px;
+  background-color: #e6fffa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  color: #38b2ac;
+}
+
+.help-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  color: #2d3748;
+}
+
+.help-card p {
+  margin-bottom: 1.5rem;
+  color: #718096;
+}
+
+.help-button {
+  background-color: transparent;
+  border: 2px solid #38b2ac;
+  color: #38b2ac;
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.help-button:hover {
+  background-color: #38b2ac;
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .doc-header {
+    padding: 3rem 0 2rem;
+  }
+  
+  .doc-header h1 {
+    font-size: 2rem;
+  }
+  
+  .help-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .doc-sidebar {
+    position: static;
+    margin-bottom: 2rem;
+  }
+} 

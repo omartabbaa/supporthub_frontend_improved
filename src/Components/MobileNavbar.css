@@ -1,0 +1,249 @@
+/* MobileNavbar.css */
+
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.mn-navbar {
+    width: 100%;
+    background-color: #0d2403;
+    border-bottom: 1px solid #e0e0e0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    font-family: 'Arial', sans-serif;
+}
+
+.mn-navbar__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.mn-navbar__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+}
+
+/* Logo Styling */
+.mn-navbar__logo {
+    height: 40px;
+    width: auto;
+}
+
+/* Hamburger Menu Styling */
+.mn-navbar__hamburger {
+    width: 30px;
+    height: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.3s ease-in-out;
+}
+
+.mn-navbar__hamburger:focus {
+    outline: none;
+}
+
+.mn-navbar__bar {
+    height: 4px;
+    width: 100%;
+    background-color: #333333;
+    border-radius: 2px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hamburger Animation when Open */
+.mn-navbar__hamburger--open .mn-navbar__bar:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.mn-navbar__hamburger--open .mn-navbar__bar:nth-child(2) {
+    opacity: 0;
+}
+
+.mn-navbar__hamburger--open .mn-navbar__bar:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+/* Mobile Menu Styling */
+.mn-navbar__menu {
+    position: fixed;
+    top: 60px; /* Height of the navbar header */
+    left: 0;
+    width: 100%;
+    height: calc(100% - 60px);
+    background-color: #0d2403;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+    padding: 20px 0;
+}
+
+.mn-navbar__menu--open {
+    transform: translateX(0);
+}
+
+/* Navbar Links */
+.mn-navbar__link {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #fdfbfb;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.mn-navbar__link:hover {
+    background-color: #a5a2a2;
+}
+
+.mn-navbar__icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+}
+
+/* Dropdown Container */
+.mn-navbar__dropdown-container {
+    position: relative;
+    padding: 12px 20px;
+}
+
+.mn-navbar__dropdown-button {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-size: 16px;
+    color: #e9e4e4;
+    cursor: pointer;
+    padding: 0;
+}
+
+.mn-navbar__dropdown-button:focus {
+    outline: none;
+}
+
+.mn-navbar__notification-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+}
+
+/* Notification Dropdown */
+.mn-navbar__notification-dropdown {
+    position: absolute;
+    top: 50px;
+    left: 20px;
+    right: 20px;
+    background-color: #161615;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    z-index: 1001;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.mn-navbar__dropdown-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #333333;
+}
+
+.mn-navbar__dropdown-list {
+    list-style: none;
+}
+
+.mn-navbar__dropdown-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    color: #f1eded;
+    font-size: 14px;
+}
+
+.mn-navbar__dropdown-item:last-child {
+    border-bottom: none;
+}
+
+/* Profile Dropdown Container */
+.mn-navbar__profile-dropdown-container {
+    position: relative;
+    padding: 12px 20px;
+}
+
+/* Profile Button */
+.mn-navbar__profile-button {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    font-size: 16px;
+    color: #333333;
+    cursor: pointer;
+    padding: 0;
+}
+
+.mn-navbar__profile-button:focus {
+    outline: none;
+}
+
+/* Profile Dropdown */
+.mn-navbar__profile-dropdown {
+    
+    
+    background-color: #0d2403;
+    
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Scrollbar Styling for Mobile Menu */
+.mn-navbar__menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.mn-navbar__menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.mn-navbar__menu::-webkit-scrollbar-thumb {
+    background-color: #c1c1c1;
+    border-radius: 3px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+    /* Hide mobile navbar on larger screens if needed */
+    .mn-navbar {
+        display: none;
+    }
+}

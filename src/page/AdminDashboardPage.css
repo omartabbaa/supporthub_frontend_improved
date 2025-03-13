@@ -1,0 +1,897 @@
+.dashboard-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 50px;
+    color: #3b3d3a;
+    font-weight: bold;
+    margin: 50px 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.dashboard-subtitle {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 20px;
+    color: #0d2403;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 20px 0;
+    padding: 10px;
+}
+
+.toggleButton { 
+    min-width: 30px;
+    height: 15px;
+    border-radius: 7.5px;
+    background-color: #0d2403;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 6px;
+    border: none;
+}
+
+.toggleButton.active {
+    background-color: #22ff00;
+    margin: 5px;
+    border: none;
+}
+
+.toggleButton .toggle-circle {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: #fff;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 2px rgba(255, 0, 0, 0.507);
+}
+
+.toggleButton.active .toggle-circle {
+    transform: translateX(15px);
+}
+
+.Access-NoAccess {
+    font-size: 10px;
+    color: #0d2403;
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.expert-item {
+    background-color: #f5f7f5;
+    width: 100%;
+    max-width: 900px;
+    min-width: 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 16px;
+    padding: 15px;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .expert-item {
+        max-width: 100%;
+        min-width: 300px;
+    }
+}
+
+.expert-item-active {
+    background-color: #d1fae1;
+}
+
+.expert-name {
+    font-size: 17px;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    text-align: center;
+}
+
+.experts-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start; /* Align items to the start to prevent centering */
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 9px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.add-department-button {
+    background-color: white;
+    color: #0d2403;
+    border-radius: 9px;
+    font-size: 17px;
+    font-weight: bold;
+    padding: 35px;
+    border: none;
+    cursor: pointer;
+}
+
+.add-department-button:hover {
+    color: #6b8374;
+}
+
+.department-select {
+    background-color: white;
+    border-radius: 9px;
+    font-size: 17px;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.department-projectsContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    border: 2px solid black;
+    height: 35px;
+    width: 100%; /* Make it responsive */
+    max-width: 800px;
+    border-radius: 9px;
+    padding-left: 15px;
+    box-sizing: border-box;
+}
+
+.department-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 1000px; /* Increased from 800px */
+    margin: 0 auto;
+}
+
+.projects-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+}
+
+.project-option {
+    font-size: 17px;
+    color: #007bff;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold; 
+}
+
+.project-select {
+    font-size: 17px;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold; 
+    background-color: white;
+    border: none;
+}
+
+.department-name {
+    font-size: 17px;
+    color: black;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold; 
+}
+
+.department-description {
+    font-size: 17px;
+    color: rgb(255, 255, 255);
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold; 
+    background-color: #3b3d3a;
+    padding: 8px;
+}
+
+.admin-dashboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 80px 20px 40px; /* Added top padding for navbar */
+    box-sizing: border-box;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.department-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+    background-color: white;
+    border-radius: 9px;
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+.accordion-experts-button {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.delete-department-button {
+    background-color: white;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.department-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.expert-item-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+.expert-name {
+    font-size: 17px;
+    color: #0d2403;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}
+
+.expert-email {
+    font-size: 14px;
+    color: #666;
+    font-family: Arial, Helvetica, sans-serif;
+    margin-bottom: 2px;
+}
+
+.expert-role {
+    font-size: 12px;
+    color: #38b2ac;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: 500;
+    text-transform: capitalize;
+    background-color: #e6fffa;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    width: fit-content;
+}
+
+.project-permission {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section_projects_container {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px; /* Increased padding */
+    padding-top: 40px; /* Extra space for the label */
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.2s ease-in-out;
+    position: relative;
+    width: 100%;
+}
+
+.section_projects_container::before {
+    content: "Projects Permission Settings";
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #38b2ac;
+    background-color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap; /* Prevent text wrapping */
+    z-index: 5;
+}
+
+.project-permission {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px; /* Increased padding */
+    background-color: #f8fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+    margin-bottom: 6px;
+}
+
+.project-name {
+    font-size: 15px;
+    color: #2d3748;
+    font-weight: 500;
+    position: relative;
+    padding-left: 22px;
+}
+
+.project-name::before {
+    content: "🗂️";
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+}
+
+/* Improved Toggle Button */
+.toggleButton { 
+    min-width: 36px;
+    height: 18px;
+    border-radius: 9px;
+    background-color: #cbd5e0;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0;
+    border: none;
+}
+
+.toggleButton.active {
+    background-color: #38b2ac; /* Using the teal color from the theme */
+    border: none;
+}
+
+.toggleButton .toggle-circle {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: white;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.toggleButton.active .toggle-circle {
+    transform: translateX(18px);
+}
+
+/* Accordion Styling */
+.accordion {
+    margin-bottom: 16px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.accordion:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.accordion-header {
+    background: linear-gradient(to right, #f0f9f8, #ffffff);
+    border-left: 5px solid #38b2ac;
+    padding: 18px 22px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+    border-radius: 10px 10px 0 0;
+}
+
+.accordion-header:hover {
+    background: linear-gradient(to right, #e6f7f5, #f9fafb);
+}
+
+.accordion-title {
+    font-size: 20px;
+    color: #2d3748;
+    font-weight: 600;
+    position: relative;
+    padding-left: 10px;
+    margin: 0;
+    transition: color 0.2s ease;
+}
+
+.accordion-title::before {
+    content: "Department";
+    position: absolute;
+    top: -18px;
+    left: 10px;
+    font-size: 12px;
+    color: #38b2ac;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.accordion-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f9f8;
+    border-radius: 50%;
+    color: #38b2ac;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.accordion-icon.open {
+    transform: rotate(180deg);
+    background-color: #38b2ac;
+    color: white;
+}
+
+.accordion-content {
+    background-color: #f9fafb;
+    padding: 5px 15px 20px;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* Department count badge */
+.department-count {
+    display: inline-block;
+    background-color: #e6fffa;
+    color: #38b2ac;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin-left: 10px;
+    border: 1px solid #b2f5ea;
+}
+
+/* Department description */
+.department-description {
+    font-size: 14px;
+    color: #718096;
+    margin: 5px 0 0 10px;
+    line-height: 1.5;
+}
+
+/* Experts list container */
+.experts-list {
+    background-color: #f9fafb;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+/* Animation for accordion opening/closing */
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.accordion-content.open {
+    animation: slideDown 0.3s ease forwards;
+}
+
+/* Empty state for no experts */
+.no-experts {
+    text-align: center;
+    padding: 20px;
+    color: #718096;
+    font-style: italic;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* Department actions */
+.department-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.department-action-button {
+    background: none;
+    border: none;
+    color: #718096;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.department-action-button:hover {
+    background-color: #e6fffa;
+    color: #38b2ac;
+}
+
+/* Media Queries */
+@media (max-width: 1100px) {
+    .department-grid {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 40px;
+        margin-top: 30px;
+    }
+    
+    .dashboard-subtitle {
+        font-size: 16px;
+    }
+    
+    .permission-form {
+        padding: 20px;
+    }
+    
+    .department-grid {
+        max-width: 95%;
+    }
+    
+    .expert-item {
+        padding: 15px 18px;
+    }
+    
+    .section_projects_container {
+        padding: 16px;
+        padding-top: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-title {
+        font-size: 32px;
+    }
+    
+    .expert-item {
+        padding: 12px;
+    }
+}
+
+/* Make sure we have the hover styling for the accordion */
+.accordion-icon {
+    font-size: 20px;
+    transition: transform 0.3s ease;
+    color: #4a5568;
+}
+
+.accordion-icon.open {
+    transform: rotate(180deg);
+}
+
+.accordion-header:hover {
+    background-color: #f7fafc;
+}
+
+.accordion-header:hover .accordion-title {
+    color: #38b2ac;
+}
+
+/* Improved Department Accordion Header */
+.accordion-header {
+    background-color: #f0f9f8;
+    border-left: 4px solid #38b2ac;
+    transition: all 0.2s ease;
+}
+
+.accordion-title {
+    font-size: 20px;
+    color: #0d2403;
+    position: relative;
+    padding-left: 10px;
+}
+
+.accordion-title::before {
+    content: "Department:";
+    font-size: 12px;
+    color: #38b2ac;
+    font-weight: 400;
+    position: absolute;
+    top: -16px;
+    left: 5px;
+}
+
+/* Project Section Improvements */
+.section_projects_container {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.2s ease-in-out;
+    position: relative;
+    padding-top: 32px;
+}
+
+.section_projects_container::before {
+    content: "Projects Permission Settings";
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #38b2ac;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.project-permission {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.project-name {
+    font-size: 15px;
+    color: #2d3748;
+    font-weight: 500;
+    position: relative;
+    padding-left: 22px;
+}
+
+.project-name::before {
+    content: "🗂️";
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+}
+
+/* Improved Toggle Button */
+.toggleButton { 
+    min-width: 40px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: #cbd5e0;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0;
+    border: none;
+    outline: none;
+}
+
+.toggleButton.active {
+    background-color: #38b2ac;
+}
+
+.toggleButton .toggle-circle {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: white;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.toggleButton.active .toggle-circle {
+    transform: translateX(20px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .dashboard-title {
+        font-size: 40px;
+        margin-top: 30px;
+    }
+    
+    .dashboard-subtitle {
+        font-size: 16px;
+    }
+    
+    .permission-form {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-title {
+        font-size: 32px;
+    }
+    
+    .expert-item {
+        padding: 12px;
+    }
+}
+
+/* Make sure we have the hover styling for the accordion */
+.accordion-icon {
+    font-size: 20px;
+    transition: transform 0.3s ease;
+    color: #4a5568;
+}
+
+.accordion-icon.open {
+    transform: rotate(180deg);
+}
+
+.accordion-header:hover {
+    background-color: #f7fafc;
+}
+
+.accordion-header:hover .accordion-title {
+    color: #38b2ac;
+}
+
+/* Improved Department Accordion Header */
+.accordion-header {
+    background-color: #f0f9f8;
+    border-left: 4px solid #38b2ac;
+    transition: all 0.2s ease;
+}
+
+.accordion-title {
+    font-size: 20px;
+    color: #0d2403;
+    position: relative;
+    padding-left: 10px;
+}
+
+.accordion-title::before {
+    content: "Department:";
+    font-size: 12px;
+    color: #38b2ac;
+    font-weight: 400;
+    position: absolute;
+    top: -16px;
+    left: 5px;
+}
+
+/* Project Section Improvements */
+.section_projects_container {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.2s ease-in-out;
+    position: relative;
+    padding-top: 32px;
+}
+
+.section_projects_container::before {
+    content: "Projects Permission Settings";
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #38b2ac;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.project-permission {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.project-name {
+    font-size: 15px;
+    color: #2d3748;
+    font-weight: 500;
+    position: relative;
+    padding-left: 22px;
+}
+
+.project-name::before {
+    content: "🗂️";
+    position: absolute;
+    left: 0;
+    font-size: 14px;
+}
+
+/* Permission Form Improvements */
+.permission-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 90%;
+    max-width: 500px;
+}
+
+.permission-form h3 {
+    font-size: 20px;
+    color: #0d2403;
+    margin-bottom: 20px;
+    text-align: center;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.permission-form h3::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 3px;
+    background-color: #38b2ac;
+    border-radius: 2px;
+}
+
+.permission-form select {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 16px;
+    color: #4a5568;
+    background-color: white;
+    width: 100%;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.permission-form label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: #4a5568;
+    margin: 16px 0;
+}

@@ -1,0 +1,56 @@
+/* Accordion.css */
+.accordion {
+    border: 3px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 800px; /* Ensure consistent max-width */
+    margin: 0 auto;   /* Center the accordion container */
+    color: #2a2525;
+    text-align: center;
+    padding: 6px;
+  }
+  
+  .accordion-header {
+    position: relative;  /* Allows the toggle button to be positioned absolutely */
+    display: flex;
+    justify-content: center; /* Center the header content */
+    align-items: center;
+    padding: 10px 15px;
+    background: transparent;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .accordion-header h2 {
+    margin: 0;  /* Remove any default margin so the text is properly centered */
+  }
+  
+  .accordion-toggle {
+    position: absolute; /* Remove the toggle from the normal flow */
+    right: 15px;        /* Position it to the right */
+    top: 50%;           /* Vertically center it within the header */
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  .accordion-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content children horizontally */
+    text-align: center;  /* Center inline text within children */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background: #d0ced2;
+    padding: 0 15px;
+  }
+  
+  .accordion-content.open {
+    padding: 10px 15px;
+  }
+  

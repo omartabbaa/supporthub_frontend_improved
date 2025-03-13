@@ -1,0 +1,325 @@
+/* Remove all imports */
+
+/* Replace styled-components template with regular CSS classes */
+.footer-style-wrapper {
+  background-color: var(--bg-footer);
+  position: relative;
+  z-index: 0;
+}
+
+.footer-style-wrapper.home-footer {
+    background: #191C1F;
+    border: none !important;
+}
+
+.footer-style-wrapper.home-footer .footer-inner {
+      border-radius: 50px 50px 0px 0px;
+  background-image: url('../../assets/images/footer/main-footer-bg.png');
+      background-size: cover;
+      background-position: top right;
+      background-repeat: no-repeat;
+    }
+
+/* and so on for all the other styles... */
+
+/* Improved footer styling with better typography and spacing */
+.footer-section {
+  background-color: #f8fafc;
+  padding-top: 80px;
+          position: relative;
+  color: #4a5568;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.footer-top {
+  padding-bottom: 40px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.footer-brand {
+  margin-bottom: 25px;
+}
+
+.footer-brand-text {
+      margin-top: 20px;
+  margin-bottom: 25px;
+  color: #718096;
+      font-size: 15px;
+  line-height: 1.6;
+  max-width: 350px;
+  font-weight: 400;
+}
+
+/* Social links now in a centered container */
+.footer-social-container {
+    display: flex;
+      justify-content: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.footer-social-links {
+  display: flex;
+  gap: 20px;
+      list-style: none;
+      padding: 0;
+  margin: 0;
+}
+
+.social-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+  width: 42px;
+  height: 42px;
+        border-radius: 50%;
+  background-color: rgba(56, 178, 172, 0.1);
+  color: #38b2ac;
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+  background-color: #38b2ac;
+  color: white;
+  transform: translateY(-3px);
+}
+
+/* Improved menu list styling */
+.footer-menu-list {
+        padding-left: 20px;
+}
+
+.menu-column h4 {
+  font-size: 16px;
+        font-weight: 600;
+  margin-bottom: 20px;
+  color: #2d3748;
+        text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.menu-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-column ul li {
+        margin-bottom: 12px;
+}
+
+.menu-column ul li a {
+  color: #718096;
+  text-decoration: none;
+  transition: color 0.3s, transform 0.3s;
+  font-size: 15px;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.menu-column ul li a:hover {
+  color: #38b2ac;
+  transform: translateX(3px);
+}
+
+/* Contact Form Styles */
+.footer-contact-form {
+  background-color: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.footer-contact-form h4 {
+        font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #2d3748;
+}
+
+.contact-form-group {
+  margin-bottom: 15px;
+}
+
+.contact-form-group label {
+      display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #4a5568;
+          font-weight: 500;
+}
+
+.contact-form-group input,
+.contact-form-group textarea {
+    width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+}
+
+.contact-form-group input:focus,
+.contact-form-group textarea:focus {
+      outline: none;
+  border-color: #38b2ac;
+  box-shadow: 0 0 0 2px rgba(56, 178, 172, 0.2);
+}
+
+.contact-form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.contact-form-submit {
+  background-color: #38b2ac;
+  color: white;
+        border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.contact-form-submit:hover {
+  background-color: #319795;
+  transform: translateY(-2px);
+}
+
+.footer-bottom {
+  padding: 25px 0;
+}
+
+.footer-copyright p {
+  margin: 0;
+  color: #718096;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.footer-copyright a {
+  color: #38b2ac;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.privacy-menu {
+      display: flex;
+  justify-content: flex-end;
+  gap: 25px;
+      list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.privacy-menu li a {
+  color: #718096;
+  text-decoration: none;
+  transition: color 0.3s;
+  font-size: 14px;
+      font-weight: 500;
+}
+
+.privacy-menu li a:hover {
+  color: #38b2ac;
+}
+
+/* Newsletter form on footer */
+.footer-newsletter {
+  background-color: transparent;
+  padding: 0;
+      margin-bottom: 20px;
+}
+
+.footer-newsletter h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #2d3748;
+}
+
+.footer-newsletter p {
+  margin-bottom: 15px;
+  color: #718096;
+  font-size: 14px;
+}
+
+.newsletter-form {
+          display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.newsletter-form input {
+  flex: 1;
+  padding: 12px 15px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background-color: #fff;
+}
+
+.newsletter-form button {
+  padding: 12px 20px;
+  border-radius: 6px;
+  border: none;
+  background-color: #38b2ac;
+  color: white;
+      font-weight: 600;
+  white-space: nowrap;
+}
+
+.newsletter-form button:hover {
+  background-color: #319795;
+}
+
+@media (max-width: 992px) {
+  .footer-menu-list {
+    padding-left: 0;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-section {
+    padding-top: 60px;
+  }
+  
+      .footer-top {
+      padding-bottom: 30px;
+    }
+  
+  .footer-contact-form {
+    margin-top: 30px;
+  }
+  
+  .footer-social-container {
+        margin-top: 30px;
+  }
+  
+    .privacy-menu {
+      justify-content: center;
+    margin-bottom: 15px;
+    gap: 20px;
+  }
+  
+      .footer-copyright {
+        text-align: center;
+      }
+    }
+
+@media (max-width: 576px) {
+  .menu-column {
+        margin-bottom: 25px;
+    }
+
+  .privacy-menu {
+      flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+}

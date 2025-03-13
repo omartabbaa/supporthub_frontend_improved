@@ -1,0 +1,317 @@
+/* Enhanced DepartmentProjectsGrid Styling */
+
+/* Department Header */
+.DepartmentHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0 1rem;
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.DepartmentTitle {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0.5rem 0;
+  text-align: center;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.DepartmentTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: #38B2AC;
+  border-radius: 2px;
+}
+
+/* Department Buttons */
+.DepartmentButtons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: absolute;
+  right: 1rem;
+  top: 0;
+}
+
+.UpdateDepartmentButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.UpdateDepartmentButton:hover {
+  background-color: #f7fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.DeleteDepartmentButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e53e3e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.DeleteDepartmentButton:hover {
+  background-color: #FED7D7;
+  transform: scale(1.1);
+}
+
+/* Project Container */
+.ProjectContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto 3rem;
+}
+
+/* Project Card */
+.ProjectCardContainer {
+  width: 300px;
+  transition: transform 0.3s ease;
+}
+
+.ProjectCard {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  height: 100%;
+  position: relative;
+}
+
+.ProjectCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Project Image */
+.image-Component {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background-color: #f7fafc;
+}
+
+.ProjectImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.ProjectCard:hover .ProjectImage {
+  transform: scale(1.05);
+}
+
+/* Project Title */
+.TitleProject {
+  padding: 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+  text-align: center;
+  background-color: white;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Project Buttons */
+.ButtonsContainer {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.UpdateProjectButton,
+.DeleteProjectButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background-color: white;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.UpdateProjectButton:hover {
+  transform: scale(1.1);
+  background-color: #EBF8FF;
+}
+
+.DeleteProjectButton {
+  color: #e53e3e;
+  font-weight: 600;
+}
+
+.DeleteProjectButton:hover {
+  transform: scale(1.1);
+  background-color: #FED7D7;
+}
+
+.UpdateImage {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Add Project Section */
+.ProjectContainerBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+}
+
+.AddProject {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 2px dashed #cbd5e0;
+  border-radius: 12px;
+  font-size: 3rem;
+  color: #38B2AC;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.AddProject:hover {
+  background-color: #f7fafc;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.AddProjectButton {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.projectDescription {
+  margin-top: 0.75rem;
+  text-align: center;
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+/* Add Department Section */
+.AddDepartmentButton {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  height: 100px;
+  margin: 3rem auto 1rem;
+  background-color: white;
+  border: 2px dashed #cbd5e0;
+  border-radius: 12px;
+  font-size: 3rem;
+  color: #38B2AC;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.AddDepartmentButton:hover {
+  background-color: #f7fafc;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.DepartmentDescription {
+  text-align: center;
+  color: #718096;
+  font-size: 0.875rem;
+  max-width: 600px;
+  margin: 0.75rem auto 3rem;
+}
+
+/* No Projects Message */
+.NoProjectsMessage {
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+  color: #718096;
+  background-color: #f7fafc;
+  border-radius: 12px;
+  font-style: italic;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .DepartmentButtons {
+    position: static;
+    margin-bottom: 1rem;
+  }
+  
+  .DepartmentTitle {
+    font-size: 1.5rem;
+  }
+  
+  .ProjectContainer {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ProjectCardContainer {
+    width: 100%;
+  }
+  
+  .DepartmentButtons {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+    width: 100%;
+  }
+}

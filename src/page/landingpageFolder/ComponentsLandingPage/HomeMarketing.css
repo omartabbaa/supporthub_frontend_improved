@@ -1,0 +1,400 @@
+/*-- marketing-section start --*/
+.marketing-section {
+  padding: 140px 0 0 0;
+}
+
+/*-- marketing-img style --*/
+.marketing-img {
+  width: 100%;
+  height: 420px;
+  background-color: #f8f0e6;
+  border-radius: 240px 240px 0px 0px;
+  display: flex;
+  align-items: flex-end;
+  position: relative;
+}
+
+.marketing-img > img {
+  width: 400px;
+  height: 380px;
+  border-radius: 250px 250px 0px 0px;
+}
+
+.marketing-img.v2 {
+  background-color: #f6eafe;
+  border-radius: 0px 0px 240px 240px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.marketing-img.v2 > img {
+  border-radius: 0 0 250px 250px;
+}
+
+.marketing-img .overlay img {
+  width: auto;
+  height: auto;
+}
+
+.marketing-img .overlay-item {
+  position: absolute;
+}
+
+.marketing-img .chart {
+  bottom: 0;
+  left: 0;
+  width: 188px;
+  height: 85px;
+  border-radius: 0px 45px 0px 0px;
+  background-color: var(--white-color, #fff);
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
+.marketing-img .emoji-icons {
+  bottom: 40px;
+  right: 22px;
+  width: 209px;
+  height: 70px;
+  box-shadow: 0px 30px 50px rgba(0, 0, 0, 0.15);
+  border-radius: 35px;
+  background-color: var(--white-color, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marketing-img .star-1 {
+  top: 74px;
+  right: 93px;
+}
+
+.marketing-img .star-2 {
+  top: 110px;
+  right: 57px;
+}
+
+.marketing-img .star-3 {
+  top: 135px;
+  right: 119px;
+}
+
+.marketing-img .wave-shape {
+  bottom: 121px;
+  left: 45px;
+}
+
+.marketing-img .reduction-time {
+  top: 30px;
+  left: 0;
+  width: 170px;
+  height: 90px;
+  border-radius: 0 45px 0 0;
+  background-color: var(--white-color, #fff);
+  padding: 24px 24px 24px 0;
+}
+
+.marketing-img .reduction-time-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.marketing-img .reduction-time h2 {
+  margin-bottom: 10px;
+  font-size: 30px;
+  line-height: 20px;
+}
+
+.marketing-img .reduction-time p {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 700;
+}
+
+.marketing-img .success-rate {
+  bottom: 71px;
+  right: 60px;
+  width: 170px;
+  height: 170px;
+}
+
+.marketing-img .success-rate-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* pie progress */
+.marketing-img .pie_progress {
+  width: 130px;
+  height: 130px;
+  margin: auto 0;
+  background-color: transparent;
+}
+
+.marketing-img .pie_progress p {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.marketing-img .pie_progress__label {
+  margin-top: 0px;
+}
+
+.marketing-img .pie_progress__label h4 {
+  font-size: 30px;
+  color: var(--black-color, #000);
+}
+
+.marketing-img .pie_progress__label p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+/*-- marketing-content style --*/
+.marketing-content-title {
+  margin-bottom: 37px;
+}
+
+.marketing-content-title h3 {
+  text-transform: uppercase;
+  font-size: 18px;
+  line-height: 30px;
+  color: var(--primary-color, #007bff);
+  letter-spacing: 0.2em;
+  margin-bottom: 16px;
+}
+
+.marketing-content-body {
+  padding-top: 4px;
+}
+
+.marketing-content .list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.marketing-content .list li {
+  margin-top: 10px;
+}
+
+.marketing-content .list .list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.marketing-content .list .list-item p {
+  margin-bottom: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--black-color, #000);
+}
+
+.marketing-content .list .list-item svg {
+  font-size: 18px;
+  color: var(--icon-color, #666);
+  position: relative;
+  top: 0px;
+}
+/*-- marketing-section end --*/
+
+.marketing-title-wrapper {
+  margin-bottom: 20px;
+}
+
+.marketing-title-wrapper h2 {
+  font-size: 36px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #333;
+}
+
+@media screen and (max-width: 1850px) {
+}
+@media screen and (max-width: 1699px) {
+}
+@media screen and (max-width: 1600px) {
+}
+@media screen and (max-width: 1499px) {
+}
+@media screen and (max-width: 1399px) {
+}
+@media screen and (max-width: 1280px) {
+}
+@media screen and (max-width: 1199px) {
+}
+@media screen and (min-width: 991px) and (max-width: 1200px) {
+}
+@media screen and (max-width: 991px) {
+  .marketing-section {
+    padding-top: 70px;
+  }
+  .marketing-img {
+    width: 480px;
+    height: 420px;
+    margin-bottom: 40px;
+  }
+}
+@media screen and (min-width: 768px) and (max-width: 991px) {
+}
+@media screen and (max-width: 767px) {
+  .marketing-section {
+    padding-top: 0px !important;
+  }
+  .marketing-section2 {
+    padding-top: 70px !important;
+  }
+  .marketing-content-title {
+    margin-bottom: 30px;
+  }
+  .marketing-content-title h3 {
+    font-size: 16px;
+    line-height: 30px;
+    margin-bottom: 11px;
+  }
+  .marketing-content-title h2 {
+    font-size: 32px;
+    line-height: 45px;
+  }
+
+  .marketing-img .emoji-icons {
+    padding: 10px;
+    height: 48px;
+    width: 145px;
+  }
+
+  .marketing-img .chart {
+    width: 131px;
+    height: 60px;
+    padding: 20px 20px 0px 0px;
+  }
+
+  .marketing-img {
+    height: auto;
+  }
+
+  .marketing-img > img {
+    width: 85%;
+    height: auto;
+  }
+
+  .marketing-img .pie_progress__label h4 {
+    font-size: 20px;
+    line-height: 15px;
+  }
+
+  .marketing-img .pie_progress__label p {
+    font-size: 10px;
+    line-height: 15px;
+  }
+
+  .marketing-img .reduction-time {
+    height: 62px;
+    width: 118px;
+    padding: 17px 27px 6px 0px;
+  }
+  .marketing-img .reduction-time h2 {
+    font-size: 20px;
+    line-height: 15px;
+  }
+  .marketing-img .reduction-time p {
+    font-size: 10px;
+    line-height: 15px;
+  }
+
+  .marketing-img .success-rate {
+    height: 118px;
+    width: 118px;
+    bottom: 30px;
+    right: 49px;
+  }
+  
+  .marketing-img .pie_progress__svg svg {
+    top: 25px;
+    left: 26px;
+    width: 60%;
+    height: 60%;
+    margin: auto;
+  }
+  
+  .marketing-section {
+    padding-top: 80px;
+  }
+  
+  .marketing-img.v2 {
+    width: 100%;
+    margin-bottom: 42px;
+  }
+  /*-- marketing end --*/
+}
+@media screen and (max-width: 575px) {
+  .marketing-img {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 480px) {
+  .marketing-img {
+    height: auto;
+  }
+
+  .marketing-img > img {
+    width: 85%;
+    height: auto;
+  }
+}
+@media screen and (max-width: 425px) {
+}
+@media screen and (max-width: 374px) {
+  .contact-content h2,
+  .core-feature-title h2,
+  .skills-content h2,
+  .building-content h2,
+  .lets-talk-text h2,
+  .section-title .title,
+  .team-section .section-title h2,
+  .about-feature-section .about-feature-title h2,
+  .customer-content-text h2,
+  .feature-team-slider-for .slider-item h2,
+  .how-works-title h2,
+  .usability-card-title h2,
+  .faq-section-title h2,
+  .pricing-section-title h2,
+  .testimonial-title h2,
+  .marketing-content-title h2,
+  .section-title h2 {
+    font-size: 32px !important;
+    line-height: 42px;
+  }
+}
+@media screen and (min-width: 768px) {
+  .marketing-img .success-rate {
+    bottom: 71px;
+    right: 30px;
+  }
+  .marketing-img .wave-shape {
+    bottom: 121px;
+    left: 0px;
+  }
+}
+
+/* Further increase vertical spacing */
+.home-one-marketing-section {
+  margin-top: 150px !important;
+  margin-bottom: 150px !important;
+}
+
+/* Adjust for mobile devices - also increase here */
+@media screen and (max-width: 767px) {
+  .home-one-marketing-section {
+    margin-top: 100px !important;
+    margin-bottom: 100px !important;
+  }
+}

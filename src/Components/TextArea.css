@@ -1,0 +1,13 @@
+.textarea-question {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+
+.textarea-question:focus {
+    border-color: #007bff;
+    outline: none;
+}

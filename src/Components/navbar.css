@@ -1,0 +1,194 @@
+.navbar {
+    position: fixed;
+    
+    width: 100%;
+    top: 0;
+
+
+}
+.navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    background-color: #0d2403;
+    
+}
+.navbar-left,
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    color: aliceblue;
+    margin-left: 30px;
+}
+.navbar-right {
+    gap: 30px;
+    margin-right: 30px;
+
+}
+.navbar-link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    color: aliceblue;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.navbar-container img {
+    max-height: 30px;
+    width: auto;
+}
+
+.logo-img {
+    max-height: 40px;
+}
+
+.profile {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #D9D9D9;
+}
+
+
+
+
+
+
+
+
+
+
+.notification-dropdown {
+background-color: #0d2403;
+padding: 10px;
+width: 200px;
+height: 200px;
+}
+
+
+
+
+
+
+
+
+.dropdown-container {
+    position: relative;
+    display: inline-block;
+    margin-left: 20px; /* Adjust spacing as needed */
+}
+
+/* Styles for the Notification Icon */
+.notification-icon {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+/* Styles for the Profile Icon */
+.profile {
+    width: 32px;
+    height: 32px;
+    background-image: url('/path-to-your-profile-icon.png'); /* Replace with your profile icon path */
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Dropdown Styles Common to Both Notification and Profile */
+.notification-dropdown,
+.profile-dropdown {
+    position: absolute;
+    top: 100%; /* Positions the dropdown below the button */
+    right: 0;
+    background-color: #ffffff;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    padding: 15px;
+    z-index: 1000;
+    border-radius: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Show Dropdown When Open */
+.dropdown-container:hover .notification-dropdown,
+.dropdown-container:hover .profile-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Header Styles within Dropdowns */
+.notification-dropdown h3,
+.profile-dropdown h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333333;
+}
+
+/* List Styles within Dropdowns */
+.notification-dropdown ul,
+.profile-dropdown ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notification-dropdown li,
+.profile-dropdown li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    color: #555555;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.notification-dropdown li:last-child,
+.profile-dropdown li:last-child {
+    border-bottom: none;
+}
+
+.notification-dropdown li:hover,
+.profile-dropdown li:hover {
+    background-color: #f9f9f9;
+}
+
+/* Optional: Add a small arrow to the dropdown */
+.notification-dropdown::before,
+.profile-dropdown::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #ffffff transparent;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    .notification-dropdown,
+    .profile-dropdown {
+        min-width: 150px;
+        padding: 10px;
+    }
+
+    .notification-dropdown h3,
+    .profile-dropdown h3 {
+        font-size: 16px;
+    }
+
+    .notification-dropdown li,
+    .profile-dropdown li {
+        padding: 6px 0;
+    }
+}
