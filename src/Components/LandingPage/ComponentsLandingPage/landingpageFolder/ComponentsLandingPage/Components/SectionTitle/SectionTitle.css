@@ -1,0 +1,31 @@
+.section-title-wrapper {
+  margin-bottom: 38px;
+}
+
+.section-title-wrapper .subtitle {
+  margin-bottom: 12px;
+}
+
+.section-title-wrapper .subtitle p {
+  color: #00cec9;
+  font-size: 18px;
+  line-height: 20px;
+  font-weight: 600;
+  display: inline-block;
+  position: relative;
+}
+
+.section-title-wrapper .title h2 {
+  font-size: 42px;
+  line-height: 1.1em;
+  margin-bottom: 0;
+  font-weight: 700;
+}
+
+.section-title-wrapper.text-center {
+  text-align: center;
+}
+
+.section-title-wrapper .white-color {
+  color: white;
+} 

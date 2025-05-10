@@ -1,0 +1,25 @@
+.question-count-bubble {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #ffffff; /* Red color to make it more visible */
+  color: red;
+  border-radius: 50%;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 100; /* Ensure it's above other elements */
+  padding: 0 4px;
+  border: 0px solid black;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+} 

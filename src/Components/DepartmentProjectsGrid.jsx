@@ -3,6 +3,18 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Update from '../assets/Button/sign-up-icon.png';
 import "./DepartmentProjectsGrid.css";
+import QuestionCountBubble from './QuestionCountBubble';
+import { useUserPermissions } from '../hooks/useUserPermissions';
+import Tooltip from './Tooltip';
+"use client"
+
+// Create a simple utility for consistent naming
+const uiTerms = {
+  department: "Expertise Area",
+  departments: "Expertise Areas",
+  project: "Topic",
+  projects: "Topics"
+};
 
 const DepartmentProjectsGrid = ({
   departments,
@@ -15,24 +27,39 @@ const DepartmentProjectsGrid = ({
   onDeleteProject,
   onOpenAddProjectModal,
   onOpenAddDepartmentModal,
-  businessName
+  businessName,
+  singleDepartmentView = false
 }) => {
+  const { hasProjectPermission } = useUserPermissions();
+
+  const positionTooltip = (e) => {
+    const tooltip = e.currentTarget.querySelector("::after");
+    if (tooltip) {
+      // Set custom properties that the CSS will use
+      e.currentTarget.style.setProperty('--tooltip-x', `${e.clientX}px`);
+      e.currentTarget.style.setProperty('--tooltip-y', `${e.clientY + 20}px`);
+    }
+  };
+
   return (
     <div>
       <div className="DepartmentProjectManagementPageHeader">
-        <h1 className="DepartmentProjectManagementPageTitle">{businessName}</h1>
+        <div className="BusinessTitleWrapper">
+          <h1 className="DepartmentProjectManagementPageTitle">{businessName}</h1>
+          <div className="BusinessTypeLabel">Organization</div>
+        </div>
       </div>
 
       {departments.map((department, index) => (
         <div key={`dept-${department.id || index}`}>
           <div className='DepartmentHeader'>
-            {role === "ROLE_ADMIN" && isBusinessOwner === "yes" && (
+            {!singleDepartmentView && (role === "ROLE_ADMIN" || isBusinessOwner === "yes") && (
               <div className='DepartmentButtons'>
                 <button 
                   className='UpdateDepartmentButton' 
                   onClick={() => onOpenUpdateDepartmentModal(department.id, department.departmentName)}
                 >
-                  <img className='UpdateImage' src={Update} alt="Update" />Update Department
+                  <img className='UpdateImage' src={Update} alt="Update" />
                 </button>
                 <button 
                   className='DeleteDepartmentButton' 
@@ -42,39 +69,76 @@ const DepartmentProjectsGrid = ({
                 </button>
               </div>
             )}
-            <h2 className='DepartmentTitle'>{department.departmentName}</h2>
+            <div className="DepartmentTitleWrapper">
+              <h2 className='DepartmentTitle'>{department.departmentName}</h2>
+              <div className="DepartmentTypeLabel">{uiTerms.department}</div>
+            </div>
           </div>
           <div className='ProjectContainer'>
             {projects
               .filter(project => project.departmentId === department.id)
-              .map((project) => (
-                <div className='ProjectCardContainer' key={`proj-${project.projectId}`}>
-                  <div className='ProjectCard'>
-                    {role === "ROLE_ADMIN" && isBusinessOwner === "yes" && (
-                      <div className='ButtonsContainer'>
-                        <button 
-                          className='UpdateProjectButton' 
-                          onClick={() => onOpenUpdateProjectModal(department.id, project.projectId, project.name)}
-                        >
-                          <img className='UpdateImage' src={Update} alt="Update" />
-                        </button>
-                        <button 
-                          className='DeleteProjectButton' 
-                          onClick={() => onDeleteProject(project.projectId)}
-                        >
-                          X
-                        </button>
-                      </div>
-                    )}
-                    <Link to={`/question-overview/${encodeURIComponent(department.departmentName)}/${encodeURIComponent(project.name)}/${project.projectId}`}>
-                      <div className='image-Component'>
-                        <img className='ProjectImage' src={project.image} alt={project.name} />
-                      </div>
-                      <div className='TitleProject'>{project.name}</div>
-                    </Link>
+              .map((project) => {
+                // Check if user has permission for this project
+                const hasPermission = hasProjectPermission(project.projectId);
+                
+                return (
+                  <div className='ProjectCardContainer' key={`proj-${project.projectId}`}>
+                    <div className={`ProjectCard ${!hasPermission ? 'no-permission' : ''}`}>
+                      {role === "ROLE_ADMIN" && isBusinessOwner === "yes" && (
+                        <div className='ButtonsContainer'>
+                          <button 
+                            className='UpdateProjectButton' 
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent event bubbling
+                              onOpenUpdateProjectModal(department.id, project.projectId);
+                            }}
+                            onMouseMove={positionTooltip}
+                          >
+                            <img className='UpdateImage' src={Update} alt="Update" />
+                          </button>
+                          <button 
+                            className='DeleteProjectButton' 
+                            onClick={() => onDeleteProject(project.projectId)}
+                            onMouseMove={positionTooltip}
+                          >
+                            X
+                          </button>
+                        </div>
+                      )}
+                      <Link 
+                        to={`/question-overview/${encodeURIComponent(businessName)}/${encodeURIComponent(department.departmentName)}/${encodeURIComponent(project.name)}/${project.projectId}`}
+                        className="project-link"
+                      >
+                        <div className='image-Component' style={{ position: 'relative' }}>
+                          {project.image || project.imageUrl ? (
+                            <img 
+                              className="ProjectImage" 
+                              src={project.image || project.imageUrl} 
+                              alt={`${project.name} image`}
+                              onError={(e) => {
+                                e.target.onerror = null; 
+                                e.target.src = 'https://via.placeholder.com/150/e2e8f0/2d3748?text=No+Image';
+                              }}
+                            />
+                          ) : (
+                            <div className="ProjectImagePlaceholder">No Image</div>
+                          )}
+                          <QuestionCountBubble projectId={project.projectId} />
+                          {!hasPermission && (
+                            <div className="no-permission-overlay">
+                              <span>No Answer Permission</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className='TitleProjectWrapper'>
+                          <div className='TitleProject'>{project.name}</div>
+                          <div className="ProjectTypeLabel">{uiTerms.project}</div>
+                        </div>
+                      </Link>
+                    </div>
                   </div>
-                </div>
-            ))}
+                );
+              })}
             {projects.filter(project => project.departmentId === department.id).length === 0 && (
               <div className='NoProjectsMessage'>
                 No projects have been added to this department yet.
@@ -88,27 +152,23 @@ const DepartmentProjectsGrid = ({
                 >
                   <div className='AddProject'>+</div>
                 </button>
-                <div className='projectDescription'>
-                  By adding a project you can manage your questions
-                </div>
               </div>
             )}
           </div>
         </div>
       ))}
 
-      {role === "ROLE_ADMIN" && isBusinessOwner === "yes" && (
-        <>
-          <button 
-            className='AddDepartmentButton' 
-            onClick={onOpenAddDepartmentModal}
-          >
-            +
-          </button>
-          <div className='DepartmentDescription'>
-            By adding a Question category also referred to as department you can manage your projects
-          </div>
-        </>
+      {!singleDepartmentView && (role === "ROLE_ADMIN" || isBusinessOwner === "yes") && (
+        <div className="add-department-container">
+          <Tooltip text="Create a new department to organize projects">
+            <button 
+              className="add-department-button"
+              onClick={onOpenAddDepartmentModal}
+            >
+              Add Department
+            </button>
+          </Tooltip>
+        </div>
       )}
     </div>
   );

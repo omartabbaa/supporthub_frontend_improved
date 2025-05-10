@@ -192,3 +192,91 @@ height: 200px;
         padding: 6px 0;
     }
 }
+
+.notification-bubble {
+  background-color: #e53e3e; /* Red color for visibility */
+  color: white;
+  border-radius: 50%;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  display: inline-block;
+}
+
+/* Professional navbar button styles */
+.navbar-button {
+    background-color: #00813e; /* Brighter green for better contrast */
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 100px;
+    height: 36px;
+}
+
+.navbar-button:hover {
+    background-color: #00a651; /* Even brighter on hover */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+.navbar-button:active {
+    background-color: #007538;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+}
+
+.navbar-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Login button */
+.navbar-button.login {
+    background-color: #00813e;
+}
+
+/* Signup button */
+.navbar-button.signup {
+    background-color: transparent;
+    border: 2px solid #00813e;
+    color: white;
+}
+
+.navbar-button.signup:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #00a651;
+}
+
+/* Logout button */
+.navbar-button.logout {
+    background-color: #bf360c;
+    color: white;
+}
+
+.navbar-button.logout:hover {
+    background-color: #e64a19;
+}
+
+/* Adding icons */
+.navbar-button i, 
+.navbar-button svg {
+    font-size: 16px;
+}
+
+/* Consistent spacing between buttons */
+.navbar-right .navbar-button + .navbar-button {
+    margin-left: 12px;
+}

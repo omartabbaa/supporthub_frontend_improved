@@ -1,0 +1,5 @@
+<svg width="170" height="170" viewBox="0 0 170 170" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 0H85C131.944 0 170 38.0558 170 85C170 131.944 131.944 170 85 170C38.0558 170 0 131.944 0 85V0Z" fill="white"/>
+<path d="M0.5 0.5H85C131.668 0.5 169.5 38.3319 169.5 85C169.5 131.668 131.668 169.5 85 169.5C38.3319 169.5 0.5 131.668 0.5 85V0.5Z" stroke="black" stroke-opacity="0.1"/>
+<circle cx="85" cy="85" r="68" fill="#00CEC9" fill-opacity="0.5"/>
+</svg>

@@ -1,18 +1,23 @@
 // QuestionDetailPage.jsx
-import { useParams } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './QuestionDetailPage.css';
 import { permissions as permissionsApi, answers as answersApi } from "../services/ApiService";
 import { useUserContext } from "../context/LoginContext";
 import TextArea from '../Components/TextArea';
 import AnswerList from '../Components/AnswerList';
+import Tooltip from '../Components/Tooltip';
 
 const QuestionDetailPage = () => {
-  const { questionId, title, question, projectId } = useParams();
+  const { businessName, department, project, questionId, title, question, projectId } = useParams();
   const { userId } = useUserContext();
+  const navigate = useNavigate();
 
   const decodedTitle = decodeURIComponent(title);
   const decodedQuestion = decodeURIComponent(question);
+  const decodedBusinessName = businessName ? decodeURIComponent(businessName) : "Business";
+  const decodedDepartment = department ? decodeURIComponent(department) : "Department";
+  const decodedProject = project ? decodeURIComponent(project) : "Topic";
 
   const [answer, setAnswer] = useState('');
   const [answers, setAnswers] = useState([]);
@@ -21,24 +26,42 @@ const QuestionDetailPage = () => {
   const [error, setError] = useState('');
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState('');
-  const [userPermission, setUserPermission] = useState([]);
-  const [canAnswerQuestion, setCanAnswerQuestion] = useState();
+  const [canAnswerQuestion, setCanAnswerQuestion] = useState(false);
+  const [helpModeEnabled, setHelpModeEnabled] = useState(false);
+
+  useEffect(() => {
+    console.log("URL params in QuestionDetailPage:", { businessName, department, project });
+  }, [businessName, department, project]);
 
   useEffect(() => {
     const fetchUserPermissions = async () => {
       try {
-        const response = await permissionsApi.getAll();
-        setUserPermission(response.data);
+        // Use the targeted endpoint that only returns permissions for this user
+        const response = await permissionsApi.getByUserId(userId);
+        
+        // Check if user has permission to answer this specific project's questions
+        const hasPermission = response.data.some(permission => 
+          permission.projectId === parseInt(projectId) && permission.canAnswer === true
+        );
+        
+        setCanAnswerQuestion(hasPermission);
+        console.log(`User ${userId} has permission to answer questions for project ${projectId}: ${hasPermission}`);
       } catch (error) {
         console.error('Error fetching permissions:', error);
         setError('Failed to fetch permissions.');
+        setCanAnswerQuestion(false);
       } finally {
         setLoadingPermissions(false);
       }
     };
 
-    fetchUserPermissions();
-  }, []);
+    if (userId && projectId) {
+      fetchUserPermissions();
+    } else {
+      setLoadingPermissions(false);
+      setCanAnswerQuestion(false);
+    }
+  }, [userId, projectId]);
 
   useEffect(() => {
     const fetchAnswers = async () => {
@@ -140,19 +163,51 @@ const QuestionDetailPage = () => {
   };
 
   return (
-    <div className="question-detail-page">
-      <div className="question-detail-container">
+    <div className={`question-detail-page ${helpModeEnabled ? 'help-mode-enabled' : 'help-mode-disabled'}`}>
+      <div className="breadcrumb-navigation">
+        <button className="back-button" onClick={() => navigate(-1)}>
+          <span className="back-icon">←</span> Back to Topic {decodedProject}
+        </button>
+        <div className="breadcrumb-trail">
+          <span className="breadcrumb-item">Organisation:</span>
+          <span className="breadcrumb-value">{decodedBusinessName}</span>
+          <span className="breadcrumb-separator">/</span>
+          <span className="breadcrumb-item">Expertise Area:</span>
+          <span className="breadcrumb-value">{decodedDepartment}</span>
+          <span className="breadcrumb-separator">/</span>
+          <span className="breadcrumb-item">Topic:</span>
+          <span className="breadcrumb-value">{decodedProject}</span>
+          <span className="breadcrumb-separator">/</span>
+          <span className="breadcrumb-item">Question:</span>
+          <span className="breadcrumb-current">{decodedTitle}</span>
+        </div>
+      </div>
+
+      <div className="help-mode-toggle-container">
+        <span className="help-mode-label">Help Mode</span>
+        <button 
+          className={`help-mode-toggle ${helpModeEnabled ? 'active' : ''}`}
+          onClick={() => setHelpModeEnabled(!helpModeEnabled)}
+          data-tooltip="Toggle help tooltips on/off"
+          data-tooltip-position="left"
+        >
+          <div className="help-mode-toggle-circle"></div>
+          <span className="sr-only">Toggle help mode</span>
+        </button>
+      </div>
+
+      <div className="question-detail-container" data-tooltip="This is the original question that was asked">
         <h1 className="question-title">{decodedTitle}</h1>
         <p className="question-content">{decodedQuestion}</p>
       </div>
 
-      <div className="answers-container">
- 
+      <div className="answers-container" data-tooltip="View all answers from experts for this question">
         <AnswerList 
           answers={answers} 
           loadingAnswers={loadingAnswers} 
           error={error} 
-          handleDeleteAnswer={handleDeleteAnswer}/>
+          handleDeleteAnswer={handleDeleteAnswer}
+        />
       </div>
 
       <form className="question-answer-form" onSubmit={handleSubmit}>
@@ -160,19 +215,26 @@ const QuestionDetailPage = () => {
         <p className="notification-info">
           <small>When you submit an answer, the question creator will receive an email notification.</small>
         </p>
+        {!canAnswerQuestion && !loadingPermissions && (
+          <p className="permission-warning">
+            You don't have permission to answer questions for this project.
+          </p>
+        )}
         <TextArea
           className="question-answer-input"
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
           placeholder="Your answer"
           required
+          disabled={!canAnswerQuestion}
         />
         <button
-          className="question-answer-submit-button"
+          className={`question-answer-submit-button ${!canAnswerQuestion ? 'no-permission' : ''}`}
           type="submit"
-          disabled={loadingPermissions}
+          disabled={loadingPermissions || !canAnswerQuestion}
         >
-          {loadingPermissions ? 'Checking Permissions...' : 'Submit Answer with Notification'}
+          {loadingPermissions ? 'Checking Permissions...' : 
+           canAnswerQuestion ? 'Submit Answer with Notification' : 'No Permission to Answer'}
         </button>
         {loadingPermissions && <p className="loading-message">Checking permissions...</p>}
         {submitError && <p className="error-message">{submitError}</p>}

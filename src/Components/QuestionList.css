@@ -1,0 +1,140 @@
+/* Make like button images responsive */
+.Like-Button img {
+  max-width: 24px;
+  height: auto;
+  transition: transform 0.2s ease;
+}
+
+.Like-Button:hover img {
+  transform: scale(1.2);
+}
+
+/* Question actions container */
+.question-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  min-width: 120px;
+}
+
+/* Take Question Button */
+.take-question-button {
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-right: 8px;
+  display: inline-flex;
+  align-items: center;
+  z-index: 10;
+}
+
+.take-question-button:hover {
+  background-color: #2c5282;
+  transform: translateY(-1px);
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.status-badge.pending {
+  background-color: #fbd38d;
+  color: #744210;
+  font-weight: 600;
+  padding: 3px 10px;
+}
+
+/* Assigned agent indicator */
+.assigned-agent {
+  font-size: 0.9rem;
+  color: #2d3748;
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 400;
+}
+
+.assigned-agent strong {
+  margin-left: 4px;
+  font-weight: 600;
+  color: #2c5282;
+}
+
+/* Assigned to me indicator */
+.assigned-to-me {
+  font-size: 0.75rem;
+  color: #4a5568;
+  font-style: italic;
+  margin-left: 4px;
+}
+
+/* Question assigned status */
+.question-assigned-status {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  border-top: 1px solid #edf2f7;
+  padding-top: 8px;
+}
+
+/* Fix the title container layout */
+.Question-Title-delete-Button-Container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+/* Assigned agent banner */
+.assigned-agent-banner {
+  display: flex;
+  align-items: center;
+  background-color: #ebf8ff;
+  border-left: 4px solid #3182ce;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border-radius: 4px;
+  width: 100%;
+}
+
+.assigned-agent-icon {
+  font-size: 1.25rem;
+  margin-right: 12px;
+  color: #3182ce;
+}
+
+.assigned-agent-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.assigned-label {
+  font-size: 0.85rem;
+  color: #4a5568;
+}
+
+.assigned-name {
+  font-size: 1rem;
+  color: #2d3748;
+}
+
+.assigned-name strong {
+  color: #2c5282;
+  font-weight: 600;
+} 

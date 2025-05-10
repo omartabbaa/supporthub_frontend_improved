@@ -1,4 +1,5 @@
 import "./HomeBanner.css";
+import { Helmet } from 'react-helmet-async';
 // import { FaCheck } from "react-icons/fa6";
 import bannerShape1 from "./images/main-demo/banner-shape1.png";
 import bannerShape2 from "./images/main-demo/banner-shape2.png";
@@ -24,6 +25,25 @@ const CheckIcon = () => (
 const HomeBanner = () => {
   return (
     <div className="home-banner hero-section">
+      <Helmet>
+        {/* Component-specific structured data */}
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "SupportHub - AI-Powered Customer Support",
+              "description": "Revolutionize support with AI routing, expert assistance, and continuous learning",
+              "url": "https://yourdomain.com/",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://yourdomain.com/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            }
+          `}
+        </script>
+      </Helmet>
       <div className="bg-shape">
         <div className="shape-img img-1">
           <ScrollAnimate delay={250}><img src={bannerShape1} alt="shpae1" /></ScrollAnimate>
@@ -41,7 +61,7 @@ const HomeBanner = () => {
             <div className="hero-content">
               <div className="hero-content-text">
                 <ScrollAnimate>
-                  <h1 className="uig-banner-title white-color">
+                  <h1 className="uig-banner-title white-color" id="main-headline">
                     Revolutionize <span className="hero-badge">Support</span>
                     <br />
                     with
@@ -68,8 +88,13 @@ const HomeBanner = () => {
               </div>
               <div className="hero-content-button mb-30">
                 <ScrollAnimate delay={250}>
-                  <a href="#pricing" className="hero-btn">
-                    Get Started <span className="ml-2">→</span>
+                  <a 
+                    href="#pricing" 
+                    className="hero-btn"
+                    data-cta="primary"
+                    aria-label="Get started with SupportHub"
+                  >
+                    Get Started <span className="ml-2" aria-hidden="true">→</span>
                   </a>
                 </ScrollAnimate>
               </div>
@@ -94,7 +119,16 @@ const HomeBanner = () => {
           <div className="col-lg-5 col-md12">
             <ScrollAnimate>
               <div className="hero-img">
-                <img src={heroImg} alt="hero-img" />
+                <img 
+                  src={heroImg} 
+                  alt="AI-powered support system dashboard interface" 
+                  loading="eager" 
+                  width="600" 
+                  height="450"
+                  fetchpriority="high"
+                  srcSet={`${heroImg}?w=640 640w, ${heroImg}?w=1024 1024w, ${heroImg}?w=1366 1366w`}
+                  sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 40vw"
+                />
               </div>
             </ScrollAnimate>
           </div>

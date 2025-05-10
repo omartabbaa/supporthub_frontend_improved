@@ -1,0 +1,11 @@
+.bubble-counter {
+  background-color: #e53e3e; /* Red color for visibility */
+  color: white;
+  border-radius: 50%;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  display: inline-block;
+}

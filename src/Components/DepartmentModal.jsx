@@ -1,7 +1,7 @@
 // DepartmentModal.js
 import React from 'react';
 import './Modal.css'; // Ensure Modal.css is correctly imported
-
+"use client"
 const DepartmentModal = ({
   onClose,
   onSubmit,

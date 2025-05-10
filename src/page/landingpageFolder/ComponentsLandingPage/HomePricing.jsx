@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./HomePricing.css";
 import SectionTitle from "./Components/SectionTitle/SectionTitle";
+import { Helmet } from 'react-helmet-async';
 // import { FaArrowRight } from "react-icons/fa6";
 
 import PricingShape1Image from "./images/shape/pricing-shape1.png";
@@ -23,7 +24,7 @@ const ArrowRightIcon = () => (
   </svg>
 );
 
-// Create a check icon component instead of using react-icons
+// Create a check icon component
 const CheckIcon = () => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
@@ -60,61 +61,164 @@ const HomePricing = () => {
   
   const pricingData = [
     {
-      title: "Starter",
-      price: isYearly ? "29" : "39",
+      title: "Free Plan",
+      price: "0",
       features: [
-        "AI-powered widget for your website",
-        "Up to 300 AI responses per month",
-        "Basic question routing",
-        "Email notifications for experts",
-        "Knowledge base learning",
-        "1 expert account",
-        "Standard support"
+        "1 department",
+        "1 project",
+        "1 agent",
+        "No extra agent cost",
+        "20 conversations/month",
+        "No extra conversation cost"
       ],
       recommended: false,
       buttonText: "Get Started",
-      delay: 100
+      delay: 50,
+      id: "free-plan"
     },
     {
-      title: "Professional",
-      price: isYearly ? "79" : "99",
+      title: "Starter",
+      price: isYearly ? "25" : "29",
       features: [
-        "Everything in Starter, plus:",
-        "Up to 1,500 AI responses per month",
-        "Advanced routing algorithms",
-        "Priority email notifications",
-        "Enhanced knowledge learning",
-        "5 expert accounts",
-        "White-labeled widget",
-        "Custom branding options",
-        "Priority support"
+        "3 departments",
+        "9 projects (3 per department)",
+        "10 agents",
+        "$5 per extra agent",
+        "100 conversations/month",
+        "$0.25 per extra conversation"
+      ],
+      recommended: false,
+      buttonText: "Get Started",
+      delay: 100,
+      id: "starter-plan"
+    },
+    {
+      title: "Growth",
+      price: isYearly ? "99" : "119",
+      features: [
+        "5 departments",
+        "15 projects (3 per department)",
+        "10 agents",
+        "$5 per extra agent",
+        "500 conversations/month",
+        "$0.25 per extra conversation"
       ],
       recommended: true,
       buttonText: "Get Started",
-      delay: 200
+      delay: 200,
+      id: "growth-plan"
+    },
+    {
+      title: "Scale",
+      price: isYearly ? "249" : "299",
+      features: [
+        "10 departments",
+        "30 projects (3 per department)",
+        "10 agents",
+        "$5 per extra agent",
+        "1,000 conversations/month",
+        "$0.20 per extra conversation"
+      ],
+      recommended: false,
+      buttonText: "Get Started",
+      delay: 300,
+      id: "scale-plan"
     },
     {
       title: "Enterprise",
-      price: isYearly ? "199" : "249",
+      price: "Custom",
       features: [
-        "Everything in Professional, plus:",
-        "Unlimited AI responses",
-        "Custom routing rules",
-        "Advanced analytics dashboard",
-        "Expert performance metrics",
-        "Unlimited expert accounts",
-        "API access for custom integration",
-        "Dedicated account manager",
-        "24/7 priority support"
+        "Unlimited departments",
+        "Unlimited projects",
+        "Unlimited agents",
+        "Negotiable pricing",
+        "10,000+ conversations",
+        "Volume discount"
       ],
       recommended: false,
       buttonText: "Contact Us",
-      delay: 300
+      delay: 400,
+      id: "enterprise-plan"
     }
   ];
 
+  // Build structured data for pricing
+  const buildPriceSpecification = (plan) => {
+    if (plan.price === "Custom") return null;
+    
+    return {
+      "@type": "PriceSpecification",
+      "price": plan.price,
+      "priceCurrency": "USD",
+      "billingIncrement": 1,
+      "unitText": isYearly ? "year" : "month"
+    };
+  };
+
+  const buildProductStructuredData = () => {
+    return pricingData.map(plan => ({
+      "@type": "Product",
+      "name": `SupportHub ${plan.title}`,
+      "description": `${plan.title} - ${plan.features.join(', ')}`,
+      "brand": {
+        "@type": "Brand",
+        "name": "SupportHub"
+      },
+      "category": "Customer Support Software",
+      "offers": plan.price === "Custom" ? {
+        "@type": "Offer",
+        "availability": "https://schema.org/InStock",
+        "url": "https://yourdomain.com/#pricing"
+      } : {
+        "@type": "Offer",
+        "availability": "https://schema.org/InStock",
+        "price": plan.price,
+        "priceCurrency": "USD",
+        "priceValidUntil": "2024-12-31",
+        "url": `https://yourdomain.com/#${plan.id}`
+      }
+    }));
+  };
+
   return (
-    <div className="home-pricing-section section-padding" id="pricing" style={{ marginBottom: '150px' }}>
+    <section className="home-pricing-section section-padding" id="pricing" style={{ marginBottom: '150px' }} aria-labelledby="pricing-title">
+      <Helmet>
+        {/* Fragment for structured data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "itemListElement": buildProductStructuredData()
+          })}
+        </script>
+        <script type="application/ld+json">
+        {`
+          {
+            "@context": "https://schema.org",
+            "@type": "PriceSpecification",
+            "name": "SupportHub Plans",
+            "description": "Pricing plans for SupportHub AI customer support platform",
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "Free Plan",
+                "price": "0",
+                "priceCurrency": "USD",
+                "description": "Basic plan with 1 department, 1 project, and 20 conversations/month"
+              },
+              {
+                "@type": "Offer",
+                "name": "Starter Plan",
+                "price": "25",
+                "priceCurrency": "USD",
+                "description": "3 departments, 9 projects, and 100 conversations/month"
+              }
+            ]
+          }
+        `}
+        </script>
+      </Helmet>
+      
       <div className="container">
         <div className="row">
           <div className="col-md-12">
@@ -124,41 +228,65 @@ const HomePricing = () => {
                 title="Choose the Perfect Plan for Your Support Needs"
                 text="Simple, transparent pricing that grows with your business. All plans include a 30-day free trial."
                 parentClass="md-mb-0 text-center"
+                id="pricing-title"
               />
             </ScrollAnimate>
 
             <ScrollAnimate delay={100}>
-              <div className="pricing-toggle">
-                <span className={!isYearly ? "active" : ""}>Monthly</span>
-                <div className="toggle-switch" onClick={() => setIsYearly(!isYearly)}>
+              <div className="pricing-toggle" role="group" aria-label="Billing frequency selection">
+                <span className={!isYearly ? "active" : ""} id="monthly-label">Monthly</span>
+                <button 
+                  className="toggle-switch" 
+                  onClick={() => setIsYearly(!isYearly)}
+                  aria-pressed={isYearly}
+                  aria-labelledby={isYearly ? "yearly-label" : "monthly-label"}
+                >
+                  <span className="visually-hidden">
+                    {isYearly ? "Switch to monthly billing" : "Switch to yearly billing"}
+                  </span>
                   <div className={`toggle-button ${isYearly ? "yearly" : ""}`}></div>
-                </div>
-                <span className={isYearly ? "active" : ""}>Yearly <span className="save-badge">Save 20%</span></span>
+                </button>
+                <span className={isYearly ? "active" : ""} id="yearly-label">Yearly <span className="save-badge">Save 20%</span></span>
               </div>
             </ScrollAnimate>
           </div>
         </div>
 
-        <div className="pricing-cards">
+        <div className="pricing-cards" role="list">
           {pricingData.map((plan, index) => (
             <ScrollAnimate key={index} delay={plan.delay}>
-              <div className={`pricing-card ${plan.recommended ? "recommended" : ""}`}>
-                {plan.recommended && <div className="recommended-badge">Most Popular</div>}
+              <div 
+                className={`pricing-card ${plan.recommended ? "recommended" : ""}`} 
+                id={plan.id}
+                role="listitem"
+                itemScope
+                itemType="https://schema.org/Offer"
+              >
+                {plan.recommended && (
+                  <div className="recommended-badge" aria-label="Most popular plan">Most Popular</div>
+                )}
                 <div className="pricing-card-header">
-                  <h3>{plan.title}</h3>
-                  <div className="price">
-                    <span className="currency">$</span>
-                    <span className="amount">{plan.price}</span>
-                    <span className="period">/{isYearly ? "year" : "month"}</span>
+                  <h3 itemProp="name">{plan.title}</h3>
+                  <div className="price" itemProp="price" content={plan.price === "Custom" ? "0" : plan.price}>
+                    {plan.price !== "Custom" ? (
+                      <>
+                        <span className="currency">$</span>
+                        <span className="amount">{plan.price}</span>
+                        <span className="period">/{isYearly ? "year" : "month"}</span>
+                        <meta itemProp="priceCurrency" content="USD" />
+                      </>
+                    ) : (
+                      <span className="amount">Custom Pricing</span>
+                    )}
                   </div>
-                  <p className="per-user">per website</p>
+                  <p className="per-user">per organization</p>
                 </div>
                 <div className="pricing-card-body">
-                  <ul className="feature-list">
-                    {plan.features.map((feature, i) => (
-                      <li key={i}>
+                  <ul className="feature-list" aria-label={`Features of the ${plan.title} plan`}>
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex}>
                         <CheckIcon />
-                        <span>{feature}</span>
+                        <span itemProp="description"><strong>{feature.split(':')[0]}:</strong> {feature.split(':')[1] || feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -167,6 +295,8 @@ const HomePricing = () => {
                   <a 
                     href={plan.title === "Enterprise" ? "#contact" : "#signup"} 
                     className="pricing-button"
+                    aria-label={`${plan.buttonText} with the ${plan.title} plan`}
+                    itemProp="url"
                   >
                     {plan.buttonText}
                   </a>
@@ -176,7 +306,7 @@ const HomePricing = () => {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

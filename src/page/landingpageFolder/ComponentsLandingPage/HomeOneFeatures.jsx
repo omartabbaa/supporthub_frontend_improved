@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from 'react-helmet-async';
 import "./HomeOneFeater.css";
 import SectionTitle from "./Components/SectionTitle/SectionTitle";
 import FrameImage from "./images/main-demo/Frame.svg";
@@ -46,14 +47,14 @@ const HomeOneFeatures = () => {
   const homeOneFeaturesData = [
     {
       cardclassName: "feature-card home-one-feature-card",
-      cardTitle: "Learning AI Support",
+      cardTitle: "AI-Powered Learning Support System",
       cardText: "SupportHub continuously improves its performance by learning from every customer interaction. Its advanced AI algorithms analyze both questions and expert responses, refining its answers over time.",
       icon: learningIcon,
       animetiondelay: 200
     },
     {
       cardclassName: "feature-card home-one-feature-card",
-      cardTitle: "Instant, Accurate Responses",
+      cardTitle: "Instant, AI-Generated Responses",
       cardText: "The AI quickly searches your comprehensive knowledge base to retrieve the best answers for customer inquiries. This rapid response mechanism minimizes wait times and reduces the need for follow-up questions.",
       icon: responseIcon,
       animetiondelay: 250
@@ -90,6 +91,55 @@ const HomeOneFeatures = () => {
 
   return (
     <div className="home-one-features">
+      <Helmet>
+        {/* Component-specific structured data for features section */}
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "AI-Powered Learning Support System",
+                  "description": "SupportHub continuously improves its performance by learning from every customer interaction."
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 2,
+                  "name": "Instant, AI-Generated Responses",
+                  "description": "The AI quickly searches your comprehensive knowledge base to retrieve the best answers."
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 3,
+                  "name": "Smart Query Routing",
+                  "description": "SupportHub automatically directs complex inquiries to the right experts."
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 4,
+                  "name": "Expert Email Notifications",
+                  "description": "SupportHub sends prompt email notifications to the designated experts."
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 5,
+                  "name": "Direct Customer Email Replies",
+                  "description": "The system sends responses directly to the customer's email address."
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 6,
+                  "name": "Admin Control & Expert Assignment",
+                  "description": "A dedicated admin interface allows you to assign specific experts to handle particular types of questions."
+                }
+              ]
+            }
+          `}
+        </script>
+      </Helmet>
       <div className="container">
         <div className="row">
           <div className="col-md-12">

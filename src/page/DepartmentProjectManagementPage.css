@@ -470,3 +470,179 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.page-header {
+   
+    margin-top: 60px;
+margin-left: 40px;
+    background-color: transparent;
+}
+
+/* Update main container background color */
+.department-project-management-page {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  background-color: #f8f9fa; /* Light gray background color */
+  box-sizing: border-box;
+}
+
+/* Help mode toggle switch styling */
+.help-mode-toggle-container {
+  position: fixed;
+  top: 120px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: white;
+  padding: 8px 12px;
+  border-radius: 50px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.help-mode-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.help-mode-toggle {
+  width: 44px;
+  height: 22px;
+  border-radius: 11px;
+  background-color: #cbd5e0;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+  outline: none;
+}
+
+.help-mode-toggle.active {
+  background-color: #38b2ac;
+}
+
+.help-mode-toggle-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.help-mode-toggle.active .help-mode-toggle-circle {
+  transform: translateX(22px);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.department-page-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.department-project-management-page {
+  padding: 2rem;
+  padding-top: 90px; /* Account for navbar + spacing */
+  min-height: 100vh;
+  width: calc(100% - 260px);
+  margin-left: 260px;
+  transition: width 0.3s ease, margin-left 0.3s ease;
+}
+
+.department-page-container.collapsed .department-project-management-page {
+  width: calc(100% - 60px);
+  margin-left: 60px;
+}
+
+/* Add these styles to fix the image display */
+.project-image-container {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+  background-color: #f1f5f9;
+}
+
+.project-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover .project-image {
+  transform: scale(1.05);
+}
+
+.project-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.update-project-btn,
+.delete-project-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.update-project-btn:hover {
+  background-color: #e2e8f0;
+}
+
+.delete-project-btn:hover {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.project-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 12px 0 4px;
+  color: #1e293b;
+  text-align: center;
+}
+
+.project-category {
+  font-size: 0.8rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 12px;
+  text-align: center;
+}

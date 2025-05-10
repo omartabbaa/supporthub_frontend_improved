@@ -2,11 +2,14 @@
 
 import './AdminDashboardPage.css';
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useUserContext } from "../context/LoginContext";
 import Fuse from 'fuse.js';
 import SearchBar from '../Components/Searchbar';
 import Accordion from '../Components/Accordion';
 import { admins as adminsApi, departments as departmentsApi, users as usersApi, projects as projectsApi, permissions as permissionsApi, setAuthToken } from "../services/ApiService";
+import Tooltip from '../Components/Tooltip';
+import SideNavbar from '../Components/SideNavbar';
 
 const AdminDashboardPage = () => {
     const { token, stateBusinessId } = useUserContext();
@@ -26,6 +29,8 @@ const AdminDashboardPage = () => {
     const [stateAdmin, setStateAdmin] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [openAccordionId, setOpenAccordionId] = useState(null);
+    const [helpModeEnabled, setHelpModeEnabled] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
     // Fuse.js options for fuzzy search - include email
     const fuseOptions = {
@@ -224,111 +229,219 @@ const AdminDashboardPage = () => {
         }
     };
 
+    // Add toggle function for sidebar
+    const toggleSidebar = () => {
+        setSidebarCollapsed(!sidebarCollapsed);
+    };
+
     return (
-        <div className="admin-dashboard">
-            <h1 className="dashboard-title">Admin Dashboard</h1>
-            <h2 className="dashboard-subtitle">
-                Grant targeted access to experts and agents for answering tickets related to specific products or entire product categories.
-            </h2>
+        <div className={`admin-dashboard-container ${sidebarCollapsed ? 'collapsed' : ''}`}>
+            {/* Add SideNavbar component */}
+            <SideNavbar isCollapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
+            
+            <main className={`admin-dashboard ${helpModeEnabled ? 'help-mode-enabled' : 'help-mode-disabled'}`}>
+                <Helmet>
+                    <title>Admin Dashboard | SupportHub</title>
+                    <meta name="description" content="Manage expert permissions, assign specialists to departments and projects, and control access to customer support answers." />
+                    <meta name="robots" content="noindex" /> {/* Optional: for private dashboards */}
+                    <script type="application/ld+json">
+                        {`
+                            {
+                                "@context": "https://schema.org",
+                                "@type": "WebPage",
+                                "name": "Admin Dashboard",
+                                "description": "Manage expert permissions and assign specialists",
+                                "breadcrumb": {
+                                    "@type": "BreadcrumbList",
+                                    "itemListElement": [
+                                        {
+                                            "@type": "ListItem",
+                                            "position": 1,
+                                            "name": "Admin Dashboard",
+                                            "item": "https://yourdomain.com/admin-dashboard"
+                                        }
+                                    ]
+                                }
+                            }
+                        `}
+                    </script>
+                </Helmet>
 
-            <div className="search-wrapper">
-                <SearchBar
-                    value={searchQuery}
-                    onChange={setSearchQuery}
-                    placeholder="Search experts by name or email..."
-                />
-            </div>
+                <header className="dashboard-header">
+                    <h1 className="dashboard-title">Admin Dashboard</h1>
+                    <p className="dashboard-subtitle">
+                        Grant targeted access to experts and agents for answering tickets related to specific topics or entire expertise areas.
+                    </p>
+                </header>
 
-            <div className="department-grid">
-                {departments.map((department, deptIndex) => (
-                    <Accordion 
-                        key={department.departmentId} 
-                        title={department.departmentName}
-                        isOpen={openAccordionId === department.departmentId}
-                        onToggle={() => handleAccordionToggle(department.departmentId)}
+                <div className="help-mode-toggle-container">
+                    <span className="help-mode-label">Help Mode</span>
+                    <button 
+                        className={`help-mode-toggle ${helpModeEnabled ? 'active' : ''}`}
+                        onClick={() => setHelpModeEnabled(!helpModeEnabled)}
+                        data-tooltip="Toggle help tooltips on/off"
+                        data-tooltip-position="left"
                     >
-                        <div className="experts-list">
-                            <ul className="experts-container">
-                                {getFilteredExperts().map((expert, expertIndex) => {
-                                    const departmentToggleId = createToggleId(department.departmentId, null, expert.userId);
-
-                                    return (
-                                        <li
-                                            key={expert.userId}
-                                            className="expert-item"
-                                            onMouseEnter={() => setHoveredExpertId(expert.userId)}
-                                            onMouseLeave={() => setHoveredExpertId(null)}
-                                        >
-                                            <div className='expert-item-container'>
-                                                <span className="expert-name">{expert.name}</span>
-                                                <span className="expert-email">{expert.email}</span>
-                                                <span className="expert-role">{expert.role}</span>
-                                            </div>
-
-                                            {hoveredExpertId === expert.userId && (
-                                                <div className='section_projects_container'>
-                                                    
-                                                    {projects.filter(project => project.departmentId === department.departmentId).map(project => {
-                                                        const projectToggleId = createToggleId(department.departmentId, project.projectId, expert.userId);
-                                                        return (
-                                                            <div key={project.projectId} className="project-permission">
-                                                                <span className="project-name">{project.name}</span>
-                                                                <button
-                                                                    className={`toggleButton ${toggleStates[projectToggleId] ? "active" : ""}`}
-                                                                    onClick={() => handleToggle(deptIndex, expertIndex, project.projectId)}
-                                                                >
-                                                                    <div className="toggle-circle"></div>
-                                                                </button>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            )}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </div>
-                    </Accordion>
-                ))}
-            </div>
-
-            {isPermissionFormVisible && (
-                <div className="permission-form">
-                    <h3>Add New Permission</h3>
-                    <select value={formData.selectedUser} onChange={(e) => updateFormData('selectedUser', e.target.value)}>
-                        <option value="">Select User</option>
-                        {experts.map(expert => (
-                            <option key={expert.userId} value={expert.userId}>{expert.name} ({expert.email})</option>
-                        ))}
-                    </select>
-                    <select value={formData.selectedDepartment} onChange={(e) => updateFormData('selectedDepartment', e.target.value)}>
-                        <option value="">Select Department</option>
-                        {departments.map(department => (
-                            <option key={department.departmentId} value={department.departmentId}>{department.departmentName}</option>
-                        ))}
-                    </select>
-                    <select value={formData.selectedProject} onChange={(e) => updateFormData('selectedProject', e.target.value)}>
-                        <option value="">Select Project (optional)</option>
-                        {projects
-                            .filter(project => project.departmentId === formData.selectedDepartment)
-                            .map(project => (
-                                <option key={project.projectId} value={project.projectId}>{project.name}</option>
-                            ))
-                        }
-                    </select>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={formData.canAnswer}
-                            onChange={() => updateFormData('canAnswer', !formData.canAnswer)}
-                        />
-                        Can Answer
-                    </label>
-                    <button onClick={submitPermission}>Submit Permission</button>
-                    <button onClick={() => setIsPermissionFormVisible(false)}>Cancel</button>
+                        <div className="help-mode-toggle-circle"></div>
+                        <span className="sr-only">Toggle help mode</span>
+                    </button>
                 </div>
-            )}
+
+                <section className="search-section" aria-label="Search experts">
+                    <div className="search-wrapper">
+                        <Tooltip text="Search for experts by their name or email address">
+                            <SearchBar
+                                value={searchQuery}
+                                onChange={setSearchQuery}
+                                placeholder="Search experts to assign to topics..."
+                                aria-label="Search experts"
+                            />
+                        </Tooltip>
+                    </div>
+                </section>
+
+                <section 
+                    className="departments-section" 
+                    aria-label="Expertise Areas and permissions"
+                    data-tooltip="Click on an expertise area to expand it and manage permissions for experts"
+                >
+                    <div className="department-grid">
+                        {departments.map((department, deptIndex) => (
+                            <Accordion 
+                                key={department.departmentId} 
+                                title={department.departmentName}
+                                isOpen={openAccordionId === department.departmentId}
+                                onToggle={() => handleAccordionToggle(department.departmentId)}
+                                titleTooltip={`Click to expand/collapse the ${department.departmentName} expertise area. Here you can manage which experts can answer questions for this expertise area and its specific topics.`}
+                            >
+                                <div className="experts-list" role="list">
+                                    
+                                    <ul className="experts-container">
+                                        {getFilteredExperts().map((expert, expertIndex) => {
+                                            const departmentToggleId = createToggleId(department.departmentId, null, expert.userId);
+
+                                            return (
+                                                <li
+                                                    key={expert.userId}
+                                                    className="expert-item"
+                                                    onMouseEnter={() => setHoveredExpertId(expert.userId)}
+                                                    onMouseLeave={() => setHoveredExpertId(null)}
+                                                    role="listitem"
+                                                    data-tooltip={`${expert.name} - ${expert.role} specialist`}
+                                                >
+                                                    <div className='expert-item-container'>
+                                                        <span className="expert-name">{expert.name}</span>
+                                                        <span className="expert-email">{expert.email}</span>
+                                                        <span className="expert-role">{expert.role}</span>
+                                                    </div>
+
+                                                    {hoveredExpertId === expert.userId && (
+                                                        <div className='section_projects_container' role="group" aria-label={`Topics for ${expert.name}`}>
+                                                            <div className="tooltip-container" data-tooltip="Toggle permissions for specific topics">
+                                                                {projects.filter(project => project.departmentId === department.departmentId).map(project => {
+                                                                    const projectToggleId = createToggleId(department.departmentId, project.projectId, expert.userId);
+                                                                    return (
+                                                                        <div key={project.projectId} className="project-permission">
+                                                                            <span className="project-name">{project.name}</span>
+                                                                            <button
+                                                                                className={`toggleButton ${toggleStates[projectToggleId] ? "active" : ""}`}
+                                                                                onClick={() => handleToggle(deptIndex, expertIndex, project.projectId)}
+                                                                                aria-pressed={toggleStates[projectToggleId]}
+                                                                                aria-label={`Toggle permission for ${expert.name} on ${project.name} topic`}
+                                                                                data-tooltip={toggleStates[projectToggleId] ? 
+                                                                                    `Click to remove ${expert.name}'s permission to answer questions for ${project.name} topic` : 
+                                                                                    `Click to grant ${expert.name} permission to answer questions for ${project.name} topic`}
+                                                                                data-tooltip-position="left"
+                                                                            >
+                                                                                <div className="toggle-circle"></div>
+                                                                            </button>
+                                                                        </div>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>
+                            </Accordion>
+                        ))}
+                    </div>
+                </section>
+
+                {isPermissionFormVisible && (
+                    <dialog open className="permission-form" aria-labelledby="permission-form-title">
+                        <h3 id="permission-form-title">Add New Permission</h3>
+                        <form onSubmit={(e) => { e.preventDefault(); submitPermission(); }}>
+                            <div className="tooltip-container" data-tooltip="Select the user who needs permissions">
+                                <label htmlFor="user-select">Select User</label>
+                                <select 
+                                    id="user-select"
+                                    value={formData.selectedUser} 
+                                    onChange={(e) => updateFormData('selectedUser', e.target.value)}
+                                    required
+                                >
+                                    <option value="">Select User</option>
+                                    {experts.map(expert => (
+                                        <option key={expert.userId} value={expert.userId}>{expert.name} ({expert.email})</option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            <div className="tooltip-container" data-tooltip="Select which expertise area this permission applies to">
+                                <label htmlFor="department-select">Select Expertise Area</label>
+                                <select 
+                                    id="department-select"
+                                    value={formData.selectedDepartment} 
+                                    onChange={(e) => updateFormData('selectedDepartment', e.target.value)}
+                                    required
+                                >
+                                    <option value="">Select Expertise Area</option>
+                                    {departments.map(department => (
+                                        <option key={department.departmentId} value={department.departmentId}>{department.departmentName}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            
+                            <div className="tooltip-container" data-tooltip="Optionally limit permission to a specific topic within the expertise area">
+                                <label htmlFor="project-select">Select Topic (optional)</label>
+                                <select 
+                                    id="project-select"
+                                    value={formData.selectedProject} 
+                                    onChange={(e) => updateFormData('selectedProject', e.target.value)}
+                                >
+                                    <option value="">Select Topic (optional)</option>
+                                    {projects
+                                        .filter(project => project.departmentId === formData.selectedDepartment)
+                                        .map(project => (
+                                            <option key={project.projectId} value={project.projectId}>{project.name}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                            
+                            <div className="tooltip-container" data-tooltip="When checked, the user will be able to answer customer questions">
+                                <label className="checkbox-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={formData.canAnswer}
+                                        onChange={() => updateFormData('canAnswer', !formData.canAnswer)}
+                                        id="can-answer"
+                                    />
+                                    Can Answer
+                                </label>
+                            </div>
+                            
+                            <div className="form-buttons">
+                                <button type="submit" data-tooltip="Save this permission configuration">Submit Permission</button>
+                                <button type="button" onClick={() => setIsPermissionFormVisible(false)}>Cancel</button>
+                            </div>
+                        </form>
+                    </dialog>
+                )}
+            </main>
         </div>
     );
 };

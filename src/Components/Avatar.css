@@ -1,0 +1,12 @@
+/* Make avatar images responsive */
+.avatar-image {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-container {
+  overflow: hidden;
+  border-radius: 50%;
+} 

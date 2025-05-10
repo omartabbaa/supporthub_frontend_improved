@@ -1,8 +1,10 @@
 // Accordion.js
+"use client"
 import React, { useState, useRef, useEffect } from 'react';
 import './Accordion.css';
+import Tooltip from './Tooltip';
 
-const Accordion = ({ title, children, isOpen, onToggle }) => {
+const Accordion = ({ title, children, isOpen, onToggle, titleTooltip = null }) => {
     const [height, setHeight] = useState('0px');
     const contentRef = useRef(null);
 
@@ -34,15 +36,25 @@ const Accordion = ({ title, children, isOpen, onToggle }) => {
         };
     }, [isOpen, children]);
 
+    const headerContent = (
+        <div 
+            className="accordion-header" 
+            onClick={onToggle}
+        >
+            <h3 className="accordion-title">{title} </h3>
+            <span className={`accordion-icon ${isOpen ? 'open' : ''}`}>
+                {isOpen ? '▲' : '▼'}
+            </span>
+        </div>
+    );
+
     return (
         <div className="accordion">
-            <div className="accordion-header" onClick={onToggle}>
-                <h3 className="accordion-title">{title}</h3>
-                <div className={`accordion-icon ${isOpen ? 'open' : ''}`}>
-                    {/* You can use an icon here */}
-                    {isOpen ? '−' : '+'}
-                </div>
-            </div>
+            {titleTooltip ? (
+                <Tooltip text={titleTooltip}>{headerContent}</Tooltip>
+            ) : (
+                headerContent
+            )}
             <div
                 ref={contentRef}
                 style={{ maxHeight: `${height}` }}

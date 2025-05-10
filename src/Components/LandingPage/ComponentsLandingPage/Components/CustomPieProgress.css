@@ -1,0 +1,35 @@
+.custom-pie-progress {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring__circle {
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.pie-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.pie-text h2 {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.pie-text p {
+  font-size: 8px;
+  margin: 0;
+} 

@@ -15,6 +15,14 @@ import ApiKeyManagerPage from './page/ApiKeyManagerPage';
 import { useUserContext } from './context/LoginContext';
 import Landingpage from './page/landingpageFolder/Landingpage';
 import DocumentationPage from './page/landingpageFolder/DocumentationPage';
+import UploadYourOwnData from './page/UploadYourOwnData';
+import ExpertiseAreaPage from './page/ExpertiseAreaPage';
+import { QuestionCountProvider } from './context/QuestionCountContext';
+import AgentQuestionsPage from './page/AgentQuestionsPage';
+import AgentAnalyticsPage from './page/AgentAnalyticsPage';
+import AgentManagementPage from './page/AgentManagementPage';
+import AccountActivationPage from './page/AccountActivationPage';
+import AdminAnalyticsPage from './page/AdminAnalyticsPage';
 
 // Admin-only route wrapper component
 const AdminRoute = ({ children }) => {
@@ -33,32 +41,50 @@ const AdminRoute = ({ children }) => {
 
 function App() {
   return (
-    <body>
+    <>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Landingpage />} />
-        <Route path="/old-landing" element={<LandingPage />} />
-        <Route path="/new-landing" element={<NewLandingPage />} />
-        <Route path="/documentation" element={<DocumentationPage />} />
-        <Route path="/business-overview" element={<BusinessOverviewPage />} />
-        <Route path="/department-project-management/:businessId/:businessName" element={<DepartmentProjectManagementPage />} />
-        <Route path="/question-overview/:department/:project/:projectId" element={<QuestionOverviewPage />} />
-        <Route path="/question-detail/:questionId/:title/:question/:projectId" element={<QuestionDetailPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/admin-dashboard" element={
-          <AdminRoute>
-            <AdminDashboardPage />
-          </AdminRoute>
-        } />
-        <Route path="/api-key-manager" element={
-          <AdminRoute>
-            <ApiKeyManagerPage />
-          </AdminRoute>
-        } />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </body>
+      <QuestionCountProvider>
+        <Routes>
+          <Route path="/" element={<Landingpage />} />
+          <Route path="/old-landing" element={<LandingPage />} />
+          <Route path="/new-landing" element={<NewLandingPage />} />
+          <Route path="/documentation" element={<DocumentationPage />} />
+          <Route path="/business-overview" element={<BusinessOverviewPage />} />
+          <Route path="/department-project-management/:businessId/:businessName" element={<DepartmentProjectManagementPage />} />
+          <Route path="/department-project-management/:businessId/:businessName/:departmentId" element={<DepartmentProjectManagementPage />} />
+          <Route path="/question-overview/:businessName/:department/:project/:projectId" element={<QuestionOverviewPage />} />
+          <Route path="/question-detail/:businessName/:department/:project/:questionId/:title/:question/:projectId" element={<QuestionDetailPage />} />
+          <Route path="/upload-data/:businessName/:department/:project/:projectId" element={<UploadYourOwnData />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/admin-dashboard" element={
+            <AdminRoute>
+              <AdminDashboardPage />
+            </AdminRoute>
+          } />
+          <Route path="/api-key-manager" element={
+            <AdminRoute>
+              <ApiKeyManagerPage />
+            </AdminRoute>
+          } />
+          <Route path="/expertise-area/:areaId" element={<ExpertiseAreaPage />} />
+          <Route path="/my-questions" element={<AgentQuestionsPage />} />
+          <Route path="/my-analytics" element={<AgentAnalyticsPage />} />
+          <Route path="/agent-management" element={
+            <AdminRoute>
+              <AgentManagementPage />
+            </AdminRoute>
+          } />
+          <Route path="/activate-account/:tokenId" element={<AccountActivationPage />} />
+          <Route path="/admin-analytics" element={
+            <AdminRoute>
+              <AdminAnalyticsPage />
+            </AdminRoute>
+          } />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </QuestionCountProvider>
+    </>
   )
 }
 

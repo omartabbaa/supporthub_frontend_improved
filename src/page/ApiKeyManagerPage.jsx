@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from 'react-helmet-async';
 import "./ApiKeyManagerPage.css";
 import { useUserContext } from "../context/LoginContext";
+import SideNavbar from '../Components/SideNavbar';
 
 /**
  * A React component for creating, fetching, and deactivating API keys
@@ -14,6 +16,11 @@ function ApiKeyManagerPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [isDeactivating, setIsDeactivating] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
 
   // Redirect if not an admin
   useEffect(() => {
@@ -155,104 +162,162 @@ function ApiKeyManagerPage() {
 
   if (role !== "ROLE_ADMIN") {
     return (
-      <div className="api-key-manager-page">
+      <main className="api-key-manager-page">
+        <Helmet>
+          <title>Access Denied | API Key Manager | SupportHub</title>
+          <meta name="description" content="Admin privileges required to access the API Key Manager" />
+          <meta name="robots" content="noindex,nofollow" />
+        </Helmet>
         <h1>Access Denied</h1>
         <div className="error-message" role="alert">
           You need admin privileges to access this page.
         </div>
-      </div>
+      </main>
     );
   }
 
   if (!stateBusinessId) {
     return (
-      <div className="api-key-manager-page">
+      <main className="api-key-manager-page">
+        <Helmet>
+          <title>Business ID Required | API Key Manager | SupportHub</title>
+          <meta name="description" content="Please log in with a valid business account to manage API keys" />
+          <meta name="robots" content="noindex,nofollow" />
+        </Helmet>
         <h1>API Key Manager</h1>
         <div className="error-message" role="alert">
           No business ID available. Please ensure you're properly logged in.
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="api-key-manager-page">
-      <h1>API Key Manager</h1>
+    <div className={`api-key-manager-container ${sidebarCollapsed ? 'collapsed' : ''}`}>
+      <SideNavbar isCollapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
+      
+      <main className="api-key-manager-page">
+        <Helmet>
+          <title>API Key Manager | SupportHub</title>
+          <meta name="description" content="Generate and manage API keys for your business integration with SupportHub services." />
+          <meta name="robots" content="noindex" /> {/* Optional: for private dashboards */}
+          <script type="application/ld+json">
+            {`
+              {
+                "@context": "https://schema.org",
+                "@type": "WebPage",
+                "name": "API Key Manager",
+                "description": "Generate and manage API keys for business integration",
+                "breadcrumb": {
+                  "@type": "BreadcrumbList",
+                  "itemListElement": [
+                    {
+                      "@type": "ListItem",
+                      "position": 1,
+                      "name": "Admin Dashboard",
+                      "item": "https://yourdomain.com/admin-dashboard"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 2,
+                      "name": "API Key Manager",
+                      "item": "https://yourdomain.com/api-key-manager"
+                    }
+                  ]
+                }
+              }
+            `}
+          </script>
+        </Helmet>
 
-      {error && (
-        <div className="error-message" role="alert">
-          {error}
-        </div>
-      )}
+        <header className="page-header">
+          <h1>API Key Manager</h1>
+          <nav aria-label="Breadcrumb" className="breadcrumb-nav">
+            <ol className="breadcrumb">
+              <li><a href="/admin-dashboard">Admin Dashboard</a></li>
+              <li aria-current="page">API Key Manager</li>
+            </ol>
+          </nav>
+        </header>
 
-      <div className="form-section">
-        <div className="business-id-display">
-          <strong>Business ID:</strong> {stateBusinessId}
-        </div>
-        
-        <div className="button-container">
-          <button
-            className="button generate-button"
-            onClick={handleGenerateApiKey}
-            disabled={isGenerating || isFetching || isDeactivating}
-          >
-            {isGenerating ? "Generating..." : "Generate API Key"}
-          </button>
-          <button
-            className="button fetch-button"
-            onClick={fetchApiKeys}
-            disabled={isGenerating || isFetching || isDeactivating}
-          >
-            {isFetching ? "Fetching..." : "Refresh Keys"}
-          </button>
-        </div>
-      </div>
-
-      {generatedKey && (
-        <div className="generated-key-section">
-          <h2>Newly Generated Key</h2>
-          <p className="generated-key">{generatedKey}</p>
-        </div>
-      )}
-
-      <div className="api-keys-section">
-        <h2>Active API Keys</h2>
-        {apiKeys.length === 0 ? (
-          <p>No active API keys found for this business.</p>
-        ) : (
-          <table className="api-keys-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Key Value</th>
-                <th>Description</th>
-                <th>Active</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {apiKeys.map((apiKey) => (
-                <tr key={apiKey.keyValue}>
-                  <td>{apiKey.id}</td>
-                  <td>{apiKey.keyValue}</td>
-                  <td>{apiKey.description || "N/A"}</td>
-                  <td>{apiKey.active ? "Yes" : "No"}</td>
-                  <td>
-                    {apiKey.active && (
-                      <button
-                        onClick={() => deactivateApiKey(apiKey.keyValue)}
-                        disabled={isDeactivating}
-                      >
-                        {isDeactivating ? "Deactivating..." : "Deactivate"}
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {error && (
+          <div className="error-message" role="alert">
+            {error}
+          </div>
         )}
-      </div>
+
+        <section className="form-section">
+          <div className="business-id-display">
+            <strong>Business ID:</strong> {stateBusinessId}
+          </div>
+          
+          <div className="button-container">
+            <button
+              className="button generate-button"
+              onClick={handleGenerateApiKey}
+              disabled={isGenerating || isFetching || isDeactivating}
+              aria-busy={isGenerating}
+            >
+              {isGenerating ? "Generating..." : "Generate API Key"}
+            </button>
+            <button
+              className="button fetch-button"
+              onClick={fetchApiKeys}
+              disabled={isGenerating || isFetching || isDeactivating}
+              aria-busy={isFetching}
+            >
+              {isFetching ? "Fetching..." : "Refresh Keys"}
+            </button>
+          </div>
+        </section>
+
+        {generatedKey && (
+          <section className="generated-key-section">
+            <h2>Newly Generated Key</h2>
+            <p className="generated-key" aria-live="polite">{generatedKey}</p>
+          </section>
+        )}
+
+        <section className="api-keys-section">
+          <h2>Active API Keys</h2>
+          {apiKeys.length === 0 ? (
+            <p role="status">No active API keys found for this business.</p>
+          ) : (
+            <table className="api-keys-table" aria-label="API Keys">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Key Value</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Active</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {apiKeys.map((apiKey) => (
+                  <tr key={apiKey.keyValue}>
+                    <td>{apiKey.id}</td>
+                    <td>{apiKey.keyValue}</td>
+                    <td>{apiKey.description || "N/A"}</td>
+                    <td>{apiKey.active ? "Yes" : "No"}</td>
+                    <td>
+                      {apiKey.active && (
+                        <button
+                          onClick={() => deactivateApiKey(apiKey.keyValue)}
+                          disabled={isDeactivating}
+                          aria-busy={isDeactivating}
+                        >
+                          {isDeactivating ? "Deactivating..." : "Deactivate"}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </section>
+      </main>
     </div>
   );
 }

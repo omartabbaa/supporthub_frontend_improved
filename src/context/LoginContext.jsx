@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { decodeToken } from 'jsontokens';
+import { QuestionCountProvider } from './QuestionCountContext';
 
 const UserContext = createContext();
 
@@ -59,9 +60,23 @@ export const UserProvider = ({ children }) => {
         console.log("Logout function called: User is logged out");
     };
 
+    const contextValue = {
+        stateBusinessId,
+        userId,
+        role,
+        token,
+        user,
+        login,
+        logout,
+        loading,
+        isLogin
+    };
+
     return (
-        <UserContext.Provider value={{ stateBusinessId, userId, role, token, user, login, logout, loading, isLogin }}>
-            {loading ? <p>Loading...</p> : children}
+        <UserContext.Provider value={contextValue}>
+            <QuestionCountProvider>
+                {loading ? <p>Loading...</p> : children}
+            </QuestionCountProvider>
         </UserContext.Provider>
     );
 };

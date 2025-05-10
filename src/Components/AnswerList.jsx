@@ -1,5 +1,5 @@
 import React from 'react';
-
+"use client"
 const AnswerList = ({ answers, loadingAnswers, error, handleDeleteAnswer }) => {
   if (loadingAnswers) {
     return <p className="loading-message">Loading answers...</p>;

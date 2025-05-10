@@ -1,6 +1,6 @@
 // QuestionOverviewPage.js
 import React, { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Fuse from 'fuse.js';
 import './QuestionOverviewPage.css';
 import SearchBar from '../Components/Searchbar';
@@ -8,15 +8,26 @@ import TextArea from '../Components/TextArea';
 import TextInput from '../Components/TextInput';
 import QuestionList from '../Components/QuestionList';
 import { questions as questionsApi } from '../services/ApiService';
+import Tooltip from '../Components/Tooltip';
+import { useUserPermissions } from '../hooks/useUserPermissions';
+import { users as usersApi } from '../services/ApiService';
 
 const QuestionOverviewPage = () => {
   const [questionText, setQuestionText] = useState('');
   const [questions, setQuestions] = useState([]);
   const [title, setTitle] = useState('');
   const [error, setError] = useState('');
-  const { project, department, projectId } = useParams();
+  const { project, department, projectId, businessName } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+  const [helpModeEnabled, setHelpModeEnabled] = useState(false);
+  const [pendingQuestions, setPendingQuestions] = useState([]);
+  const [pendingQuestionsLoaded, setPendingQuestionsLoaded] = useState(false);
+  const [pendingUsersMap, setPendingUsersMap] = useState({});
+
+  const { hasProjectPermission } = useUserPermissions();
+  const hasPermission = hasProjectPermission(projectId);
 
   const decodedProject = decodeURIComponent(project);
   const decodedDepartment = decodeURIComponent(department);
@@ -25,12 +36,11 @@ const QuestionOverviewPage = () => {
     const fetchQuestions = async () => {
       setIsLoading(true);
       try {
-        const response = await questionsApi.getAll();
+        // Use the project-specific endpoint instead of getting all questions
+        const response = await questionsApi.getByProjectId(projectId);
         
-        // Filter questions with the correct projectId
-        const filteredQuestions = response.data.filter(question => question.projectId === parseInt(projectId));
-        
-        const questionsData = filteredQuestions.map(question => ({
+        // No need to filter anymore since the API is already returning project-specific questions
+        const questionsData = response.data.map(question => ({
           id: question.questionId,
           title: question.questionTitle,
           question: question.questionText,
@@ -38,6 +48,7 @@ const QuestionOverviewPage = () => {
           projectId: question.projectId,
           createdAt: question.createdAt,
           likes: question.likes || 0,
+          assignedAgentId: question.assignedAgentId
         }));
         
         setQuestions(questionsData);
@@ -53,6 +64,13 @@ const QuestionOverviewPage = () => {
       fetchQuestions();
     }
   }, [projectId]);
+
+  // Add this after fetchQuestions to log the question structure
+  useEffect(() => {
+    if (questions.length > 0) {
+      console.log("Sample question structure:", questions[0]);
+    }
+  }, [questions]);
 
   // Set up Fuse.js with options
   const fuse = useMemo(() => {
@@ -91,6 +109,7 @@ const QuestionOverviewPage = () => {
           projectId: response.data.projectId,
           createdAt: response.data.createdAt,
           likes: 0,
+          assignedAgentId: response.data.assignedAgentId
         };
         setQuestions(prevQuestions => [...prevQuestions, newQuestion]);
         setTitle('');
@@ -136,10 +155,117 @@ const QuestionOverviewPage = () => {
     }
   };
 
+  const handleStatusChange = (updatedQuestion) => {
+    setQuestions(prevQuestions => 
+      prevQuestions.map(q => 
+        q.id === updatedQuestion.questionId ? {
+          ...q,
+          status: updatedQuestion.status,
+          assignedAgentId: updatedQuestion.assignedAgentId
+        } : q
+      )
+    );
+  };
+
+  const fetchPendingQuestions = async () => {
+    try {
+      console.log('Fetching pending questions for project:', projectId);
+      const response = await questionsApi.getPendingByProjectId(projectId);
+      
+      // Log ALL pending questions to see their full structure
+      console.log('PENDING QUESTIONS FULL DATA:', response.data);
+      
+      // Extract and log just the agent IDs for easier debugging
+      const agentIds = response.data.map(q => ({
+        questionId: q.questionId,
+        title: q.questionTitle,
+        assignedAgentId: q.assignedAgentId,
+        status: q.status
+      }));
+      console.log('PENDING QUESTIONS AGENT IDs:', agentIds);
+      
+      // Store the pending questions in state
+      setPendingQuestions(response.data);
+      
+      // Extract unique agent IDs from pending questions
+      const uniqueAgentIds = [...new Set(
+        response.data
+          .filter(q => q.assignedAgentId && q.assignedAgentId > 0)
+          .map(q => q.assignedAgentId)
+      )];
+      
+      console.log('UNIQUE AGENT IDs TO FETCH:', uniqueAgentIds);
+      
+      // Fetch user details for each agent ID
+      const userMap = {};
+      for (const agentId of uniqueAgentIds) {
+        try {
+          console.log(`FETCHING USER FOR AGENT ID: ${agentId}`);
+          const userResponse = await usersApi.getById(agentId);
+          console.log(`USER RESPONSE FOR AGENT ID ${agentId}:`, userResponse);
+          
+          if (userResponse && userResponse.data) {
+            userMap[agentId] = userResponse.data;
+            console.log(`MAPPED USER FOR AGENT ID ${agentId}:`, userMap[agentId]);
+          }
+        } catch (error) {
+          console.error(`ERROR FETCHING USER FOR AGENT ID ${agentId}:`, error);
+        }
+      }
+      
+      console.log('FINAL PENDING USERS MAP:', userMap);
+      setPendingUsersMap(userMap);
+      setPendingQuestionsLoaded(true);
+    } catch (error) {
+      console.error('Error fetching pending questions:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (projectId && !pendingQuestionsLoaded) {
+      fetchPendingQuestions();
+    }
+  }, [projectId, questions]);
+
   return (
-    <div className="question-overview-page">
-      <h1 className="question-overview-title">{decodedProject}</h1>
-      <h2 className="question-overview-department">{decodedDepartment}</h2>
+    <div className={`question-overview-page ${helpModeEnabled ? 'help-mode-enabled' : 'help-mode-disabled'}`}>
+      
+      <div className="breadcrumb-navigation">
+        <button className="back-button" onClick={() => navigate(-1)}>
+          <span className="back-icon">←</span> Back to Organisation {businessName}
+        </button>
+        <div className="breadcrumb-trail">
+          <span className="breadcrumb-item">Organisation:</span>
+          <span className="breadcrumb-value">{businessName || "Business"}</span>
+          <span className="breadcrumb-separator">/</span>
+          <span className="breadcrumb-item">Expertise Area:</span>
+          <span className="breadcrumb-value">{decodedDepartment}</span>
+          <span className="breadcrumb-separator">/</span>
+          <span className="breadcrumb-item">Topic:</span>
+          <span className="breadcrumb-current">{decodedProject}</span>
+        </div>
+      </div>
+      
+      <div className="help-mode-toggle-container">
+        <span className="help-mode-label">Help Mode</span>
+        <button 
+          className={`help-mode-toggle ${helpModeEnabled ? 'active' : ''}`}
+          onClick={() => setHelpModeEnabled(!helpModeEnabled)}
+          data-tooltip="Toggle help tooltips on/off"
+          data-tooltip-position="left"
+        >
+          <div className="help-mode-toggle-circle"></div>
+          <span className="sr-only">Toggle help mode</span>
+        </button>
+      </div>
+      
+      <div className="topic-overview-header">
+        <div className="TopicTitleWrapper">
+          <h1 className="question-overview-title">{decodedProject}</h1>
+          <div className="TopicTypeLabel">Topic</div>
+        </div>
+   
+      </div>
       
       <form className="form-question" onSubmit={handleSubmit}>
         <h2>Ask a New Question</h2>
@@ -155,15 +281,26 @@ const QuestionOverviewPage = () => {
           placeholder="Ask a question..."
           required
         />
-        <button type="submit">Ask Question</button>
+        <button type="submit" className="ask-question-button">Ask Question</button>
       </form>
       
+      {/* Separate AI training link below the form */}
+      <Link 
+        to={`/upload-data/${businessName}/${department}/${project}/${projectId}`}
+        className="teach-ai-link"
+        data-tooltip="Upload your own documents to improve the AI's knowledge about this topic"
+      >
+        Teach AI with your own data files
+      </Link>
+      
       <div className="search-container">
-        <SearchBar
-          value={searchTerm}
-          onChange={setSearchTerm}
-          placeholder="Search questions..."
-        />
+        <Tooltip text="Search through existing questions">
+          <SearchBar
+            value={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="Search questions..."
+          />
+        </Tooltip>
       </div>
       
       {isLoading ? (
@@ -177,9 +314,16 @@ const QuestionOverviewPage = () => {
           questions={filteredQuestions}
           onDelete={handleDelete}
           onLike={handleLike}
+          hasPermission={hasPermission}
+          businessName={businessName} 
+          department={decodedDepartment}
+          project={decodedProject}
+          onStatusChange={handleStatusChange}
+          pendingUsersMap={pendingUsersMap}
+          pendingQuestions={pendingQuestions}
         />
       )}
-      
+   
       {error && <p className="error-message">{error}</p>}
     </div>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Helmet } from 'react-helmet-async';
 import "./HomeMarketing.css";
 import SectionTitle from "./Components/SectionTitle/SectionTitle";
 import TitleWithBadge from "./Components/Title/TitleWithBadge";
@@ -53,6 +54,25 @@ const ArrowRightIcon = () => (
 const HomeMarketingSection = () => {
   return (
     <div className="home-one-marketing-section section-padding" style={{ marginTop: '150px', marginBottom: '150px' }}>
+      <Helmet>
+        {/* Component-specific structured data for the marketing section */}
+        <script type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "Product",
+              "name": "SupportHub",
+              "description": "Transform Your Customer Support with AI-powered assistance",
+              "image": "https://yourdomain.com/marketing-image.jpg",
+              "offers": {
+                "@type": "Offer",
+                "url": "https://yourdomain.com/#pricing",
+                "priceCurrency": "USD"
+              }
+            }
+          `}
+        </script>
+      </Helmet>
       <div className="container">
         <div className="row align-items-center">
           <div className="col-lg-6 col-md-12">
@@ -91,7 +111,20 @@ const HomeMarketingSection = () => {
           <div className="col-lg-6 col-md-12">
             <ScrollAnimate delay={200}>
               <div className="marketing-img">
-                <img src={M1Image} alt="marketing-img" />
+                <picture>
+                  <source
+                    type="image/webp"
+                    srcSet={`${M1Image}?w=640 640w, ${M1Image}?w=768 768w, ${M1Image}?w=1024 1024w`}
+                    sizes="(max-width: 767px) 100vw, (max-width: 1199px) 50vw, 40vw"
+                  />
+                  <img 
+                    src={M1Image} 
+                    alt="SupportHub marketing visual showing AI support features" 
+                    loading="lazy" 
+                    width="600" 
+                    height="450"
+                  />
+                </picture>
               </div>
             </ScrollAnimate>
           </div>

@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import FooterOne from './ComponentsLandingPage/FooterOne';
 import './ComponentsLandingPage/documentation.css';
+import SideNavbar from '../../Components/SideNavbar';
 
 const DocumentationPage = () => {
   const [activeSection, setActiveSection] = useState('getting-started');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
 
   // Documentation sections data
   const sections = [
@@ -138,7 +144,9 @@ const DocumentationPage = () => {
     : sections;
 
   return (
-    <div className="documentation-page">
+    <div className={`documentation-page ${sidebarCollapsed ? 'collapsed' : ''}`}>
+      <SideNavbar isCollapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
+
       {/* Documentation Header */}
       <div className="doc-header">
         <div className="container">
@@ -162,7 +170,7 @@ const DocumentationPage = () => {
       </div>
 
       {/* Documentation Content */}
-      <div className="doc-content container">
+      <div className={`doc-content container ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
         {/* Sidebar */}
         <div className="doc-sidebar">
           <nav>

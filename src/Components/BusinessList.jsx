@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './BusinessList.css';
-
+"use client"
 const BusinessList = ({ businesses }) => {
   return (
     <>

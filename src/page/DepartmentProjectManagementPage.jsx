@@ -1,16 +1,19 @@
 // DepartmentProjectManagementPage.js
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import "./DepartmentProjectManagementPage.css";
 import { useUserContext } from "../context/LoginContext";
 import ProjectModal from '../Components/ProjectModal';
 import DepartmentModal from '../Components/DepartmentModal';
 import DepartmentProjectsGrid from '../Components/DepartmentProjectsGrid';
 import { departments as departmentsApi, projects as projectsApi, setAuthToken } from '../services/ApiService';
+import Tooltip from '../Components/Tooltip';
+import SideNavbar from '../Components/SideNavbar';
 
 const DepartmentProjectManagementPage = () => {
   const { role, token, stateBusinessId } = useUserContext();
-  const { businessId, businessName } = useParams(); 
+  const { businessId, businessName, departmentId } = useParams();
 
   const [departments, setDepartments] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -38,14 +41,33 @@ const DepartmentProjectManagementPage = () => {
   const [operationError, setOperationError] = useState(null);
   const [operationSuccess, setOperationSuccess] = useState(null);
 
+  // Add a new state for help mode
+  const [helpModeEnabled, setHelpModeEnabled] = useState(false);
+
+  // Add the state for sidebar collapsed state
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  
+  // Add the toggle function
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   useEffect(() => {
     if (token) {
-      setAuthToken(token); // Set auth token for future requests
+      setAuthToken(token);
     }
-    fetchDepartments();
+    
+    // If departmentId is provided, fetch just that department
+    if (departmentId) {
+      fetchSingleDepartment(departmentId);
+    } else {
+      // Otherwise fetch all departments for this business
+      fetchDepartments();
+    }
+    
     fetchProjects();
     isBusinessOwnerFunction();
-  }, [businessId, token]);
+  }, [businessId, departmentId, token]);
 
   useEffect(() => {
     isBusinessOwnerFunction();
@@ -668,107 +690,181 @@ const DepartmentProjectManagementPage = () => {
     }
   };
 
+  // Add a new function to fetch a single department
+  const fetchSingleDepartment = async (deptId) => {
+    try {
+      console.log(`Fetching single department with ID: ${deptId}`);
+      const response = await departmentsApi.getById(deptId);
+      console.log("Single department data:", response.data);
+      
+      // Create an array with just this one department
+      const departmentData = [{
+        id: response.data.departmentId || response.data.id,
+        departmentId: response.data.departmentId || response.data.id,
+        departmentName: response.data.departmentName || response.data.name,
+        description: response.data.description || "",
+        businessId: response.data.businessId
+      }];
+      
+      setDepartments(departmentData);
+    } catch (error) {
+      console.error('Error fetching department:', error);
+      setError('Failed to load department information. Please try again later.');
+    }
+  };
+
   return (
-    <div>
-      {error && <div className="error-message">{error}</div>}
-      {operationError && (
-        <div className="operation-error-message">
-          <button className="close-button" onClick={() => setOperationError(null)}>×</button>
-          {operationError}
-        </div>
-      )}
-      {operationSuccess && (
-        <div className="operation-success-message">
-          <button className="close-button" onClick={() => setOperationSuccess(null)}>×</button>
-          {operationSuccess}
-        </div>
-      )}
-
-      {Array.isArray(departments) && departments.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '20px', margin: '50px' }}>
-          <h2>No departments have been added to {businessName}</h2>
-          {(role === 'ADMIN' || isBusinessOwner === 'yes') && (
-            <button onClick={openAddDepartmentModal}>Add Department</button>
+    <div className={`department-page-container ${sidebarCollapsed ? 'collapsed' : ''}`}>
+      <SideNavbar 
+        isCollapsed={sidebarCollapsed} 
+        toggleSidebar={toggleSidebar} 
+      />
+      
+      <main className="department-project-management-page">
+        <Helmet>
+          <title>{departmentId ? `${departments[0]?.departmentName || 'Department'} - ${businessName}` : `${businessName} - Departments`}</title>
+        </Helmet>
+        
+        {/* Add a breadcrumb for better navigation */}
+        <div className="breadcrumbs">
+          <Link to="/business-overview">Business Overview</Link> {' > '}
+          {!departmentId && <span>{businessName}</span>}
+          {departmentId && (
+            <>
+              <Link to={`/department-project-management/${businessId}/${businessName}`}>{businessName}</Link>
+              {' > '}
+              <span>{departments[0]?.departmentName || 'Department'}</span>
+            </>
           )}
         </div>
-      )}
 
-      {Array.isArray(departments) && departments.length > 0 && (
-        <DepartmentProjectsGrid
-          departments={departments}
-          projects={projects}
-          role={role}
-          isBusinessOwner={isBusinessOwner}
-          onOpenUpdateDepartmentModal={openUpdateDepartmentModal}
-          onDeleteDepartment={deleteDepartment}
-          onOpenUpdateProjectModal={openUpdateProjectModal}
-          onDeleteProject={deleteProject}
-          onOpenAddProjectModal={openAddProjectModal}
-          onOpenAddDepartmentModal={openAddDepartmentModal}
-          businessName={businessName}
-        />
-      )}
+        {/* Help Mode Toggle... */}
+        
+        {/* Render appropriate title based on context */}
+        <h1 className="page-title">
+          {departmentId 
+            ? (departments[0]?.departmentName || 'Department') 
+            : `${businessName} Expertise Areas`}
+        </h1>
+        
+        {/* Error messages section */}
+        {error && <div className="error-message" role="alert">{error}</div>}
+        {operationError && (
+          <div className="operation-error-message" role="alert">
+            <button className="close-button" onClick={() => setOperationError(null)} aria-label="Close error message">×</button>
+            {operationError}
+          </div>
+        )}
+        {operationSuccess && (
+          <div className="operation-success-message" role="status">
+            <button className="close-button" onClick={() => setOperationSuccess(null)} aria-label="Close success message">×</button>
+            {operationSuccess}
+          </div>
+        )}
 
-      {modalVisible && (
-        <>
-          {modalType === 'project' && (
-            <ProjectModal
-              onClose={() => setModalVisible(false)}
-              onSubmit={() => addProject(selectedDepartmentId)}
-              projectName={newProjectName}
-              setProjectName={setNewProjectName}
-              projectDescription={newProjectDescription}
-              setProjectDescription={setNewProjectDescription}
-              projectImage={newProjectImage}
-              setProjectImage={setNewProjectImage}
-              averageResponseTime={newProjectAverageResponseTime}
-              setAverageResponseTime={setNewProjectAverageResponseTime}
-              isUpdate={false}
-              role={role}
-              isBusinessOwner={isBusinessOwner}
-            />
-          )}
-          {modalType === 'department' && (
-            <DepartmentModal
-              onClose={() => setModalVisible(false)}
-              onSubmit={addDepartment}
-              departmentName={newDepartmentName}
-              setDepartmentName={setNewDepartmentName}
-              departmentDescription={newDepartmentDescription}
-              setDepartmentDescription={setNewDepartmentDescription}
-              isUpdate={false}
-            />
-          )}
-          {modalType === 'updateProject' && (
-            <ProjectModal
-              onClose={() => setModalVisible(false)}
-              onSubmit={() => updateProject(selectedProjectId)}
-              projectName={newProjectName}
-              setProjectName={setNewProjectName}
-              projectDescription={newProjectDescription}
-              setProjectDescription={setNewProjectDescription}
-              projectImage={newProjectImage}
-              setProjectImage={setNewProjectImage}
-              averageResponseTime={newProjectAverageResponseTime}
-              setAverageResponseTime={setNewProjectAverageResponseTime}
-              isUpdate={true}
-              role={role}
-              isBusinessOwner={isBusinessOwner}
-            />
-          )}
-          {modalType === 'updateDepartment' && (
-            <DepartmentModal
-              onClose={() => setModalVisible(false)}
-              onSubmit={() => updateDepartment(selectedDepartmentId)}
-              departmentName={newDepartmentName}
-              setDepartmentName={setNewDepartmentName}
-              departmentDescription={newDepartmentDescription}
-              setDepartmentDescription={setNewDepartmentDescription}
-              isUpdate={true}
-            />
-          )}
-        </>
-      )}
+        {/* Empty state with clear call to action */}
+        {Array.isArray(departments) && departments.length === 0 && (
+          <section className="empty-state">
+            <h2>
+              {departmentId 
+                ? "No projects have been added to this department yet" 
+                : `No departments have been added to ${businessName}`}
+            </h2>
+            {/* Only show Add Department button when NOT on a specific department page */}
+            {!departmentId && (role === 'ADMIN' || isBusinessOwner === 'yes') && (
+              <Tooltip text="Create a new department for organizing projects">
+                <button onClick={openAddDepartmentModal} aria-label="Add your first department">Add Department</button>
+              </Tooltip>
+            )}
+          </section>
+        )}
+
+        {/* Main content */}
+        {Array.isArray(departments) && departments.length > 0 && (
+          <DepartmentProjectsGrid
+            departments={departments}
+            projects={projects}
+            role={role}
+            isBusinessOwner={isBusinessOwner}
+            onOpenUpdateDepartmentModal={openUpdateDepartmentModal}
+            onDeleteDepartment={deleteDepartment}
+            onOpenUpdateProjectModal={openUpdateProjectModal}
+            onDeleteProject={deleteProject}
+            onOpenAddProjectModal={openAddProjectModal}
+            onOpenAddDepartmentModal={openAddDepartmentModal}
+            businessName={businessName}
+          >
+            {department => (
+              <Tooltip text={`Manage projects in the ${department.departmentName} department`}>
+                <div className="department-card">
+                  {/* Department content */}
+                </div>
+              </Tooltip>
+            )}
+          </DepartmentProjectsGrid>
+        )}
+
+        {modalVisible && (
+          <>
+            {modalType === 'project' && (
+              <ProjectModal
+                onClose={() => setModalVisible(false)}
+                onSubmit={() => addProject(selectedDepartmentId)}
+                projectName={newProjectName}
+                setProjectName={setNewProjectName}
+                projectDescription={newProjectDescription}
+                setProjectDescription={setNewProjectDescription}
+                projectImage={newProjectImage}
+                setProjectImage={setNewProjectImage}
+                averageResponseTime={newProjectAverageResponseTime}
+                setAverageResponseTime={setNewProjectAverageResponseTime}
+                isUpdate={false}
+                role={role}
+                isBusinessOwner={isBusinessOwner}
+              />
+            )}
+            {modalType === 'department' && (
+              <DepartmentModal
+                onClose={() => setModalVisible(false)}
+                onSubmit={addDepartment}
+                departmentName={newDepartmentName}
+                setDepartmentName={setNewDepartmentName}
+                departmentDescription={newDepartmentDescription}
+                setDepartmentDescription={setNewDepartmentDescription}
+                isUpdate={false}
+              />
+            )}
+            {modalType === 'updateProject' && (
+              <ProjectModal
+                onClose={() => setModalVisible(false)}
+                onSubmit={() => updateProject(selectedProjectId)}
+                projectName={newProjectName}
+                setProjectName={setNewProjectName}
+                projectDescription={newProjectDescription}
+                setProjectDescription={setNewProjectDescription}
+                projectImage={newProjectImage}
+                setProjectImage={setNewProjectImage}
+                averageResponseTime={newProjectAverageResponseTime}
+                setAverageResponseTime={setNewProjectAverageResponseTime}
+                isUpdate={true}
+                role={role}
+                isBusinessOwner={isBusinessOwner}
+              />
+            )}
+            {modalType === 'updateDepartment' && (
+              <DepartmentModal
+                onClose={() => setModalVisible(false)}
+                onSubmit={() => updateDepartment(selectedDepartmentId)}
+                departmentName={newDepartmentName}
+                setDepartmentName={setNewDepartmentName}
+                departmentDescription={newDepartmentDescription}
+                setDepartmentDescription={setNewDepartmentDescription}
+                isUpdate={true}
+              />
+            )}
+          </>
+        )}
+      </main>
     </div>
   );
 };

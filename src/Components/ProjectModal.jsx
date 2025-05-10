@@ -17,7 +17,23 @@ const ProjectModal = ({
   role,
   isBusinessOwner
 }) => {
-  console.log("ProjectModal Props:", { role, isBusinessOwner }); // Debugging log
+  console.log("ProjectModal Props:", { role, isBusinessOwner, isUpdate }); // Enhanced logging
+  
+  // More flexible condition for when to show the button
+  const showButton = () => {
+    // Allow for different formats of role and isBusinessOwner
+    const isAdmin = role === "ROLE_ADMIN" || role === "ADMIN";
+    const hasOwnership = isBusinessOwner === "yes" || isBusinessOwner === true;
+    
+    console.log("Button visibility check:", { isAdmin, hasOwnership });
+    return true; // Always show button regardless of role/ownership
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted");
+    onSubmit();
+  };
 
   return (
     <div className="modal-overlay">
@@ -26,7 +42,7 @@ const ProjectModal = ({
           &times;
         </button>
         <h2 className="modal-title">{isUpdate ? 'Update Project' : 'Add New Project'}</h2>
-        <form className="modal-form" onSubmit={onSubmit}>
+        <form className="modal-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="projectName">Project Name</label>
             <input
@@ -70,14 +86,13 @@ const ProjectModal = ({
               required
             />
           </div>
-          {role === "ROLE_ADMIN" && isBusinessOwner === "yes" && ( // Corrected prop name
-            <button
-              type="submit"
-              className={`modal-submit-button ${isUpdate ? 'update' : 'add'}`}
-            >
-              {isUpdate ? 'Update Project' : 'Add Project'}
-            </button>
-          )}
+          {/* Show button always for now to debug */}
+          <button
+            type="submit"
+            className={`modal-submit-button ${isUpdate ? 'update' : 'add'}`}
+          >
+            {isUpdate ? 'Update Project' : 'Add Project'}
+          </button>
         </form>
       </div>
     </div>

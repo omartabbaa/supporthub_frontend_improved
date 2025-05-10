@@ -1,0 +1,342 @@
+/* Professional Pricing Section Styling */
+.home-pricing-section {
+  padding: 80px 0;
+  background-color: #f9fafb;
+  position: relative;
+  margin-bottom: 0 !important;
+}
+
+/* Section title enhancements */
+.home-pricing-section .section-title .title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1a202c;
+}
+
+.home-pricing-section .section-title .sub-title {
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #38b2ac;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.home-pricing-section .section-title p {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #4a5568;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Center the section title properly */
+.home-pricing-section .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.home-pricing-section .row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.home-pricing-section .col-md-12 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.home-pricing-section .section-title {
+  text-align: center !important;
+  width: 100%;
+}
+
+.home-pricing-section .section-title .title,
+.home-pricing-section .section-title .sub-title,
+.home-pricing-section .section-title p {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  max-width: 800px;
+}
+
+/* Pricing toggle improvements */
+.pricing-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px 0;
+  padding: 8px;
+  background-color: #edf2f7;
+  border-radius: 30px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pricing-toggle span {
+  font-size: 15px;
+  padding: 0 16px;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.pricing-toggle span.active {
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.toggle-switch {
+  width: 56px;
+  height: 28px;
+  background-color: #e2e8f0;
+  border-radius: 14px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-switch .toggle-button {
+  width: 22px;
+  height: 22px;
+  background-color: #38b2ac;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch .toggle-button.yearly {
+  left: 31px;
+}
+
+.save-badge {
+  background-color: #38b2ac;
+  color: white;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+  font-weight: 600;
+}
+
+/* Pricing cards grid improvements */
+.pricing-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+  width: 100%;
+}
+
+/* Card styling enhancements */
+.pricing-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+}
+
+.pricing-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.pricing-card.recommended {
+  border: 2px solid #38b2ac;
+  transform: scale(1.02);
+  z-index: 1;
+}
+
+.pricing-card.recommended:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+.recommended-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: #38b2ac;
+  color: white;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Card header styling */
+.pricing-card-header {
+  padding: 24px 20px;
+  text-align: center;
+  border-bottom: 1px solid #edf2f7;
+  background-color: #f8fafc;
+}
+
+.pricing-card-header h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #1a202c;
+  font-weight: 600;
+}
+
+.pricing-card-header .price {
+  margin-bottom: 4px;
+}
+
+.pricing-card-header .price .currency {
+  font-size: 18px;
+  vertical-align: top;
+  position: relative;
+  top: 4px;
+  color: #4a5568;
+}
+
+.pricing-card-header .price .amount {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a202c;
+  line-height: 1;
+}
+
+.pricing-card-header .price .period {
+  font-size: 15px;
+  color: #718096;
+}
+
+.per-user {
+  font-size: 13px;
+  color: #718096;
+  margin-top: 4px;
+}
+
+/* Card body styling */
+.pricing-card-body {
+  padding: 24px 20px;
+  flex-grow: 1;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-list li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  color: #4a5568;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.feature-list li svg {
+  margin-right: 10px;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.feature-list li strong {
+  font-weight: 600;
+  color: #2d3748;
+  margin-right: 4px;
+}
+
+/* Button styling */
+.pricing-card-footer {
+  padding: 0 20px 24px;
+}
+
+.pricing-button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  background-color: #38b2ac;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border: 2px solid #38b2ac;
+}
+
+.pricing-button:hover {
+  background-color: #2c9490;
+  box-shadow: 0 4px 8px rgba(56, 178, 172, 0.2);
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .pricing-cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .pricing-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .pricing-card.recommended {
+    transform: scale(1);
+    grid-column: span 2;
+    max-width: 450px;
+    margin: 0 auto;
+  }
+  
+  .pricing-card.recommended:hover {
+    transform: translateY(-8px);
+  }
+}
+
+@media (max-width: 768px) {
+  .home-pricing-section {
+    padding: 60px 0;
+  }
+  
+  .pricing-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .pricing-card {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .pricing-card.recommended {
+    grid-column: auto;
+  }
+  
+  .pricing-card-header {
+    padding: 20px 16px;
+  }
+  
+  .pricing-card-body {
+    padding: 20px 16px;
+  }
+  
+  .pricing-card-footer {
+    padding: 0 16px 20px;
+  }
+}

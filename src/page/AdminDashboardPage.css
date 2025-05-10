@@ -1,3 +1,8 @@
+/* Set background color on body/html */
+body, html {
+  background-color: #f8f9fa;
+}
+
 .dashboard-title {
     display: flex;
     flex-direction: column;
@@ -65,7 +70,7 @@
 }
 
 .expert-item {
-    background-color: #f5f7f5;
+    background-color: white;
     width: 100%;
     max-width: 900px;
     min-width: 600px;
@@ -78,6 +83,7 @@
     padding: 15px;
     box-sizing: border-box;
     transition: background-color 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
@@ -102,11 +108,11 @@
 .experts-container {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start; /* Align items to the start to prevent centering */
+    justify-content: flex-start;
     align-items: flex-start;
     flex-wrap: wrap;
     gap: 20px;
-    background-color: white;
+    background-color: transparent;
     padding: 10px;
     border-radius: 9px;
     box-sizing: border-box;
@@ -144,7 +150,7 @@
     gap: 20px;
     border: 2px solid black;
     height: 35px;
-    width: 100%; /* Make it responsive */
+    width: 100%;
     max-width: 800px;
     border-radius: 9px;
     padding-left: 15px;
@@ -156,8 +162,9 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
-    max-width: 1000px; /* Increased from 800px */
+    max-width: 1000px;
     margin: 0 auto;
+    background-color: transparent;
 }
 
 .projects-list {
@@ -203,12 +210,12 @@
 .admin-dashboard {
     display: flex;
     flex-direction: column;
-    align-items: center;
     width: 100%;
-    padding: 80px 20px 40px; /* Added top padding for navbar */
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    background-color: #f8f9fa;
     box-sizing: border-box;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%;
 }
 
 .department-buttons-container {
@@ -293,8 +300,8 @@
     gap: 12px;
     background-color: white;
     border-radius: 8px;
-    padding: 20px; /* Increased padding */
-    padding-top: 40px; /* Extra space for the label */
+    padding: 20px;
+    padding-top: 40px;
     border: 1px solid #e2e8f0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     animation: fadeIn 0.2s ease-in-out;
@@ -303,7 +310,7 @@
 }
 
 .section_projects_container::before {
-    content: "Projects Permission Settings";
+    content: "Topic Permission Settings";
     position: absolute;
     top: 12px;
     left: 16px;
@@ -313,7 +320,7 @@
     background-color: white;
     padding: 2px 8px;
     border-radius: 4px;
-    white-space: nowrap; /* Prevent text wrapping */
+    white-space: nowrap;
     z-index: 5;
 }
 
@@ -321,7 +328,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 20px; /* Increased padding */
+    padding: 14px 20px;
     background-color: #f8fafc;
     border-radius: 8px;
     transition: all 0.2s ease;
@@ -344,7 +351,6 @@
     font-size: 14px;
 }
 
-/* Improved Toggle Button */
 .toggleButton { 
     min-width: 36px;
     height: 18px;
@@ -358,7 +364,7 @@
 }
 
 .toggleButton.active {
-    background-color: #38b2ac; /* Using the teal color from the theme */
+    background-color: #38b2ac;
     border: none;
 }
 
@@ -378,7 +384,6 @@
     transform: translateX(18px);
 }
 
-/* Accordion Styling */
 .accordion {
     margin-bottom: 16px;
     border-radius: 10px;
@@ -393,15 +398,16 @@
 }
 
 .accordion-header {
-    background: linear-gradient(to right, #f0f9f8, #ffffff);
-    border-left: 5px solid #38b2ac;
+    background-color: white;
+    border-left: 4px solid #38b2ac;
     padding: 18px 22px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: all 0.2s ease;
-    border-radius: 10px 10px 0 0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .accordion-header:hover {
@@ -419,15 +425,14 @@
 }
 
 .accordion-title::before {
-    content: "Department";
-    position: absolute;
-    top: -18px;
-    left: 10px;
-    font-size: 12px;
+    content: "Expertise Area:";
+    font-size: 16px !important;
     color: #38b2ac;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-weight: 400;
+    position: absolute;
+    top: -16px;
+    left: 5px;
+    white-space: nowrap;
 }
 
 .accordion-icon {
@@ -459,7 +464,6 @@
     border-top: 1px solid #e2e8f0;
 }
 
-/* Department count badge */
 .department-count {
     display: inline-block;
     background-color: #e6fffa;
@@ -472,7 +476,6 @@
     border: 1px solid #b2f5ea;
 }
 
-/* Department description */
 .department-description {
     font-size: 14px;
     color: #718096;
@@ -480,7 +483,6 @@
     line-height: 1.5;
 }
 
-/* Experts list container */
 .experts-list {
     background-color: #f9fafb;
     padding: 15px;
@@ -488,7 +490,6 @@
     margin-top: 10px;
 }
 
-/* Animation for accordion opening/closing */
 @keyframes slideDown {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -498,7 +499,6 @@
     animation: slideDown 0.3s ease forwards;
 }
 
-/* Empty state for no experts */
 .no-experts {
     text-align: center;
     padding: 20px;
@@ -509,7 +509,6 @@
     margin: 10px 0;
 }
 
-/* Department actions */
 .department-actions {
     display: flex;
     gap: 10px;
@@ -535,7 +534,6 @@
     color: #38b2ac;
 }
 
-/* Media Queries */
 @media (max-width: 1100px) {
     .department-grid {
         max-width: 90%;
@@ -580,7 +578,6 @@
     }
 }
 
-/* Make sure we have the hover styling for the accordion */
 .accordion-icon {
     font-size: 20px;
     transition: transform 0.3s ease;
@@ -599,7 +596,6 @@
     color: #38b2ac;
 }
 
-/* Improved Department Accordion Header */
 .accordion-header {
     background-color: #f0f9f8;
     border-left: 4px solid #38b2ac;
@@ -614,16 +610,16 @@
 }
 
 .accordion-title::before {
-    content: "Department:";
-    font-size: 12px;
+    content: "Expertise Area:";
+    font-size: 16px !important;
     color: #38b2ac;
     font-weight: 400;
     position: absolute;
     top: -16px;
     left: 5px;
+    white-space: nowrap;
 }
 
-/* Project Section Improvements */
 .section_projects_container {
     margin-top: 16px;
     display: flex;
@@ -677,169 +673,6 @@
     font-size: 14px;
 }
 
-/* Improved Toggle Button */
-.toggleButton { 
-    min-width: 40px;
-    height: 20px;
-    border-radius: 10px;
-    background-color: #cbd5e0;
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin: 0;
-    border: none;
-    outline: none;
-}
-
-.toggleButton.active {
-    background-color: #38b2ac;
-}
-
-.toggleButton .toggle-circle {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: white;
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    transition: transform 0.3s ease;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.toggleButton.active .toggle-circle {
-    transform: translateX(20px);
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-    .dashboard-title {
-        font-size: 40px;
-        margin-top: 30px;
-    }
-    
-    .dashboard-subtitle {
-        font-size: 16px;
-    }
-    
-    .permission-form {
-        padding: 20px;
-    }
-}
-
-@media (max-width: 480px) {
-    .dashboard-title {
-        font-size: 32px;
-    }
-    
-    .expert-item {
-        padding: 12px;
-    }
-}
-
-/* Make sure we have the hover styling for the accordion */
-.accordion-icon {
-    font-size: 20px;
-    transition: transform 0.3s ease;
-    color: #4a5568;
-}
-
-.accordion-icon.open {
-    transform: rotate(180deg);
-}
-
-.accordion-header:hover {
-    background-color: #f7fafc;
-}
-
-.accordion-header:hover .accordion-title {
-    color: #38b2ac;
-}
-
-/* Improved Department Accordion Header */
-.accordion-header {
-    background-color: #f0f9f8;
-    border-left: 4px solid #38b2ac;
-    transition: all 0.2s ease;
-}
-
-.accordion-title {
-    font-size: 20px;
-    color: #0d2403;
-    position: relative;
-    padding-left: 10px;
-}
-
-.accordion-title::before {
-    content: "Department:";
-    font-size: 12px;
-    color: #38b2ac;
-    font-weight: 400;
-    position: absolute;
-    top: -16px;
-    left: 5px;
-}
-
-/* Project Section Improvements */
-.section_projects_container {
-    margin-top: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background-color: white;
-    border-radius: 8px;
-    padding: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    animation: fadeIn 0.2s ease-in-out;
-    position: relative;
-    padding-top: 32px;
-}
-
-.section_projects_container::before {
-    content: "Projects Permission Settings";
-    position: absolute;
-    top: 10px;
-    left: 16px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #38b2ac;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.project-permission {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    background-color: #f8fafc;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    position: relative;
-}
-
-.project-name {
-    font-size: 15px;
-    color: #2d3748;
-    font-weight: 500;
-    position: relative;
-    padding-left: 22px;
-}
-
-.project-name::before {
-    content: "🗂️";
-    position: absolute;
-    left: 0;
-    font-size: 14px;
-}
-
-/* Permission Form Improvements */
 .permission-form {
     position: fixed;
     top: 50%;
@@ -894,4 +727,271 @@
     font-size: 16px;
     color: #4a5568;
     margin: 16px 0;
+}
+
+/* Improved search section styling */
+.search-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto 30px;
+}
+
+.search-wrapper {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Update search input selectors to match the component */
+.search-wrapper .search-container,
+.search-wrapper .search-input {
+  background-color: white !important;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-wrapper .search-container {
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+/* Remove any background from search container */
+.search-container {
+  background-color: transparent !important;
+  border: none;
+  box-shadow: none;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* Make the search input clean and white */
+.search-input {
+  background-color: white !important;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #38b2ac;
+  box-shadow: 0 0 0 3px rgba(56, 178, 172, 0.2);
+}
+
+/* Center the content while keeping full background */
+.dashboard-header, .search-section, .departments-section {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Modern tooltip system */
+[data-tooltip] {
+  position: relative;
+  cursor: help;
+}
+
+[data-tooltip]::before,
+[data-tooltip]::after {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+/* Tooltip bubble */
+[data-tooltip]::before {
+  content: attr(data-tooltip);
+  width: max-content;
+  max-width: 300px;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: #2d3748;
+  color: white;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Tooltip arrow */
+[data-tooltip]::after {
+  content: "";
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #2d3748;
+}
+
+/* Show tooltip on hover */
+[data-tooltip]:hover::before,
+[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Position modifiers */
+[data-tooltip-position="left"]::before {
+  bottom: 50%;
+  left: auto;
+  right: calc(100% + 10px);
+  transform: translateY(50%);
+}
+
+[data-tooltip-position="left"]::after {
+  bottom: 50%;
+  left: auto;
+  right: 100%;
+  transform: translateY(50%) rotate(-90deg);
+}
+
+[data-tooltip-position="right"]::before {
+  bottom: 50%;
+  left: calc(100% + 10px);
+  transform: translateY(50%);
+}
+
+[data-tooltip-position="right"]::after {
+  bottom: 50%;
+  left: 100%;
+  transform: translateY(50%) rotate(90deg);
+}
+
+[data-tooltip-position="bottom"]::before {
+  bottom: auto;
+  top: calc(100% + 10px);
+}
+
+[data-tooltip-position="bottom"]::after {
+  bottom: auto;
+  top: 100%;
+  border-top-color: transparent;
+  border-bottom-color: #2d3748;
+}
+
+/* Help mode toggle switch styling */
+.help-mode-toggle-container {
+  position: fixed;
+  top: 120px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: white;
+  padding: 8px 12px;
+  border-radius: 50px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.help-mode-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.help-mode-toggle {
+  width: 44px;
+  height: 22px;
+  border-radius: 11px;
+  background-color: #cbd5e0;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+  outline: none;
+}
+
+.help-mode-toggle.active {
+  background-color: #38b2ac;
+}
+
+.help-mode-toggle-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.help-mode-toggle.active .help-mode-toggle-circle {
+  transform: translateX(22px);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Modify tooltip system to work with help mode */
+.help-mode-disabled [data-tooltip]::before,
+.help-mode-disabled [data-tooltip]::after {
+  display: none !important;
+}
+
+/* Enhanced tooltip for accordion headers */
+.accordion-header[data-tooltip]::before {
+  font-weight: 500;
+  max-width: 350px;
+  z-index: 1000;
+  background-color: #38b2ac;
+}
+
+.accordion-header[data-tooltip]::after {
+  border-top-color: #38b2ac;
+  z-index: 1000;
+}
+
+/* Ensure search bar is centered on mobile too */
+@media (max-width: 768px) {
+  .search-wrapper {
+    max-width: 90%;
+  }
+}
+
+/* Add these styles to support the sidebar */
+.admin-dashboard-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f5f7f9;
+  transition: all 0.3s ease;
+}
+
+.admin-dashboard-container.collapsed .admin-dashboard-page {
+  margin-left: 60px;
+}
+
+.admin-dashboard-page {
+  flex: 1;
+  padding: 2rem;
+  margin-left: 260px;
+  transition: margin-left 0.3s ease;
 }
