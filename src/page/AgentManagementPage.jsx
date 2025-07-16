@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/LoginContext';
 import { agentInvitations as agentInvitationsApi, departments as departmentsApi } from '../services/ApiService';
-import SideNavbar from '../Components/SideNavbar';
 import './AgentManagementPage.css';
 import Tooltip from '../Components/Tooltip';
+import { useSidebarContext } from '../context/SidebarContext.jsx';
 
 const AgentManagementPage = () => {
   const { userId, role, stateBusinessId } = useUserContext();
   const navigate = useNavigate();
+  const { setActiveSidebarType } = useSidebarContext();
   
   // State for invitation form
   const [email, setEmail] = useState('');
@@ -21,13 +22,12 @@ const AgentManagementPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [helpModeEnabled, setHelpModeEnabled] = useState(false);
   const [formMode, setFormMode] = useState('create'); // 'create' or 'hidden'
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
+  useEffect(() => {
+    setActiveSidebarType('userActions');
+  }, [setActiveSidebarType]);
 
   useEffect(() => {
     if (!userId || role !== 'ROLE_ADMIN') {
@@ -146,10 +146,8 @@ const AgentManagementPage = () => {
   };
 
   return (
-    <div className={`agent-management-page ${sidebarCollapsed ? 'collapsed' : ''}`}>
-      <SideNavbar isCollapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
-      
-      <main className="agent-management-content">
+    <>
+      <main className={`agent-management-content ${helpModeEnabled ? 'help-mode-enabled' : 'help-mode-disabled'}`}>
         <div className="page-header">
           <h1>Agent Management</h1>
           
@@ -310,7 +308,7 @@ const AgentManagementPage = () => {
           )}
         </section>
       </main>
-    </div>
+    </>
   );
 };
 

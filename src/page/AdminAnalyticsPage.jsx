@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/LoginContext';
 import { agentQuestions as agentQuestionsApi, users as usersApi, projects as projectsApi, conversations as conversationsApi } from '../services/ApiService';
-import SideNavbar from '../Components/SideNavbar';
 import './AdminAnalyticsPage.css';
+import DonutProgressChart from '../Components/DonutProgressChart';
+import { useSidebarContext } from '../context/SidebarContext.jsx';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, Sector
@@ -12,13 +13,13 @@ import {
 const AdminAnalyticsPage = () => {
   const { userId, role, stateBusinessId } = useUserContext();
   const navigate = useNavigate();
+  const { setActiveSidebarType } = useSidebarContext();
   
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [businessApiAvailable, setBusinessApiAvailable] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [helpModeEnabled, setHelpModeEnabled] = useState(false);
   const [viewMode, setViewMode] = useState('agent');
   
@@ -127,7 +128,7 @@ const AdminAnalyticsPage = () => {
           agentPerformance.sort((a, b) => a.avgResponseTime - b.avgResponseTime);
           
           // Find current agent's rank
-          const selectedAgentRank = agentPerformance.findIndex(a => a.userId === parseInt(selectedUserId));
+          const selectedAgentRank = agentPerformance.findIndex(a => a.userId === selectedUserId);
           
           setComparisonData({
             agents: agentPerformance,
@@ -144,9 +145,9 @@ const AdminAnalyticsPage = () => {
     }
   }, [showComparison, users, selectedUserId, businessStats.timing]);
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
+  useEffect(() => {
+    setActiveSidebarType('userActions');
+  }, [setActiveSidebarType]);
 
   // Fetch all users belonging to the business
   useEffect(() => {
@@ -201,21 +202,13 @@ const AdminAnalyticsPage = () => {
     }));
     
     try {
-      // Extract the numeric part if the ID includes non-numeric values
-      let numericId = agentId;
-      if (typeof agentId === 'string') {
-        // Extract only digits from the ID
-        const matches = agentId.match(/\d+/);
-        if (matches && matches[0]) {
-          numericId = matches[0];
-        }
-      }
+      // The agentId is expected to be a UUID string by the API.
+      // The previous logic to extract a numericId was causing issues.
+      console.log('Fetching analytics for specific agent ID:', agentId);
       
-      console.log('Fetching analytics for specific agent ID:', numericId);
-      
-      // Use the numericId for API calls
-      const countsPromise = agentQuestionsApi.getCountsForUser(numericId);
-      const timingPromise = agentQuestionsApi.getTimingForUser(numericId);
+      // Use the agentId directly for API calls
+      const countsPromise = agentQuestionsApi.getCountsForUser(agentId);
+      const timingPromise = agentQuestionsApi.getTimingForUser(agentId);
       
       const [countsResponse, timingResponse] = await Promise.all([
         countsPromise,
@@ -637,6 +630,127 @@ const AdminAnalyticsPage = () => {
     document.querySelector('.project-selector').scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Add state for conversation detail messages
+  const [conversationDetailLoading, setConversationDetailLoading] = useState(false);
+  const [conversationDetailError, setConversationDetailError] = useState(null);
+  const [conversationDetail, setConversationDetail] = useState(null);
+
+  // Add state for message view mode
+  const [messageViewMode, setMessageViewMode] = useState('alternating'); // 'alternating' or 'all'
+
+  // Function to load ALL conversation messages (not just alternating)
+  const loadAllConversationMessages = useCallback(async (conversation) => {
+    setConversationDetailLoading(true);
+    setConversationDetailError(null);
+    
+    try {
+      const conversationId = conversation.conversationId || conversation.conversation_id;
+      
+      if (!conversationId) {
+        throw new Error('Conversation ID is missing');
+      }
+      
+      console.log('🔍 Loading ALL messages for conversation ID:', conversationId);
+      
+      // Use the regular conversation endpoint that includes all messages
+      const response = await conversationsApi.getConversation(conversationId);
+      
+      console.log('📥 All messages API response:', response);
+      
+      // The regular conversation endpoint returns the conversation with all messages
+      const allMessages = response.messages || response.data?.messages || [];
+      
+      setConversationDetail({
+        ...conversation,
+        alternatingMessages: allMessages, // Using same state but with all messages
+        totalMessages: allMessages.length,
+        hasMore: false,
+        pattern: 'All message types included'
+      });
+      
+      console.log('✅ Successfully loaded ALL conversation messages:', {
+        conversationId: conversationId,
+        messageCount: allMessages.length
+      });
+    } catch (error) {
+      console.error('❌ Error loading all conversation messages:', error);
+      setConversationDetailError(`Failed to load all conversation messages: ${error.message}`);
+    } finally {
+      setConversationDetailLoading(false);
+    }
+  }, []);
+
+  // Function to load detailed conversation messages using the new endpoint
+  const loadConversationDetail = useCallback(async (conversation) => {
+    setConversationDetailLoading(true);
+    setConversationDetailError(null);
+    setConversationDetail(null);
+    
+    try {
+      // Use the conversation_id field from backend (mapped to conversationId in frontend)
+      const conversationId = conversation.conversationId || conversation.conversation_id;
+      
+      if (!conversationId) {
+        throw new Error('Conversation ID is missing');
+      }
+      
+      console.log('🔍 Loading conversation detail for ID:', conversationId);
+      console.log('🔍 Message view mode:', messageViewMode);
+      
+      // Choose endpoint based on view mode
+      if (messageViewMode === 'all') {
+        await loadAllConversationMessages(conversation);
+        return;
+      }
+      
+      // Use the alternating messages endpoint for filtered view
+      console.log('📞 Calling API: getAlternatingMessages(' + conversationId + ')');
+      const response = await conversationsApi.getAlternatingMessages(conversationId);
+      
+      console.log('📥 Alternating messages API response:', response);
+      console.log('📥 Response type:', typeof response);
+      console.log('📥 Response keys:', Object.keys(response || {}));
+      
+      // The response structure should be: { conversationId, messages, totalCount, hasMore, pattern }
+      const messagesData = response.messages || response.data?.messages || [];
+      const totalCount = response.totalCount || response.data?.totalCount || 0;
+      const hasMore = response.hasMore || response.data?.hasMore || false;
+      const pattern = response.pattern || response.data?.pattern || 'USER -> PERSONALIZED_AI alternating';
+      
+      console.log('📋 Processed data:', {
+        messagesCount: messagesData.length,
+        totalCount,
+        hasMore,
+        pattern
+      });
+      
+      setConversationDetail({
+        ...conversation,
+        alternatingMessages: messagesData,
+        totalMessages: totalCount,
+        hasMore: hasMore,
+        pattern: pattern
+      });
+      
+      console.log('✅ Successfully loaded conversation detail:', {
+        conversationId: conversationId,
+        messageCount: messagesData.length,
+        totalMessages: totalCount,
+        hasMore: hasMore
+      });
+    } catch (error) {
+      console.error('❌ Error loading conversation detail:', error);
+      console.error('❌ Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      setConversationDetailError(`Failed to load conversation messages: ${error.message}`);
+    } finally {
+      setConversationDetailLoading(false);
+    }
+  }, [messageViewMode, loadAllConversationMessages]);
+
   // Add function to load conversation data
   const loadConversations = useCallback(async () => {
     if (!stateBusinessId) return;
@@ -645,13 +759,42 @@ const AdminAnalyticsPage = () => {
     setConversationError(null);
     
     try {
-      // Load conversations for the business
+      console.log('Loading conversations for business ID:', stateBusinessId);
+      
+      // Fix: Remove .data since axios already unwraps the response
       const response = await conversationsApi.getByBusinessId(stateBusinessId);
-      setConversations(response.data);
+      
+      console.log('Raw conversations response:', response);
+      
+      // Handle the response - it might be an array directly or wrapped in data
+      let conversationsData = Array.isArray(response) ? response : (response.data || []);
+      
+      // Map backend field names to frontend expectations
+      const normalizedConversations = conversationsData.map(conv => ({
+        ...conv,
+        // Map conversation_id to conversationId if needed
+        conversationId: conv.conversationId || conv.conversation_id,
+        // Map business_id to businessId if needed  
+        businessId: conv.businessId || conv.business_id,
+        // Ensure other fields are present
+        startTime: conv.startTime || conv.start_time,
+        endTime: conv.endTime || conv.end_time,
+        primaryTopic: conv.primaryTopic || conv.primary_topic,
+        messageCount: conv.messageCount || conv.message_count || 0
+      }));
+      
+      setConversations(normalizedConversations);
+      console.log('Processed conversations:', normalizedConversations);
       
       // Load analytics data
-      const analyticsResponse = await conversationsApi.getAnalytics(stateBusinessId, conversationPeriod);
-      setConversationAnalytics(analyticsResponse.data);
+      try {
+        const analyticsResponse = await conversationsApi.getAnalytics(stateBusinessId, conversationPeriod);
+        console.log('Analytics response:', analyticsResponse);
+        setConversationAnalytics(analyticsResponse || null);
+      } catch (analyticsError) {
+        console.error('Analytics endpoint unavailable:', analyticsError);
+        // Don't set error - we'll show a limited view with just conversations
+      }
     } catch (err) {
       console.error('Error fetching conversation data:', err);
       setConversationError('Failed to load AI conversation data. Please try again later.');
@@ -660,278 +803,277 @@ const AdminAnalyticsPage = () => {
     }
   }, [stateBusinessId, conversationPeriod]);
   
+  // View a single conversation - NOW DEFINED AFTER loadConversationDetail
+  const viewConversation = useCallback(async (conversation) => {
+    console.log('Viewing conversation:', conversation.conversationId || conversation.conversation_id);
+    console.log('Full conversation object:', conversation);
+    
+    setSelectedConversation(conversation);
+    await loadConversationDetail(conversation);
+  }, [loadConversationDetail]);
+  
   // Load conversations when the AI analytics view is shown
   useEffect(() => {
     if (showAiAgentAnalytics && stateBusinessId) {
       loadConversations();
     }
   }, [showAiAgentAnalytics, stateBusinessId, loadConversations]);
-  
-  // View a single conversation
-  const viewConversation = async (conversationId) => {
-    setSelectedConversation(null);
-    setConversationsLoading(true);
+
+  // Add state for modal
+  const [showConversationModal, setShowConversationModal] = useState(false);
+
+  // Add new state for conversation filtering
+  const [conversationFilters, setConversationFilters] = useState({
+    status: 'all',
+    topic: 'all',
+    dateRange: 'all',
+    messageType: 'all',
+    sortBy: 'newest'
+  });
+
+  // Add filtering function
+  const getFilteredConversations = useCallback(() => {
+    if (!conversations.length) return [];
     
-    try {
-      const response = await conversationsApi.getById(conversationId);
-      setSelectedConversation(response.data);
-    } catch (err) {
-      console.error(`Error fetching conversation ${conversationId}:`, err);
-      setConversationError('Failed to load conversation details.');
-    } finally {
-      setConversationsLoading(false);
-    }
-  };
-  
-  // Add this new useEffect for AI conversations at the top level
-  useEffect(() => {
-    const fetchConversationData = async () => {
-      if (!stateBusinessId || !showAiAgentAnalytics) return;
-      
-      setConversationsLoading(true);
-      setConversationError(null);
-      
-      try {
-        // First, check if conversations endpoint works
-        const conversationsResponse = await conversationsApi.getByBusinessId(stateBusinessId);
-        setConversations(conversationsResponse.data || []);
-        
-        try {
-          // Then try to get analytics (this may fail if endpoint isn't implemented)
-          const analyticsResponse = await conversationsApi.getAnalytics(stateBusinessId, conversationPeriod);
-          setConversationAnalytics(analyticsResponse.data);
-        } catch (analyticsError) {
-          console.error('Analytics endpoint unavailable:', analyticsError);
-          // Don't set error - we'll show a limited view with just conversations
-        }
-      } catch (error) {
-        console.error('Error fetching conversation data:', error);
-        setConversationError('Unable to load AI conversation data. The API may not be fully implemented yet.');
-      } finally {
-        setConversationsLoading(false);
-      }
-    };
+    let filtered = [...conversations];
     
-    fetchConversationData();
-  }, [stateBusinessId, showAiAgentAnalytics, conversationPeriod]);
-
-  // Add these at the top level with your other state declarations
-  const [conversationDetail, setConversationDetail] = useState(null);
-  const [conversationDetailLoading, setConversationDetailLoading] = useState(false);
-  const [conversationDetailError, setConversationDetailError] = useState(null);
-
-  // Add this useEffect at the top level of your component
-  useEffect(() => {
-    const fetchConversationDetail = async () => {
-      if (!selectedConversation?.conversationId) return;
-      
-      try {
-        setConversationDetailLoading(true);
-        setConversationDetailError(null);
-        const response = await conversationsApi.getById(selectedConversation.conversationId);
-        setConversationDetail(response.data);
-      } catch (error) {
-        console.error('Error fetching conversation detail:', error);
-        setConversationDetailError('Failed to load conversation messages');
-      } finally {
-        setConversationDetailLoading(false);
-      }
-    };
-
-    if (selectedConversation) {
-      fetchConversationDetail();
-    } else {
-      // Reset conversation detail when no conversation is selected
-      setConversationDetail(null);
+    // Filter by status
+    if (conversationFilters.status !== 'all') {
+      filtered = filtered.filter(conv => {
+        const isCompleted = conv.endTime;
+        return conversationFilters.status === 'completed' ? isCompleted : !isCompleted;
+      });
     }
-  }, [selectedConversation]);
+    
+    // Filter by topic
+    if (conversationFilters.topic !== 'all') {
+      filtered = filtered.filter(conv => 
+        conv.primaryTopic === conversationFilters.topic
+      );
+    }
+    
+    // Filter by date range
+    if (conversationFilters.dateRange !== 'all') {
+      const now = new Date();
+      const filterDate = new Date();
+      
+      switch (conversationFilters.dateRange) {
+        case 'today':
+          filterDate.setHours(0, 0, 0, 0);
+          break;
+        case 'week':
+          filterDate.setDate(now.getDate() - 7);
+          break;
+        case 'month':
+          filterDate.setMonth(now.getMonth() - 1);
+          break;
+      }
+      
+      filtered = filtered.filter(conv => 
+        conv.startTime && new Date(conv.startTime) >= filterDate
+      );
+    }
+    
+    // Sort conversations
+    filtered.sort((a, b) => {
+      const dateA = new Date(a.startTime || 0);
+      const dateB = new Date(b.startTime || 0);
+      
+      switch (conversationFilters.sortBy) {
+        case 'oldest':
+          return dateA - dateB;
+        case 'newest':
+        default:
+          return dateB - dateA;
+      }
+    });
+    
+    return filtered;
+  }, [conversations, conversationFilters]);
 
-  // Update the renderConversationDetail function to correctly display messages
-  const renderConversationDetail = () => {
+  // Get unique topics for filter dropdown
+  const availableTopics = useMemo(() => {
+    const topics = conversations
+      .map(conv => conv.primaryTopic)
+      .filter(topic => topic && topic !== 'General');
+    return [...new Set(topics)];
+  }, [conversations]);
+
+  // Update the renderAiAgentAnalytics function to include filters
+  const renderAiAgentAnalytics = () => {
+    if (!showAiAgentAnalytics) return null;
+
+    const filteredConversations = getFilteredConversations();
+
     return (
-      <section className="conversation-detail-container">
-        <div className="detail-header">
-          <button className="back-button" onClick={() => setSelectedConversation(null)}>
-            ← Back to Conversations
-          </button>
-          <h3>Conversation Detail</h3>
+      <section className="analytics-section ai-agent-analytics">
+        <div className="section-header">
+          <h2>AI Agent Analytics</h2>
+          <div className="period-selector">
+            <label htmlFor="conversation-period">Time Period:</label>
+            <select 
+              id="conversation-period"
+              value={conversationPeriod} 
+              onChange={(e) => setConversationPeriod(e.target.value)}
+            >
+              <option value="all">All Time</option>
+              <option value="year">This Year</option>
+              <option value="month">This Month</option>
+              <option value="week">This Week</option>
+            </select>
+          </div>
         </div>
 
-        {conversationDetailLoading ? (
+        {conversationsLoading ? (
           <div className="loading-container">
-            <p>Loading conversation...</p>
+            <div className="loading-spinner"></div>
+            <p>Loading AI conversation data...</p>
           </div>
-        ) : conversationDetailError ? (
+        ) : conversationError ? (
           <div className="error-container">
-            <p>{conversationDetailError}</p>
-            <button className="retry-button" onClick={() => 
-              setSelectedConversation({...selectedConversation})}>
-              Retry
+            <p className="error-message">{conversationError}</p>
+            <button 
+              className="retry-button modern-button danger" 
+              onClick={loadConversations}
+            >
+              <span className="button-icon">🔄</span>
+              <span className="button-text">Retry</span>
             </button>
           </div>
-        ) : conversationDetail ? (
-          <div className="conversation-detail">
-            <div className="conversation-metadata">
-              <div className="metadata-item">
-                <span className="metadata-label">Topic:</span>
-                <span className="metadata-value">{conversationDetail.primaryTopic || 'General'}</span>
-              </div>
-              <div className="metadata-item">
-                <span className="metadata-label">Started:</span>
-                <span className="metadata-value">{new Date(conversationDetail.startTime).toLocaleString()}</span>
-              </div>
-              {conversationDetail.endTime && (
-                <div className="metadata-item">
-                  <span className="metadata-label">Ended:</span>
-                  <span className="metadata-value">{new Date(conversationDetail.endTime).toLocaleString()}</span>
-                </div>
-              )}
-              <div className="metadata-item">
-                <span className="metadata-label">Status:</span>
-                <span className="metadata-value">
-                  {conversationDetail.endTime ? 'Completed' : 'Active'}
-                </span>
-              </div>
-            </div>
-
-            <div className="conversation-messages">
-              <h3>Conversation History</h3>
-              <div className="messages-container">
-                {selectedConversation.messages && selectedConversation.messages.map((message, index) => {
-                  // Determine if we should show this message
-                  const isUser = message.messageType === "USER";
-                  const isPersonalizedAi = message.messageType === "PERSONALIZED_AI";
-                  const isRegularAi = message.messageType === "AI";
-                  
-                  // Only show AI messages if they have a category or are personalized
-                  const shouldDisplay = isUser || isPersonalizedAi || 
-                    (isRegularAi && message.messageCategory);
-                  
-                  if (!shouldDisplay) return null;
-                  
-                  return (
-                    <div 
-                      key={message.messageId || `message-${index}`} 
-                      className={`message ${isUser ? 'user-message' : 'ai-message'}`}
-                    >
-                      <div className="message-header">
-                        <span className="message-sender">
-                          {isUser ? 'User' : (isPersonalizedAi ? 'Support AI' : 'AI')}
-                        </span>
-                        <span className="message-time">
-                          {message.timestamp ? new Date(message.timestamp).toLocaleString() : 'Unknown time'}
-                        </span>
-                      </div>
-                      <div className="message-content">{message.message}</div>
-                      {message.messageCategory && (
-                        <div className="message-category">
-                          {message.messageCategory.replace(/_/g, ' ').toLowerCase()}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
         ) : (
-          <p className="no-data-message">Conversation details not available</p>
-        )}
-      </section>
-    );
-  };
+          <>
+            {/* Analytics Summary Cards */}
+            {conversationAnalytics && (
+              <div className="analytics-summary">
+                <div className="analytics-card">
+                  <h3>Total Conversations</h3>
+                  <p className="analytics-number">{conversationAnalytics.totalConversations || 0}</p>
+                </div>
+                <div className="analytics-card">
+                  <h3>Active Users</h3>
+                  <p className="analytics-number">{conversationAnalytics.activeUsers || 0}</p>
+                </div>
+                <div className="analytics-card">
+                  <h3>Avg Response Time</h3>
+                  <p className="analytics-number">{conversationAnalytics.avgResponseTime || 'N/A'}</p>
+                </div>
+                <div className="analytics-card">
+                  <h3>Satisfaction Rate</h3>
+                  <p className="analytics-number">{conversationAnalytics.satisfactionRate || 'N/A'}</p>
+                </div>
+              </div>
+            )}
 
-  // Keep just one renderAiAgentAnalytics function
-  const renderAiAgentAnalytics = () => {
-    // If a conversation is selected, show its detail view
-    if (selectedConversation) {
-      return renderConversationDetail();
-    }
-    
-    // Regular AI analytics view
-    return (
-      <section className="analytics-container">
-        <div className="ai-analytics-container">
-          <h3>AI Agent Conversations</h3>
-          
-          {conversationsLoading ? (
-            <div className="loading-container">
-              <p>Loading AI conversation data...</p>
-            </div>
-          ) : conversationError ? (
-            <div className="error-container">
-              <p>{conversationError}</p>
-              <div className="api-status-message">
-                <p>This feature requires the AI Conversation API to be available.</p>
-                <p>Status: <span className="api-status-error">Endpoint Not Available</span></p>
-              </div>
-              <button 
-                className="retry-button" 
-                onClick={() => setShowAiAgentAnalytics(true)}
-              >
-                Retry
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className="time-period-selector">
-                <label htmlFor="conversation-period">Time Period:</label>
-                <select 
-                  id="conversation-period"
-                  value={conversationPeriod}
-                  onChange={(e) => setConversationPeriod(e.target.value)}
+            {/* Conversation Filters */}
+            <div className="conversation-filters">
+              <h4>Filter Conversations</h4>
+              <div className="filter-controls">
+                <div className="filter-group">
+                  <label htmlFor="status-filter">Status:</label>
+                  <select
+                    id="status-filter"
+                    value={conversationFilters.status}
+                    onChange={(e) => setConversationFilters(prev => ({
+                      ...prev,
+                      status: e.target.value
+                    }))}
+                  >
+                    <option value="all">All Statuses</option>
+                    <option value="active">Active Only</option>
+                    <option value="completed">Completed Only</option>
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <label htmlFor="topic-filter">Topic:</label>
+                  <select
+                    id="topic-filter"
+                    value={conversationFilters.topic}
+                    onChange={(e) => setConversationFilters(prev => ({
+                      ...prev,
+                      topic: e.target.value
+                    }))}
+                  >
+                    <option value="all">All Topics</option>
+                    <option value="General">General</option>
+                    {availableTopics.map(topic => (
+                      <option key={topic} value={topic}>{topic}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <label htmlFor="date-filter">Date Range:</label>
+                  <select
+                    id="date-filter"
+                    value={conversationFilters.dateRange}
+                    onChange={(e) => setConversationFilters(prev => ({
+                      ...prev,
+                      dateRange: e.target.value
+                    }))}
+                  >
+                    <option value="all">All Time</option>
+                    <option value="today">Today</option>
+                    <option value="week">Last 7 Days</option>
+                    <option value="month">Last 30 Days</option>
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <label htmlFor="sort-filter">Sort By:</label>
+                  <select
+                    id="sort-filter"
+                    value={conversationFilters.sortBy}
+                    onChange={(e) => setConversationFilters(prev => ({
+                      ...prev,
+                      sortBy: e.target.value
+                    }))}
+                  >
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                  </select>
+                </div>
+
+                <button
+                  className="clear-filters-button modern-button secondary"
+                  onClick={() => setConversationFilters({
+                    status: 'all',
+                    topic: 'all',
+                    dateRange: 'all',
+                    messageType: 'all',
+                    sortBy: 'newest'
+                  })}
                 >
-                  <option value="today">Today</option>
-                  <option value="week">This Week</option>
-                  <option value="month">This Month</option>
-                  <option value="year">This Year</option>
-                  <option value="all">All Time</option>
-                </select>
+                  <span className="button-icon">🗑️</span>
+                  <span className="button-text">Clear Filters</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Conversations Table */}
+            <div className="conversations-section">
+              <div className="conversations-header">
+                <h3>
+                  Conversations ({filteredConversations.length}
+                  {filteredConversations.length !== conversations.length && (
+                    <span className="filter-note"> of {conversations.length} total</span>
+                  )}
+                  )
+                </h3>
+                {filteredConversations.length !== conversations.length && (
+                  <div className="active-filters">
+                    <span className="filter-indicator">Filters applied</span>
+                  </div>
+                )}
               </div>
               
-              {/* Display basic conversation stats */}
-              <div className="ai-analytics-summary">
-                <div className="analytics-card">
-                  <h4>Total Conversations</h4>
-                  <p className="analytics-value">{conversations.length}</p>
-                </div>
-                
-                <div className="analytics-card">
-                  <h4>Active Conversations</h4>
-                  <p className="analytics-value">
-                    {conversations.filter(c => !c.endTime).length}
-                  </p>
-                </div>
-                
-                <div className="analytics-card">
-                  <h4>Completed Conversations</h4>
-                  <p className="analytics-value">
-                    {conversations.filter(c => c.endTime).length}
-                  </p>
-                </div>
-                
-                <div className="analytics-card">
-                  <h4>Avg Messages Per Conversation</h4>
-                  <p className="analytics-value">
-                    {conversations.length > 0
-                      ? (conversations.reduce((sum, c) => sum + (c.messages?.length || 0), 0) / conversations.length).toFixed(1)
-                      : '0'}
-                  </p>
-                </div>
-              </div>
-              
-              {/* Conversations table */}
-              <div className="conversations-table-container">
-                <h4>Recent Conversations</h4>
-                
-                {conversations.length === 0 ? (
-                  <p className="no-data-message">No conversations found for this business</p>
-                ) : (
+              {filteredConversations.length > 0 ? (
+                <div className="conversations-table-container">
                   <table className="conversations-table">
                     <thead>
                       <tr>
-                        <th>ID</th>
-                        <th>Start Time</th>
+                        <th>Conversation ID</th>
+                        <th>Started</th>
                         <th>Status</th>
                         <th>Topic</th>
                         <th>Messages</th>
@@ -939,399 +1081,865 @@ const AdminAnalyticsPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {conversations.slice(0, 10).map((conversation, index) => (
-                        <tr key={conversation.conversationId || `conversation-${index}`}>
-                          <td>{conversation.conversationId ? conversation.conversationId.substring(0, 8) + '...' : 'N/A'}</td>
-                          <td>{conversation.startTime ? new Date(conversation.startTime).toLocaleString() : 'Unknown'}</td>
-                          <td>{conversation.endTime ? 'Completed' : 'Active'}</td>
-                          <td>{conversation.primaryTopic || 'Unknown'}</td>
-                          <td>{conversation.messages?.length || 0}</td>
+                      {filteredConversations.map((conversation, index) => {
+                        // Handle different ID formats
+                        const displayId = conversation.conversationId || conversation.conversation_id || `conv-${index}`;
+                        const shortId = displayId.toString().substring(0, 8);
+                        
+                        return (
+                          <tr key={displayId}>
+                            <td className="conversation-id">
+                              {shortId}...
+                            </td>
+                            <td>
+                              {conversation.startTime 
+                                ? new Date(conversation.startTime).toLocaleDateString()
+                                : 'Unknown'
+                              }
+                            </td>
+                            <td>
+                              <span className={`status-badge ${conversation.endTime ? 'completed' : 'active'}`}>
+                                {conversation.endTime ? 'Completed' : 'Active'}
+                              </span>
+                            </td>
+                            <td>{conversation.primaryTopic || 'General'}</td>
+                            <td>{conversation.messageCount || 'N/A'}</td>
+                            <td>
+                              <button 
+                                className="view-details-button modern-button success"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  console.log('View button clicked for conversation:', conversation);
+                                  setSelectedConversation(conversation);
+                                  setShowConversationModal(true);
+                                  loadConversationDetail(conversation);
+                                }}
+                                type="button"
+                              >
+                                <span className="button-icon">👁️</span>
+                                <span className="button-text">View Details</span>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="no-data-container">
+                  <p className="no-data-message">
+                    {conversations.length === 0 
+                      ? "No conversations found for the selected period."
+                      : "No conversations match the current filters."
+                    }
+                  </p>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </section>
+    );
+  };
+
+  // Add ConversationModal component
+  const ConversationModal = () => {
+    if (!showConversationModal || !selectedConversation) return null;
+
+    return (
+      <div className="modal-overlay" onClick={() => setShowConversationModal(false)}>
+        <div className="modal-content conversation-modal" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <h2>Conversation Details</h2>
+            <div className="modal-controls">
+              {/* View mode selector */}
+              <div className="view-mode-selector">
+                <label htmlFor="modal-message-view-mode">View:</label>
+                <select 
+                  id="modal-message-view-mode"
+                  value={messageViewMode}
+                  onChange={(e) => {
+                    setMessageViewMode(e.target.value);
+                    loadConversationDetail(selectedConversation);
+                  }}
+                >
+                  <option value="alternating">Alternating USER ↔ AI</option>
+                  <option value="all">All Messages</option>
+                </select>
+              </div>
+              <button 
+                className="close-modal-button modern-button secondary"
+                onClick={() => {
+                  setShowConversationModal(false);
+                  setSelectedConversation(null);
+                  setConversationDetail(null);
+                  setConversationDetailError(null);
+                  setMessageViewMode('alternating');
+                }}
+              >
+                <span className="button-icon">✕</span>
+                <span className="button-text">Close</span>
+              </button>
+            </div>
+          </div>
+          
+          {conversationDetailLoading ? (
+            <div className="modal-loading">
+              <div className="loading-spinner"></div>
+              <p>Loading conversation messages...</p>
+            </div>
+          ) : conversationDetailError ? (
+            <div className="modal-error">
+              <p className="error-message">{conversationDetailError}</p>
+              <button 
+                className="retry-button modern-button" 
+                onClick={() => loadConversationDetail(selectedConversation)}
+              >
+                <span className="button-icon">🔄</span>
+                <span className="button-text">Retry</span>
+              </button>
+            </div>
+          ) : conversationDetail ? (
+            <div className="modal-body">
+              {/* Conversation metadata */}
+              <div className="conversation-metadata-compact">
+                <div className="metadata-grid">
+                  <div className="metadata-item">
+                    <span className="label">ID:</span>
+                    <span className="value">{selectedConversation.conversationId || selectedConversation.conversation_id}</span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="label">Started:</span>
+                    <span className="value">
+                      {selectedConversation.startTime ? new Date(selectedConversation.startTime).toLocaleString() : 'Unknown'}
+                    </span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="label">Status:</span>
+                    <span className="value">
+                      <span className={`status-badge ${selectedConversation.endTime ? 'completed' : 'active'}`}>
+                        {selectedConversation.endTime ? 'Completed' : 'Active'}
+                      </span>
+                    </span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="label">Topic:</span>
+                    <span className="value">{selectedConversation.primaryTopic || 'General'}</span>
+                  </div>
+                  <div className="metadata-item">
+                    <span className="label">Messages:</span>
+                    <span className="value">
+                      {conversationDetail.alternatingMessages?.length || 0}
+                      {conversationDetail.totalMessages && conversationDetail.totalMessages > (conversationDetail.alternatingMessages?.length || 0) && (
+                        <span className="message-count-note"> of {conversationDetail.totalMessages} total</span>
+                      )}
+                    </span>
+                  </div>
+                  {conversationDetail.pattern && (
+                    <div className="metadata-item">
+                      <span className="label">Pattern:</span>
+                      <span className="value">{conversationDetail.pattern}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Messages container */}
+              <div className="modal-messages-container">
+                <h3>
+                  {messageViewMode === 'all' 
+                    ? 'All Conversation Messages' 
+                    : 'Conversation History (Alternating User ↔ AI Messages)'}
+                </h3>
+                
+                {/* Message type breakdown */}
+                {conversationDetail.alternatingMessages && conversationDetail.alternatingMessages.length > 0 && (
+                  <div className="message-breakdown">
+                    <div className="breakdown-stats">
+                      <span className="stat-item">
+                        <span className="stat-icon">👤</span>
+                        USER: {conversationDetail.alternatingMessages.filter(m => m.messageType === 'USER').length}
+                      </span>
+                      <span className="stat-item">
+                        <span className="stat-icon">✨</span>
+                        PERSONALIZED_AI: {conversationDetail.alternatingMessages.filter(m => m.messageType === 'PERSONALIZED_AI').length}
+                      </span>
+                      <span className="stat-item">
+                        <span className="stat-icon">🎭</span>
+                        PERSONALITY_AI: {conversationDetail.alternatingMessages.filter(m => m.messageType === 'PERSONALITY_AI').length}
+                      </span>
+                      <span className="stat-item">
+                        <span className="stat-icon">📊</span>
+                        AI_STATUS: {conversationDetail.alternatingMessages.filter(m => m.messageType === 'AI_STATUS').length}
+                      </span>
+                    </div>
+                    
+                    {messageViewMode === 'alternating' && conversationDetail.alternatingMessages.filter(m => m.messageType !== 'USER').length === 0 && (
+                      <div className="warning-message">
+                        ⚠️ This conversation contains only user messages - no AI responses were generated.
+                        <br />
+                        💡 Try switching to "All Messages" view to see system/status messages.
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <div className="messages-list">
+                  {conversationDetail.alternatingMessages && conversationDetail.alternatingMessages.length > 0 ? (
+                    conversationDetail.alternatingMessages.map((message, index) => {
+                      const isUser = message.messageType === "USER";
+                      const isPersonalizedAi = message.messageType === "PERSONALIZED_AI";
+                      const isPersonalityAi = message.messageType === "PERSONALITY_AI";
+                      const isAiStatus = message.messageType === "AI_STATUS";
+                      
+                      return (
+                        <div 
+                          key={message.messageId || `message-${index}`} 
+                          className={`message-bubble ${isUser ? 'user-message' : 'ai-message'}`}
+                        >
+                          <div className="message-header">
+                            <div className="message-sender-info">
+                              <span className="message-sender-icon">
+                                {isUser ? '👤' : 
+                                 isPersonalizedAi ? '✨' : 
+                                 isPersonalityAi ? '🎭' :
+                                 isAiStatus ? '📊' : '🤖'}
+                              </span>
+                              <span className="message-sender-name">
+                                {isUser ? 'User' : 
+                                 isPersonalizedAi ? 'Personalized AI' : 
+                                 isPersonalityAi ? 'Personality AI' :
+                                 isAiStatus ? 'AI Status' :
+                                 message.messageType}
+                              </span>
+                            </div>
+                            <div className="message-meta">
+                              <span className="message-time">
+                                {message.timestamp ? new Date(message.timestamp).toLocaleString() : 
+                                 message.createdAt ? new Date(message.createdAt).toLocaleString() : 'Unknown time'}
+                              </span>
+                              <span 
+                                className="message-type-badge" 
+                                style={{
+                                  backgroundColor: isUser ? '#1976d2' : 
+                                                 isPersonalizedAi ? '#4caf50' :
+                                                 isPersonalityAi ? '#ff9800' : 
+                                                 isAiStatus ? '#9c27b0' : '#9e9e9e'
+                                }}
+                              >
+                                {message.messageType}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="message-content">{message.message || 'No message content'}</div>
+                          {message.messageCategory && (
+                            <div className="message-category">
+                              Category: {message.messageCategory.replace(/_/g, ' ')}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="no-messages-placeholder">
+                      <span className="placeholder-icon">💬</span>
+                      <p>No {messageViewMode === 'all' ? '' : 'alternating '}messages to display</p>
+                    </div>
+                  )}
+                </div>
+                
+                {conversationDetail.hasMore && (
+                  <div className="load-more-container">
+                    <button 
+                      className="load-more-button modern-button secondary"
+                      onClick={() => {
+                        console.log('🔄 Load more messages requested');
+                        // TODO: Implement pagination
+                      }}
+                    >
+                      <span className="button-icon">⬇️</span>
+                      <span className="button-text">Load More Messages</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="no-data-placeholder">
+              <span className="placeholder-icon">📭</span>
+              <p>No conversation details available</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Render business-wide performance stats
+  const renderBusinessWidePerformance = () => {
+    if (!businessApiAvailable || !businessStats.counts || !businessStats.timing) {
+      return (
+        <div className="api-status-message">
+          <p className="api-status-error">Business analytics data is currently unavailable or still loading.</p>
+          {businessStats.error && <p>Error: {businessStats.error}</p>}
+        </div>
+      );
+    }
+
+    const { counts, timing } = businessStats;
+    const responseRate = counts.totalQuestions > 0 ? (counts.answeredQuestions / counts.totalQuestions) * 100 : 0;
+
+    return (
+      <div className="business-stats-overview">
+        <h3>Business-Wide Performance</h3>
+        <div className="stats-cards">
+          <div className="stats-card">
+            <div className="stats-label">Total Questions</div>
+            <div className="stats-value">{counts.totalQuestions || 0}</div>
+          </div>
+          <div className="stats-card">
+            <div className="stats-label">Answered Questions</div>
+            <div className="stats-value">{counts.answeredQuestions || 0}</div>
+          </div>
+          <div className="stats-card">
+            <div className="stats-label">Unanswered Questions</div>
+            <div className="stats-value">{counts.unansweredQuestions || 0}</div>
+          </div>
+          <div className="stats-card">
+            <div className="stats-label">Response Rate</div>
+            <DonutProgressChart percentage={responseRate} size={70} strokeWidth={7} />
+          </div>
+          <div className="stats-card">
+            <div className="stats-label">Avg. Response Time</div>
+            <div className="stats-value">{formatTime(timing.averageResponseTimeMinutes)}</div>
+          </div>
+          <div className="stats-card">
+            <div className="stats-label">Active Agents</div>
+            <div className="stats-value">{users.length}</div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Add state for detailed comparison
+  const [detailedComparison, setDetailedComparison] = useState(null);
+  const [comparisonLoading, setComparisonLoading] = useState(false);
+
+  // Add the complete loadDetailedComparison function
+  const loadDetailedComparison = useCallback(async () => {
+    if (!users.length) return;
+    
+    setComparisonLoading(true);
+    try {
+      console.log('Loading detailed comparison for', users.length, 'users');
+      
+      // Get real analytics data for all users
+      const allAgentsData = await Promise.all(
+        users.map(async (user) => {
+          try {
+            console.log('Loading analytics for user:', user.firstName, user.lastName);
+            
+            // Get analytics for each user using the corrected API
+            const userAnalytics = await agentQuestionsApi.getAgentAnalytics(user.userId, stateBusinessId);
+            
+            const counts = userAnalytics.data.counts || {};
+            const timing = userAnalytics.data.timing || {};
+            
+            return {
+              userId: user.userId,
+              name: `${user.firstName} ${user.lastName}`,
+              email: user.email,
+              responseTime: timing.averageResponseTimeMinutes || 0,
+              accuracy: counts.totalQuestions > 0 ? 
+                ((counts.totalQuestions - (counts.unansweredQuestions || 0)) / counts.totalQuestions * 100) : 0,
+              volume: (counts.totalQuestions || 0) - (counts.unansweredQuestions || 0),
+              totalQuestions: counts.totalQuestions || 0,
+              unansweredQuestions: counts.unansweredQuestions || 0,
+              projectCount: counts.projectCount || 0,
+              satisfaction: Math.random() * 20 + 80, // This would come from actual satisfaction surveys
+              efficiency: timing.averageResponseTimeMinutes && timing.averageResponseTimeMinutes > 0 ? 
+                Math.max(0, 100 - (timing.averageResponseTimeMinutes / 60) * 10) : 0,
+              lastActive: user.lastLoginTime || user.createdAt,
+              joinDate: user.createdAt,
+              fastestResponse: timing.fastestResponseTimeMinutes || 0,
+              slowestResponse: timing.slowestResponseTimeMinutes || 0
+            };
+          } catch (error) {
+            console.error(`Error loading analytics for user ${user.userId}:`, error);
+            return {
+              userId: user.userId,
+              name: `${user.firstName} ${user.lastName}`,
+              email: user.email,
+              responseTime: 0,
+              accuracy: 0,
+              volume: 0,
+              totalQuestions: 0,
+              unansweredQuestions: 0,
+              projectCount: 0,
+              satisfaction: 0,
+              efficiency: 0,
+              lastActive: user.lastLoginTime || user.createdAt,
+              joinDate: user.createdAt,
+              fastestResponse: 0,
+              slowestResponse: 0
+            };
+          }
+        })
+      );
+
+      console.log('All agents data loaded:', allAgentsData);
+
+      // Show all agents, even those with no activity (but mark them differently)
+      const activeAgents = allAgentsData.filter(agent => 
+        agent.volume > 0 || agent.totalQuestions > 0
+      );
+      
+      console.log('Active agents:', activeAgents.length, 'of', allAgentsData.length);
+
+      // Calculate company averages based on active agents
+      let companyAverages = {
+        responseTime: 0,
+        accuracy: 0,
+        volume: 0,
+        satisfaction: 0,
+        efficiency: 0,
+      };
+      
+      if (activeAgents.length > 0) {
+        companyAverages = {
+          responseTime: activeAgents.reduce((sum, a) => sum + a.responseTime, 0) / activeAgents.length,
+          accuracy: activeAgents.reduce((sum, a) => sum + a.accuracy, 0) / activeAgents.length,
+          volume: activeAgents.reduce((sum, a) => sum + a.volume, 0) / activeAgents.length,
+          satisfaction: activeAgents.reduce((sum, a) => sum + a.satisfaction, 0) / activeAgents.length,
+          efficiency: activeAgents.reduce((sum, a) => sum + a.efficiency, 0) / activeAgents.length,
+        };
+      }
+
+      // Sort agents by overall performance score
+      const sortedByPerformance = [...activeAgents].sort((a, b) => {
+        const scoreA = (a.accuracy + a.efficiency + (100 - Math.min(a.responseTime, 100))) / 3;
+        const scoreB = (b.accuracy + b.efficiency + (100 - Math.min(b.responseTime, 100))) / 3;
+        return scoreB - scoreA;
+      });
+
+      // Find selected agent or default to first active agent
+      const selectedAgent = selectedUserId ? 
+        allAgentsData.find(a => a.userId === selectedUserId) :
+        (activeAgents.length > 0 ? activeAgents[0] : allAgentsData[0]);
+
+      // Calculate rankings for selected agent
+      let rankings = {};
+      if (selectedAgent && activeAgents.length > 0) {
+        const sortedByResponseTime = [...activeAgents].sort((a, b) => a.responseTime - b.responseTime);
+        const sortedByAccuracy = [...activeAgents].sort((a, b) => b.accuracy - a.accuracy);
+        const sortedByVolume = [...activeAgents].sort((a, b) => b.volume - a.volume);
+
+        rankings = {
+          responseTime: sortedByResponseTime.findIndex(a => a.userId === selectedAgent.userId) + 1,
+          accuracy: sortedByAccuracy.findIndex(a => a.userId === selectedAgent.userId) + 1,
+          volume: sortedByVolume.findIndex(a => a.userId === selectedAgent.userId) + 1,
+          overall: sortedByPerformance.findIndex(a => a.userId === selectedAgent.userId) + 1,
+        };
+      }
+
+      setDetailedComparison({
+        allAgents: allAgentsData,
+        activeAgents,
+        selectedAgent,
+        rankings,
+        companyAverages,
+        totalAgents: allAgentsData.length,
+        totalActiveAgents: activeAgents.length,
+        hasData: activeAgents.length > 0
+      });
+
+    } catch (error) {
+      console.error('Error loading detailed comparison:', error);
+      setDetailedComparison({
+        allAgents: [],
+        activeAgents: [],
+        selectedAgent: null,
+        rankings: {},
+        companyAverages: {},
+        totalAgents: 0,
+        totalActiveAgents: 0,
+        hasData: false,
+        error: 'Failed to load comparison data'
+      });
+    } finally {
+      setComparisonLoading(false);
+    }
+  }, [users, stateBusinessId, selectedUserId, agentQuestionsApi]);
+
+  // Load detailed comparison when users change or component mounts
+  useEffect(() => {
+    if (users.length > 0 && stateBusinessId && viewMode === 'agent') {
+      loadDetailedComparison();
+    }
+  }, [users, stateBusinessId, viewMode, loadDetailedComparison]);
+
+  // Complete renderEnhancedAgentComparison function
+  const renderEnhancedAgentComparison = () => {
+    if (comparisonLoading) {
+      return (
+        <div className="enhanced-agent-comparison">
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading team performance data...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (!detailedComparison) {
+      return (
+        <div className="enhanced-agent-comparison">
+          <div className="no-data-placeholder">
+            <span className="placeholder-icon">📊</span>
+            <h3>No Comparison Data</h3>
+            <p>Unable to load team comparison data.</p>
+            <button 
+              className="modern-button"
+              onClick={loadDetailedComparison}
+            >
+              <span className="button-icon">🔄</span>
+              <span className="button-text">Retry</span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    const { 
+      allAgents, 
+      activeAgents, 
+      selectedAgent, 
+      rankings, 
+      companyAverages, 
+      totalAgents, 
+      totalActiveAgents, 
+      hasData,
+      error 
+    } = detailedComparison;
+
+    return (
+      <div className="enhanced-agent-comparison">
+        <div className="comparison-header">
+          <h3>
+            <span className="comparison-icon">📊</span>
+            Team Performance Analytics
+          </h3>
+          <div className="team-stats">
+            <span className="stat-item">Total Agents: {totalAgents}</span>
+            <span className="stat-item">Active Agents: {totalActiveAgents}</span>
+            {error && <span className="stat-item error">⚠️ {error}</span>}
+          </div>
+        </div>
+
+        {!hasData ? (
+          <div className="no-active-data-message">
+            <div className="message-content">
+              <span className="message-icon">🚀</span>
+              <h4>Ready to Start Analytics</h4>
+              <p>
+                You have {totalAgents} agent{totalAgents !== 1 ? 's' : ''} registered, but no question activity yet. 
+                Once agents start answering questions, detailed performance analytics will appear here.
+              </p>
+              <div className="agent-list">
+                <h5>Registered Agents:</h5>
+                <ul>
+                  {allAgents.slice(0, 5).map(agent => (
+                    <li key={agent.userId}>
+                      {agent.name} ({agent.email})
+                    </li>
+                  ))}
+                  {allAgents.length > 5 && (
+                    <li>...and {allAgents.length - 5} more</li>
+                  )}
+                </ul>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Selected Agent Overview */}
+            {selectedAgent && (
+              <div className="selected-agent-overview">
+                <div className="agent-card">
+                  <div className="agent-info-header">
+                    <div className="agent-details">
+                      <h4>{selectedAgent.name}</h4>
+                      <p className="agent-email">{selectedAgent.email}</p>
+                      <p className="agent-meta">
+                        Joined: {formatDate(selectedAgent.joinDate)} • 
+                        Last Active: {formatDate(selectedAgent.lastActive)}
+                      </p>
+                    </div>
+                    <div className="agent-status">
+                      <span className={`status-indicator ${selectedAgent.volume > 0 ? 'active' : 'inactive'}`}>
+                        {selectedAgent.volume > 0 ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Metrics Dashboard */}
+                  <div className="metrics-dashboard">
+                    <div className="metric-card">
+                      <div className="metric-header">
+                        <h4>
+                          <span className="metric-icon">⚡</span>
+                          Response Time
+                        </h4>
+                        <span className="performance-indicator">
+                          {selectedAgent.responseTime < companyAverages.responseTime ? '🟢' : '🟡'}
+                        </span>
+                      </div>
+                      <div className="metric-values">
+                        <div className="current-value">
+                          {formatTime(selectedAgent.responseTime)}
+                        </div>
+                        <div className="comparison-value">
+                          Company avg: {formatTime(companyAverages.responseTime)}
+                        </div>
+                      </div>
+                      <div className="metric-bar">
+                        <div 
+                          className="metric-progress"
+                          style={{ 
+                            width: `${Math.min(100, (selectedAgent.responseTime / Math.max(companyAverages.responseTime * 2, 1)) * 100)}%`,
+                            background: selectedAgent.responseTime < companyAverages.responseTime ? 
+                              'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' :
+                              'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="metric-card">
+                      <div className="metric-header">
+                        <h4>
+                          <span className="metric-icon">🎯</span>
+                          Accuracy Rate
+                        </h4>
+                        <span className="performance-indicator">
+                          {selectedAgent.accuracy > companyAverages.accuracy ? '🟢' : '🟡'}
+                        </span>
+                      </div>
+                      <div className="metric-values">
+                        <div className="current-value">
+                          {selectedAgent.accuracy.toFixed(1)}%
+                        </div>
+                        <div className="comparison-value">
+                          Company avg: {companyAverages.accuracy.toFixed(1)}%
+                        </div>
+                      </div>
+                      <div className="metric-bar">
+                        <div 
+                          className="metric-progress"
+                          style={{ 
+                            width: `${selectedAgent.accuracy}%`,
+                            background: selectedAgent.accuracy > companyAverages.accuracy ? 
+                              'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' :
+                              'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="metric-card">
+                      <div className="metric-header">
+                        <h4>
+                          <span className="metric-icon">📈</span>
+                          Question Volume
+                        </h4>
+                        <span className="performance-indicator">
+                          {selectedAgent.volume > companyAverages.volume ? '🟢' : '🟡'}
+                        </span>
+                      </div>
+                      <div className="metric-values">
+                        <div className="current-value">
+                          {selectedAgent.volume}
+                        </div>
+                        <div className="comparison-value">
+                          Company avg: {Math.round(companyAverages.volume)}
+                        </div>
+                      </div>
+                      <div className="metric-bar">
+                        <div 
+                          className="metric-progress"
+                          style={{ 
+                            width: `${Math.min(100, (selectedAgent.volume / Math.max(companyAverages.volume * 2, 1)) * 100)}%`,
+                            background: selectedAgent.volume > companyAverages.volume ? 
+                              'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' :
+                              'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="metric-card">
+                      <div className="metric-header">
+                        <h4>
+                          <span className="metric-icon">⭐</span>
+                          Efficiency Score
+                        </h4>
+                        <span className="performance-indicator">
+                          {selectedAgent.efficiency > companyAverages.efficiency ? '🟢' : '🟡'}
+                        </span>
+                      </div>
+                      <div className="metric-values">
+                        <div className="current-value">
+                          {selectedAgent.efficiency.toFixed(1)}%
+                        </div>
+                        <div className="comparison-value">
+                          Company avg: {companyAverages.efficiency.toFixed(1)}%
+                        </div>
+                      </div>
+                      <div className="metric-bar">
+                        <div 
+                          className="metric-progress"
+                          style={{ 
+                            width: `${selectedAgent.efficiency}%`,
+                            background: selectedAgent.efficiency > companyAverages.efficiency ? 
+                              'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' :
+                              'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Team Rankings Table */}
+            <div className="detailed-rankings">
+              <h4>
+                <span className="section-icon">🏆</span>
+                Team Performance Rankings
+              </h4>
+              <div className="rankings-container">
+                <div className="rankings-table-wrapper">
+                  <table className="rankings-table">
+                    <thead>
+                      <tr>
+                        <th>Rank</th>
+                        <th>Agent</th>
+                        <th>Response Time</th>
+                        <th>Accuracy</th>
+                        <th>Volume</th>
+                        <th>Efficiency</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {activeAgents.map((agent, index) => (
+                        <tr 
+                          key={agent.userId} 
+                          className={`ranking-row ${agent.userId === selectedUserId ? 'current-agent' : ''}`}
+                        >
+                          <td className="rank-cell">
+                            <div className={`rank-badge ${index < 3 ? 'top-rank' : ''}`}>
+                              {index + 1}
+                            </div>
+                          </td>
                           <td>
-                            <button 
-                              className="view-details-button"
-                              onClick={() => setSelectedConversation(conversation)}
-                              title="View conversation details"
-                            >
-                              View
-                            </button>
+                            <div className="agent-info">
+                              <div>
+                                <div className="agent-name">{agent.name}</div>
+                                <div className="agent-email-small">{agent.email}</div>
+                              </div>
+                              {agent.userId === selectedUserId && (
+                                <span className="current-badge">Current</span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="metric-cell">
+                            <div className="metric-value">
+                              {formatTime(agent.responseTime)}
+                            </div>
+                          </td>
+                          <td className="metric-cell">
+                            <div className="metric-value">
+                              {agent.accuracy.toFixed(1)}%
+                            </div>
+                          </td>
+                          <td className="metric-cell">
+                            <div className="metric-value">
+                              {agent.volume}
+                            </div>
+                          </td>
+                          <td className="score-cell">
+                            <div className="score-value">
+                              {agent.efficiency.toFixed(1)}%
+                            </div>
+                            <div className="score-bar">
+                              <div 
+                                className="score-progress"
+                                style={{ width: `${agent.efficiency}%` }}
+                              ></div>
+                            </div>
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-    );
-  };
-
-  // Add this function to render the agent response time chart
-  const renderAgentResponseTimeChart = () => {
-    if (!agentAnalytics?.timing?.details || agentAnalytics.timing.details.length === 0) {
-      return null;
-    }
-    
-    // Process data for the chart - show last 10 responses
-    const chartData = agentAnalytics.timing.details
-      .slice(0, 10)
-      .map(detail => ({
-        question: detail.questionTitle?.substring(0, 15) + '...',
-        time: parseFloat(detail.responseTimeMinutes.toFixed(2)),
-        date: new Date(detail.answerCreatedAt).toLocaleDateString()
-      }))
-      .reverse();
-    
-    return (
-      <div className="analytics-chart-container">
-        <h4>Recent Response Times</h4>
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 60 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-            <XAxis 
-              dataKey="question" 
-              angle={-45} 
-              textAnchor="end" 
-              height={60}
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis label={{ value: 'Minutes', angle: -90, position: 'insideLeft' }} />
-            <Tooltip formatter={(value) => [`${value} min`, 'Response time']} />
-            <Line 
-              type="monotone" 
-              dataKey="time" 
-              stroke="#3182ce" 
-              strokeWidth={2}
-              dot={{ stroke: '#3182ce', strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  };
-
-  // Add this function to render a distribution chart
-  const renderQuestionDistributionChart = () => {
-    if (!agentAnalytics?.counts) {
-      return null;
-    }
-    
-    const data = [
-      { name: 'Answered', value: agentAnalytics.counts.answered, color: '#3182ce' },
-      { name: 'Unanswered', value: agentAnalytics.counts.unanswered, color: '#f59e0b' }
-    ];
-    
-    return (
-      <div className="analytics-chart-container">
-        <h4>Questions Distribution</h4>
-        <ResponsiveContainer width="100%" height={250}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={80}
-              paddingAngle={5}
-              dataKey="value"
-              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-            >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.color} />
-              ))}
-            </Pie>
-            <Tooltip formatter={(value, name) => [`${value} questions`, name]} />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  };
-
-  // Add this function to render an agent comparison chart
-  const renderAgentComparisonChart = () => {
-    if (!comparisonData || !comparisonData.agents || comparisonData.agents.length === 0) {
-      return null;
-    }
-    
-    // Take top 5 agents for comparison
-    const chartData = comparisonData.agents
-      .slice(0, 5)
-      .map(agent => ({
-        name: agent.name?.split(' ')[0] || 'Agent', // Just use first name to save space
-        responseTime: parseFloat(agent.avgResponseTime.toFixed(2)),
-        answers: agent.totalAnswers
-      }));
-    
-    return (
-      <div className="analytics-chart-container">
-        <h4>Top 5 Agents by Response Time</h4>
-        <ResponsiveContainer width="100%" height={250}>
-          <BarChart 
-            data={chartData}
-            layout="vertical"
-            margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
-            <XAxis type="number" label={{ value: 'Minutes', position: 'insideBottom', offset: -5 }} />
-            <YAxis 
-              dataKey="name" 
-              type="category" 
-              tick={{ fontSize: 12 }} 
-              width={60}
-            />
-            <Tooltip formatter={(value) => [`${value} min`, 'Avg. Response Time']} />
-            <Bar 
-              dataKey="responseTime" 
-              fill="#3182ce" 
-              radius={[0, 4, 4, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  };
-
-  // Add this dashboard component within AdminAnalyticsPage
-  const renderDashboardHeader = () => {
-    // Calculate total tickets, open, closed from business data
-    const totalTickets = businessStats?.counts?.total || 0;
-    const closedTickets = businessStats?.counts?.answered || 0;
-    const openTickets = businessStats?.counts?.unanswered || 0;
-    const satisfactionRate = 88; // Placeholder, replace with actual data if available
-    
-    // Calculate percentages for comparison with previous period
-    const closedChange = 4.3; // Placeholder, replace with calculated value
-    const openChange = 1.7; // Placeholder, replace with calculated value
-    const satisfactionChange = 2.4; // Placeholder, replace with calculated value
-    
-    return (
-      <div className="dashboard-header">
-        <div className="metric-cards">
-          <div className="metric-card">
-            <div className="metric-title">Total Tickets</div>
-            <div className="metric-value">{totalTickets.toLocaleString()}</div>
-          </div>
-          
-          <div className="metric-card">
-            <div className="metric-title">Closed Tickets</div>
-            <div className="metric-value">{closedTickets.toLocaleString()}</div>
-            <div className="metric-trend positive">
-              <span className="trend-arrow">↑</span> {closedChange}%
-            </div>
-          </div>
-          
-          <div className="metric-card">
-            <div className="metric-title">Open Tickets</div>
-            <div className="metric-value">{openTickets.toLocaleString()}</div>
-            <div className="metric-trend positive">
-              <span className="trend-arrow">↑</span> {openChange}%
-            </div>
-          </div>
-          
-          <div className="metric-card">
-            <div className="metric-title">Customer Satisfaction</div>
-            <div className="metric-value">{satisfactionRate}%</div>
-            <div className="metric-trend positive">
-              <span className="trend-arrow">↑</span> {satisfactionChange}%
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Add this function to create the tickets over time chart
-  const renderTicketsOverTimeChart = () => {
-    // Generate some sample data based on date ranges if not available
-    const today = new Date();
-    const timeData = Array(30).fill().map((_, i) => {
-      const date = new Date();
-      date.setDate(today.getDate() - (29 - i));
-      const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
-      
-      // Create realistic looking data
-      const closedBase = Math.floor(Math.random() * 50) + 150;
-      const openBase = Math.floor(Math.random() * 30) + 50;
-      
-      return {
-        date: dateStr,
-        open: openBase,
-        closed: closedBase
-      };
-    });
-    
-    return (
-      <div className="chart-container">
-        <h3>Tickets Over Time</h3>
-        <div className="chart-legend">
-          <div className="legend-item">
-            <div className="legend-color open"></div>
-            <span>Open</span>
-          </div>
-          <div className="legend-item">
-            <div className="legend-color closed"></div>
-            <span>Closed</span>
-          </div>
-        </div>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={timeData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Line type="monotone" dataKey="open" stroke="#2563eb" strokeWidth={2} dot={false} />
-            <Line type="monotone" dataKey="closed" stroke="#6366f1" strokeWidth={2} dot={false} strokeDasharray="5 5" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  };
-
-  // Add this function to create the tickets by category chart
-  const renderTicketsByCategoryChart = () => {
-    // Use existing project stats if available, otherwise use sample data
-    const categoryData = allProjectStats?.length > 0 
-      ? allProjectStats.slice(0, 4).map(project => ({
-          name: project.name,
-          value: project.total
-        }))
-      : [
-        { name: 'Technical Support', value: 45 },
-        { name: 'Billing', value: 25 },
-        { name: 'Account Management', value: 20 },
-        { name: 'Other', value: 10 }
-      ];
-    
-    const COLORS = ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'];
-    
-    return (
-      <div className="chart-container">
-        <h3>Tickets by Category</h3>
-        <div className="chart-with-legend">
-          <div className="pie-chart-container">
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={categoryData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={100}
-                  fill="#8884d8"
-                  paddingAngle={2}
-                  dataKey="value"
-                >
-                  {categoryData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value, name) => [`${value}%`, name]} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="pie-chart-legend">
-            {categoryData.map((entry, index) => (
-              <div key={`legend-${index}`} className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
-                <div className="legend-text">
-                  <span className="legend-name">{entry.name}</span>
-                  <span className="legend-value">{entry.value}%</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // Add this function to render a table of top agents
-  const renderTopAgentsTable = () => {
-    // Use users data to create a sorted list of top agents
-    const sortedAgents = [...users]
-      .filter(user => user.stats) // This assumes you add a stats property to users, adjust as needed
-      .sort((a, b) => (b.stats?.closedTickets || 0) - (a.stats?.closedTickets || 0))
-      .slice(0, 5);
-    
-    // If we don't have stats, use placeholder data
-    const agentsToShow = sortedAgents.length > 0 ? sortedAgents : [
-      { name: 'Jane Doe', stats: { closedTickets: 402, satisfaction: 92 } },
-      { name: 'John Smith', stats: { closedTickets: 389, satisfaction: 89 } },
-      { name: 'Emily Johnson', stats: { closedTickets: 350, satisfaction: 87 } },
-      { name: 'Michael Brown', stats: { closedTickets: 275, satisfaction: 85 } },
-      { name: 'Sarah Davis', stats: { closedTickets: 241, satisfaction: 90 } }
-    ];
-    
-    return (
-      <div className="top-agents-container">
-        <h3>Top Agents</h3>
-        <table className="top-agents-table">
-          <thead>
-            <tr>
-              <th>Agent</th>
-              <th>Tickets Closed</th>
-              <th>Satisfaction</th>
-            </tr>
-          </thead>
-          <tbody>
-            {agentsToShow.map((agent, index) => (
-              <tr key={index}>
-                <td>{agent.name}</td>
-                <td>{agent.stats?.closedTickets || 0}</td>
-                <td>{agent.stats?.satisfaction || 0}%</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            </div>
+          </>
+        )}
       </div>
     );
   };
 
   return (
-    <div className={`admin-analytics-page ${sidebarCollapsed ? 'collapsed' : ''}`}>
-      <SideNavbar isCollapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
-      <main className="admin-analytics-content">
-        {/* Page header with view selection toggle */}
-        <div className="page-header">
-          <div className="header-left">
-            <h2>Analytics Dashboard</h2>
-            <p className="subtitle">Monitor performance metrics and insights</p>
-          </div>
-          <div className="view-mode-toggle">
-            <button 
-              className={viewMode === 'agent' ? 'active' : ''}
-              onClick={() => setViewMode('agent')}
+    <>
+      <main className={`admin-analytics-content ${helpModeEnabled ? 'help-mode-enabled' : 'help-mode-disabled'}`}>
+        <header className="page-header">
+          <h1>Analytics Dashboard</h1>
+          <p className="page-description">Monitor performance metrics and insights</p>
+          
+          {/* Enhanced View Toggle Buttons */}
+          <div className="view-toggles">
+            <button
+              className={`view-toggle-button ${viewMode === 'agent' ? 'active' : ''}`}
+              onClick={() => {
+                setViewMode('agent');
+                setShowAiAgentAnalytics(false);
+              }}
             >
-              Agent Performance
+              <span className="toggle-icon">👤</span>
+              <span className="toggle-text">Agent Performance</span>
             </button>
-            <button 
-              className={viewMode === 'business' ? 'active' : ''}
-              onClick={() => setViewMode('business')}
+            <button
+              className={`view-toggle-button ${viewMode === 'business' ? 'active' : ''}`}
+              onClick={() => {
+                setViewMode('business');
+                setShowAiAgentAnalytics(false);
+              }}
             >
-              Business Overview
+              <span className="toggle-icon">🏢</span>
+              <span className="toggle-text">Business Overview</span>
             </button>
-            <button 
-              className={viewMode === 'ai' ? 'active' : ''}
+            <button
+              className={`view-toggle-button ${viewMode === 'ai' ? 'active' : ''}`}
               onClick={() => {
                 setViewMode('ai');
                 setShowAiAgentAnalytics(true);
               }}
             >
-              AI Agent Analytics
+              <span className="toggle-icon">🤖</span>
+              <span className="toggle-text">AI Agent Analytics</span>
             </button>
           </div>
-        </div>
+        </header>
 
         {/* Conditional rendering based on viewMode */}
         {viewMode === 'ai' ? (
-          // AI Agent Analytics View
           renderAiAgentAnalytics()
         ) : viewMode === 'business' ? (
-          // Business Overview View
           <section className="analytics-container">
             {businessStats.error ? (
               <div className="error-container">
@@ -1354,28 +1962,7 @@ const AdminAnalyticsPage = () => {
                     Overall performance metrics for your business
                   </p>
                   
-                  <div className="business-stats-grid">
-                    <div className="stats-card">
-                      <div className="stats-value">{businessStats.counts.totalQuestions || 0}</div>
-                      <div className="stats-label">Total Questions</div>
-                    </div>
-                    <div className="stats-card">
-                      <div className="stats-value">{businessStats.counts.answeredQuestions || 0}</div>
-                      <div className="stats-label">Answered</div>
-                    </div>
-                    <div className="stats-card">
-                      <div className="stats-value">{businessStats.counts.unansweredQuestions || 0}</div>
-                      <div className="stats-label">Unanswered</div>
-                    </div>
-                    <div className="stats-card">
-                      <div className="stats-value">
-                        {businessStats.counts.totalQuestions > 0 
-                          ? Math.round((businessStats.counts.answeredQuestions / businessStats.counts.totalQuestions) * 100) + '%' 
-                          : '0%'}
-                      </div>
-                      <div className="stats-label">Response Rate</div>
-                    </div>
-                  </div>
+                  {renderBusinessWidePerformance()}
                 </div>
                 
                 {/* Topic Performance Section - Only in Business View */}
@@ -1414,28 +2001,31 @@ const AdminAnalyticsPage = () => {
                     <div className="project-stats">
                       <div className="stats-cards">
                         <div className="stats-card">
-                          <div className="stats-value">{projectStats.totalQuestions}</div>
                           <div className="stats-label">Total Questions</div>
+                          <div className="stats-value">{projectStats.totalQuestions}</div>
                         </div>
                         <div className="stats-card">
-                          <div className="stats-value">{projectStats.answeredQuestions}</div>
                           <div className="stats-label">Answered</div>
+                          <div className="stats-value">{projectStats.answeredQuestions}</div>
                         </div>
                         <div className="stats-card">
-                          <div className="stats-value">{projectStats.unansweredQuestions}</div>
                           <div className="stats-label">Unanswered</div>
+                          <div className="stats-value">{projectStats.unansweredQuestions}</div>
                         </div>
                         <div className="stats-card">
-                          <div className="stats-value">
-                            {projectStats.totalQuestions > 0 
-                              ? Math.round((projectStats.answeredQuestions / projectStats.totalQuestions) * 100) + '%' 
-                              : '0%'}
-                          </div>
                           <div className="stats-label">Completion Rate</div>
+                          <DonutProgressChart 
+                            percentage={projectStats.totalQuestions > 0 
+                              ? (projectStats.answeredQuestions / projectStats.totalQuestions) * 100 
+                              : 0} 
+                            size={70} 
+                            strokeWidth={7} 
+                          />
                         </div>
                       </div>
                       
-                      {/* Add visual representation */}
+                      {/* Visual representation of completion progress is now handled by DonutProgressChart */}
+                      {/* Remove old progress bar section
                       <div className="topic-progress">
                         <h4>Completion Progress</h4>
                         <div className="progress-bar">
@@ -1453,6 +2043,7 @@ const AdminAnalyticsPage = () => {
                           <span>100%</span>
                         </div>
                       </div>
+                      */}
                     </div>
                   ) : (
                     <p className="no-data-message">Select a topic to view its analytics</p>
@@ -1533,277 +2124,69 @@ const AdminAnalyticsPage = () => {
             )}
           </section>
         ) : (
-          // Agent Performance View (default)
-          <section className="analytics-container">
-            {error ? (
-              <div className="error-container">
-                <p>{error}</p>
-                <button className="retry-button" onClick={() => window.location.reload()}>
-                  Retry
-                </button>
-              </div>
-            ) : (
-              <>
-                <section className="user-selector-section">
-                  <h3>Select Agent</h3>
+          // Replace the entire agent view section with this combined version:
+          viewMode === 'agent' && (
+            <section className="analytics-container">
+              <div className="agent-performance-section">
+                <div className="section-header">
+                  <h2>Agent Performance Analytics</h2>
+                  <p className="section-description">Compare individual and team performance metrics</p>
+                </div>
+
+                {/* Agent Selector */}
+                <div className="agent-selector-container">
+                  <div className="selector-header">
+                    <h3>Select Agent for Detailed Analysis</h3>
+                    <div className="team-stats">
+                      <span className="stat-item">Total Agents: {users.length}</span>
+                      <span className="stat-item">Active: {detailedComparison?.activeAgents?.length || 0}</span>
+                    </div>
+                  </div>
+                  
                   <div className="agent-selector">
-                    <label htmlFor="agent-select">Select Agent:</label>
                     <select
                       value={selectedUserId || ''}
-                      onChange={(e) => setSelectedUserId(e.target.value)}
-                      className="user-select"
+                      onChange={(e) => setSelectedUserId(e.target.value || null)}
                     >
-                      <option value="">Select an agent</option>
+                      <option value="">Select an agent...</option>
                       {users.map(user => (
-                        <option key={user.userId || `user-${Math.random()}`} value={user.userId}>
-                          {user.name || user.email}
+                        <option key={user.userId} value={user.userId}>
+                          {user.firstName} {user.lastName} ({user.email})
                         </option>
                       ))}
                     </select>
                   </div>
-                </section>
-                
-                {/* Agent-specific analytics content */}
-                {selectedUserId ? (
-                  <>
-                    <section className="agent-analytics-content">
-                      <h3>
-                        {users.find(u => u.userId && selectedUserId && 
-                          u.userId.toString() === selectedUserId.toString())?.name || 
-                           users.find(u => u.userId && selectedUserId && 
-                            u.userId.toString() === selectedUserId.toString())?.email || 
-                            'Agent'} Performance
-                      </h3>
-                      
-                      {agentAnalytics.loading ? (
-                        <div className="loading-container">
-                          <p>Loading agent analytics...</p>
-                        </div>
-                      ) : agentAnalytics.error ? (
-                        <div className="error-container">
-                          <p>{agentAnalytics.error}</p>
-                          <button className="retry-button" onClick={() => {
-                            loadAgentData(selectedUserId);
-                          }}>
-                            Retry
-                          </button>
-                        </div>
-                      ) : !agentAnalytics.counts || !agentAnalytics.timing ? (
-                        <p className="no-data-message">No data available for this agent</p>
-                      ) : (
-                        <div className="agent-stats">
-                          {agentAnalytics.timing && (
-                            <section className="analytics-section">
-                              <h3>Agent Response Time Analytics</h3>
-                              
-                              <div className="stats-cards timing-cards">
-                                <div className="stats-card">
-                                  <div className="stats-value">{formatTime(agentAnalytics.timing.averageResponseTimeMinutes)}</div>
-                                  <div className="stats-label">Average Response Time</div>
-                                </div>
-                                <div className="stats-card">
-                                  <div className="stats-value">{formatTime(agentAnalytics.timing.fastestResponseTimeMinutes)}</div>
-                                  <div className="stats-label">Fastest Response</div>
-                                </div>
-                                <div className="stats-card">
-                                  <div className="stats-value">{formatTime(agentAnalytics.timing.slowestResponseTimeMinutes)}</div>
-                                  <div className="stats-label">Slowest Response</div>
-                                </div>
-                              </div>
-                              
-                              <div className="time-period-info">
-                                <div className="time-period-item">
-                                  <span className="metadata-label">First Answer:</span>
-                                  <span className="metadata-value">{formatDate(agentAnalytics.timing.oldestAnswerDate)}</span>
-                                </div>
-                                <div className="time-period-item">
-                                  <span className="metadata-label">Latest Answer:</span>
-                                  <span className="metadata-value">{formatDate(agentAnalytics.timing.newestAnswerDate)}</span>
-                                </div>
-                              </div>
-                              
-                              {agentAnalytics.timing.details && agentAnalytics.timing.details.length > 0 && (
-                                <div className="response-table-container">
-                                  <h4>Agent Response Details</h4>
-                                  <table className="response-table">
-                                    <thead>
-                                      <tr>
-                                        <th>Question</th>
-                                        <th>Project</th>
-                                        <th>Asked</th>
-                                        <th>Answered</th>
-                                        <th>Response Time</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {agentAnalytics.timing.details.map((detail, index) => (
-                                        <tr key={index}>
-                                          <td className="question-col">{detail.questionTitle}</td>
-                                          <td>{detail.projectName || "N/A"}</td>
-                                          <td>{formatDate(detail.questionCreatedAt)}</td>
-                                          <td>{formatDate(detail.answerCreatedAt)}</td>
-                                          <td>{formatTime(detail.responseTimeMinutes)}</td>
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              )}
-                            </section>
-                          )}
-                        </div>
-                      )}
-                    </section>
-                    
-                    {/* Agent Comparison Section - Only in Agent View */}
-                    <section className="analytics-section">
-                      <div className="section-header-with-toggle">
-                        <h3>Agent Comparison</h3>
-                        <button 
-                          className="comparison-toggle" 
-                          onClick={() => setShowComparison(!showComparison)}
-                        >
-                          {showComparison ? 'Hide Comparison' : 'Show Comparison'}
-                        </button>
-                      </div>
-                      
-                      {showComparison && comparisonData && (
-                        <div className="comparison-container">
-                          <div className="comparison-summary">
-                            <div className="comparison-metric">
-                              <span className="metric-label">Agent Rank:</span>
-                              <span className="metric-value">
-                                {comparisonData.selectedAgentRank} of {comparisonData.totalAgents}
-                              </span>
-                            </div>
-                            
-                            <div className="comparison-metric">
-                              <span className="metric-label">Response Time vs Company Avg:</span>
-                              <span className={`metric-value ${agentAnalytics.timing && 
-                                agentAnalytics.timing.averageResponseTimeMinutes < comparisonData.companyAvg ? 
-                                'positive' : 'negative'}`}>
-                                {agentAnalytics.timing ? 
-                                  formatTime(agentAnalytics.timing.averageResponseTimeMinutes - comparisonData.companyAvg) : 
-                                  'N/A'}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <div className="agent-ranking">
-                            <h4>Agent Response Time Ranking</h4>
-                            <div className="ranking-list">
-                              {comparisonData.agents.map((agent, index) => (
-                                <div 
-                                  key={agent.userId} 
-                                  className={`ranking-item ${agent.userId === parseInt(selectedUserId) ? 'current-agent' : ''}`}
-                                >
-                                  <span className="rank">{index + 1}</span>
-                                  <span className="agent-name">{agent.name}</span>
-                                  <span className="response-time">{formatTime(agent.avgResponseTime)}</span>
-                                  <span className="answer-count">{agent.totalAnswers} answers</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </section>
-                  </>
-                ) : (
-                  <p className="prompt-message">Please select an agent to view their performance metrics</p>
-                )}
-              </>
-            )}
-          </section>
-        )}
+                </div>
 
-        {/* Conversation Detail View */}
-        {selectedConversation && (
-          <section className="analytics-section conversation-detail">
-            <div className="section-header">
-              <button 
-                className="back-button"
-                onClick={() => setSelectedConversation(null)}
-              >
-                ← Back to Conversations
-              </button>
-              <h2>Conversation Detail</h2>
-            </div>
-            
-            {!selectedConversation.messages || selectedConversation.messages.length === 0 ? (
-              <p className="no-data-message">Conversation details not available</p>
-            ) : (
-              <div className="conversation-detail-content">
-                <div className="conversation-metadata">
-                  <div className="metadata-item">
-                    <span className="label">Conversation ID:</span>
-                    <span className="value">{selectedConversation.conversationId || 'N/A'}</span>
+                {/* Main Content */}
+                {isLoading || comparisonLoading ? (
+                  <div className="loading-container">
+                    <div className="loading-spinner"></div>
+                    <p>Loading performance analytics...</p>
                   </div>
-                  <div className="metadata-item">
-                    <span className="label">Started:</span>
-                    <span className="value">
-                      {selectedConversation.startTime ? new Date(selectedConversation.startTime).toLocaleString() : 'Unknown'}
-                    </span>
+                ) : error ? (
+                  <div className="error-container">
+                    <p className="error-message">{error}</p>
+                    <button 
+                      className="retry-button modern-button danger" 
+                      onClick={() => window.location.reload()}
+                    >
+                      <span className="button-icon">🔄</span>
+                      <span className="button-text">Retry</span>
+                    </button>
                   </div>
-                  <div className="metadata-item">
-                    <span className="label">Status:</span>
-                    <span className="value">{selectedConversation.endTime ? 'Completed' : 'Active'}</span>
-                  </div>
-                  <div className="metadata-item">
-                    <span className="label">Topic:</span>
-                    <span className="value">{selectedConversation.primaryTopic || 'Unknown'}</span>
-                  </div>
-                  <div className="metadata-item">
-                    <span className="label">Total Messages:</span>
-                    <span className="value">{selectedConversation.messages?.length || 0}</span>
-                  </div>
-                </div>
-                
-                <div className="conversation-messages">
-                  <h3>Conversation History</h3>
-                  <div className="messages-container">
-                    {selectedConversation.messages && selectedConversation.messages.map((message, index) => {
-                      // Determine if we should show this message
-                      const isUser = message.messageType === "USER";
-                      const isPersonalizedAi = message.messageType === "PERSONALIZED_AI";
-                      const isRegularAi = message.messageType === "AI";
-                      
-                      // Only show AI messages if they have a category or are personalized
-                      const shouldDisplay = isUser || isPersonalizedAi || 
-                        (isRegularAi && message.messageCategory);
-                      
-                      if (!shouldDisplay) return null;
-                      
-                      return (
-                        <div 
-                          key={message.messageId || `message-${index}`} 
-                          className={`message ${isUser ? 'user-message' : 'ai-message'}`}
-                        >
-                          <div className="message-header">
-                            <span className="message-sender">
-                              {isUser ? 'User' : (isPersonalizedAi ? 'Support AI' : 'AI')}
-                            </span>
-                            <span className="message-time">
-                              {message.timestamp ? new Date(message.timestamp).toLocaleString() : 'Unknown time'}
-                            </span>
-                          </div>
-                          <div className="message-content">{message.message}</div>
-                          {message.messageCategory && (
-                            <div className="message-category">
-                              {message.messageCategory.replace(/_/g, ' ').toLowerCase()}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                ) : (
+                  // Render the enhanced agent comparison which includes everything
+                  renderEnhancedAgentComparison()
+                )}
               </div>
-            )}
-          </section>
+            </section>
+          )
         )}
       </main>
-    </div>
+      
+      <ConversationModal />
+    </>
   );
 };
 

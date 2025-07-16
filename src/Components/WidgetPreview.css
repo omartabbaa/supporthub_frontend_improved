@@ -1,0 +1,186 @@
+/* Ensure Material Icons are loaded if you use them directly in CSS */
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
+
+.widget-preview-container {
+  position: absolute; /* Positioned within .preview-area */
+  /* Dynamic positioning via inline styles or classes based on config.widgetPosition */
+}
+
+.widget-preview-container.bottom-right {
+  bottom: 20px;
+  right: 20px;
+}
+
+.widget-preview-container.bottom-left {
+  bottom: 20px;
+  left: 20px;
+}
+
+.widget-launcher {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.widget-launcher:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.widget-window {
+  width: 350px;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  overflow: hidden; /* Important for border-radius on children */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+.widget-preview-container.open .widget-window {
+ opacity: 1;
+ transform: translateY(0) scale(1);
+}
+
+
+.widget-header {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.widget-header .widget-close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: normal;
+  font-family: Arial, sans-serif;
+  line-height: 1;
+  user-select: none;
+}
+.widget-header .widget-close-button:hover {
+  opacity: 0.7;
+}
+
+
+.widget-body {
+  flex-grow: 1;
+  padding: 15px 20px;
+  overflow-y: auto;
+  background-color: #f9f9f9; /* Light background for chat body */
+}
+
+.welcome-message {
+  padding: 10px;
+  margin-bottom: 15px;
+  background-color: #eef2f7; /* Slightly different for emphasis */
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.welcome-message p {
+  margin: 0;
+}
+
+.mock-chat-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message-bubble {
+  padding: 10px 15px;
+  border-radius: 18px;
+  max-width: 75%;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.message-bubble.sent {
+  background-color: #dcf8c6; /* Example sent message color */
+  color: #333;
+  align-self: flex-end;
+  border-bottom-right-radius: 5px;
+}
+
+.message-bubble.received {
+  background-color: #ffffff;
+  color: #333;
+  align-self: flex-start;
+  border: 1px solid #eee;
+  border-bottom-left-radius: 5px;
+}
+
+
+.widget-footer {
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #fff;
+  border-top: 1px solid #e0e0e0;
+}
+
+.widget-footer input[type="text"] {
+  flex-grow: 1;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  outline: none;
+}
+.widget-footer input[type="text"]:focus {
+    border-color: inherit; /* Will be set by primaryColor via inline style */
+}
+
+.widget-footer .send-button {
+  background: none;
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+.widget-footer .send-button:hover {
+  background-color: rgba(0,0,0,0.1);
+}
+.widget-footer .send-button .material-icons-outlined {
+  font-size: 24px;
+}
+
+/* For Material Icons */
+.material-icons-outlined {
+  font-family: 'Material Icons Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px; /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+} 

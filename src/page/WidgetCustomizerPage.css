@@ -1,0 +1,201 @@
+.widget-customizer-page {
+  display: flex;
+  height: calc(100vh - 60px - 40px); /* Full height minus navbar and some padding */
+  padding: 20px;
+  gap: 20px;
+  background-color: #f4f6f8;
+  box-sizing: border-box;
+  margin-left: 0px; /* Remove excessive left margin */
+  transition: margin-left 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .widget-customizer-page {
+    flex-direction: column;
+    padding: 10px; /* Reduced padding for more width */
+    gap: 15px;
+    height: auto;
+  }
+}
+
+.controls-panel {
+  flex: 1;
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  max-width: 450px; /* Max width for controls */
+}
+
+/* Mobile responsiveness for controls panel */
+@media (max-width: 768px) {
+  .controls-panel {
+    max-width: none;
+    padding: 20px;
+    order: 2; /* Put controls below preview on mobile */
+  }
+}
+
+.controls-panel h2 {
+  margin-top: 0;
+  color: #333;
+  font-size: 1.6rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.control-group {
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.control-group:last-child {
+  border-bottom: none;
+}
+
+.control-group h3 {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.controls-panel label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #444;
+  font-size: 0.9rem;
+}
+.controls-panel label input[type="checkbox"] {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+
+.controls-panel input[type="text"],
+.controls-panel input[type="color"],
+.controls-panel select,
+.controls-panel textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.controls-panel input[type="color"] {
+  height: 40px;
+  padding: 5px; /* Adjust padding for color input */
+}
+
+.controls-panel input:focus,
+.controls-panel select:focus,
+.controls-panel textarea:focus {
+  border-color: #1976D2; /* Match primary color */
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.controls-panel textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.controls-panel small {
+    display: block;
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+.preview-panel {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  background-color: #e9edf0; /* Slightly different background for contrast */
+  border-radius: 10px;
+  padding: 25px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* Mobile responsiveness for preview panel */
+@media (max-width: 768px) {
+  .preview-panel {
+    padding: 15px; /* Reduced padding for more preview width */
+    order: 1; /* Put preview above controls on mobile */
+    min-height: 300px; /* Smaller minimum height on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .preview-panel {
+    padding: 10px; /* Even less padding on very small screens */
+  }
+}
+
+.preview-panel h3 {
+  margin-top: 0;
+  text-align: center;
+  color: #333;
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+}
+
+.preview-area {
+  flex-grow: 1;
+  display: flex;
+  align-items: center; /* Vertically center widget if it's smaller */
+  justify-content: center; /* Horizontally center */
+  position: relative; /* For positioning the widget preview */
+  min-height: 600px; /* Increased height for better preview visibility */
+  overflow: hidden; /* To see how widget position works */
+}
+
+/* Mobile responsiveness for preview area */
+@media (max-width: 768px) {
+  .preview-area {
+    min-height: 350px; /* Increased mobile height */
+  }
+}
+
+@media (max-width: 480px) {
+  .preview-area {
+    min-height: 300px; /* Increased small screen height */
+  }
+  
+  .widget-customizer-page {
+    padding: 5px; /* Minimal padding on very small screens */
+  }
+}
+
+.save-widget-config-button {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  display: block;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.save-widget-config-button:hover {
+  background-color: #45a049;
+}
+
+.save-note {
+  font-size: 0.85rem;
+  color: #777;
+  text-align: center;
+  margin-top: 10px;
+} 

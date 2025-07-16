@@ -1,7 +1,7 @@
 // AdminDashboardPage.js
 
 import './AdminDashboardPage.css';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useUserContext } from "../context/LoginContext";
 import Fuse from 'fuse.js';
@@ -9,10 +9,11 @@ import SearchBar from '../Components/Searchbar';
 import Accordion from '../Components/Accordion';
 import { admins as adminsApi, departments as departmentsApi, users as usersApi, projects as projectsApi, permissions as permissionsApi, setAuthToken } from "../services/ApiService";
 import Tooltip from '../Components/Tooltip';
-import SideNavbar from '../Components/SideNavbar';
+import { useSidebarContext } from '../context/SidebarContext.jsx';
 
 const AdminDashboardPage = () => {
-    const { token, stateBusinessId } = useUserContext();
+    const { token, stateBusinessId, role } = useUserContext();
+    const { setActiveSidebarType } = useSidebarContext();
     const [hoveredExpertId, setHoveredExpertId] = useState(null);
     const [departments, setDepartments] = useState([]);
     const [experts, setExperts] = useState([]);
@@ -30,7 +31,6 @@ const AdminDashboardPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [openAccordionId, setOpenAccordionId] = useState(null);
     const [helpModeEnabled, setHelpModeEnabled] = useState(false);
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
     // Fuse.js options for fuzzy search - include email
     const fuseOptions = {
@@ -49,19 +49,30 @@ const AdminDashboardPage = () => {
 
     // Fetch data on component mount and token change
     useEffect(() => {
-        if (token) {
+        if (role !== "ROLE_ADMIN") {
+            console.warn("Non-admin attempting to access Admin Dashboard.");
+        }
+        if (token && stateBusinessId) {
             setAuthToken(token); // Set the auth token for all future requests
             fetchAndSetData();
         }
-    }, [token]);
+    }, [token, stateBusinessId]);
+
+    useEffect(() => {
+        setActiveSidebarType('userActions');
+    }, [setActiveSidebarType]);
 
     // Combined function to fetch initial data
-    const fetchAndSetData = () => {
-        fetchDepartments();
-        fetchExperts();
-        fetchProjects();
-        fetchPermissions();
-        fetchAdminData();
+    const fetchAndSetData = async () => {
+        await fetchAdminData();
+        Promise.all([
+            fetchDepartments(),
+            fetchExperts(),
+            fetchProjects(),
+            fetchPermissions()
+        ]).catch(error => {
+            console.error("Error during parallel data fetching:", error);
+        });
     };
 
     const fetchAdminData = async () => {
@@ -75,42 +86,46 @@ const AdminDashboardPage = () => {
         }
     };
 
-    // Fetch departments
+    // Fetch departments for the current business
     const fetchDepartments = async () => {
+        if (!stateBusinessId) return;
         try {
-            const response = await departmentsApi.getAll();
-            const filteredDepartments = response.data.filter(dept => dept.businessId === stateBusinessId);
-            setDepartments(filteredDepartments);
+            const response = await departmentsApi.getByBusiness(stateBusinessId);
+            setDepartments(response.data || []);
         } catch (error) {
             console.error('Error fetching departments:', error);
+            setDepartments([]);
         }
     };
 
-    // Fetch experts
+    // Fetch experts for the current business and filter out admins
     const fetchExperts = async () => {
+        if (!stateBusinessId) return;
         try {
-            const response = await usersApi.getAll();
+            const response = await usersApi.getByBusinessId(stateBusinessId);
 
             // Extract admin userIds
             const adminUserIds = stateAdmin.map(admin => admin.userId);
 
             // Filter experts whose userId is NOT in adminUserIds
-            const filteredExperts = response.data.filter(expert => !adminUserIds.includes(expert.userId));
+            const filteredExperts = (response.data || []).filter(expert => !adminUserIds.includes(expert.userId));
 
             setExperts(filteredExperts);
         } catch (error) {
             console.error('Error fetching experts:', error);
-            throw error;
+            setExperts([]);
         }
     };
 
-    // Fetch projects
+    // Fetch projects for the current business
     const fetchProjects = async () => {
+        if (!stateBusinessId) return;
         try {
-            const response = await projectsApi.getAll();
-            setProjects(response.data);
+            const response = await projectsApi.getByBusinessId(stateBusinessId);
+            setProjects(response.data || []);
         } catch (error) {
             console.error('Error fetching projects:', error);
+            setProjects([]);
         }
     };
 
@@ -229,16 +244,8 @@ const AdminDashboardPage = () => {
         }
     };
 
-    // Add toggle function for sidebar
-    const toggleSidebar = () => {
-        setSidebarCollapsed(!sidebarCollapsed);
-    };
-
     return (
-        <div className={`admin-dashboard-container ${sidebarCollapsed ? 'collapsed' : ''}`}>
-            {/* Add SideNavbar component */}
-            <SideNavbar isCollapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
-            
+        <div className={`admin-dashboard-container`}>
             <main className={`admin-dashboard ${helpModeEnabled ? 'help-mode-enabled' : 'help-mode-disabled'}`}>
                 <Helmet>
                     <title>Admin Dashboard | SupportHub</title>

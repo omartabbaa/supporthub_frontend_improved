@@ -1,0 +1,128 @@
+.aiPersonalizationPage {
+  /* This padding assumes the page is rendered in a content area
+     that already accounts for the sidebar's width.
+     If not, a general layout component should handle sidebar spacing. */
+  padding: 30px 40px;
+  max-width: 900px;
+  margin: 20px auto; /* Centers the content if it's not in a flex container with the sidebar */
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin-top: 100px;
+}
+
+.aiPersonalizationPage h1 {
+  color: #2d3748; /* Darker, more modern heading color */
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0; /* Subtle separator, matches sidebar borders */
+  padding-bottom: 10px;
+}
+
+.aiPersonalizationPage p.intro-text {
+  color: #4a5568; /* Softer text color */
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.personalizationForm {
+  margin-top: 20px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #4a5568; /* Softer label color */
+  font-size: 0.95rem;
+}
+
+.formInput, /* New generic style for text inputs */
+.userInfoTextarea {
+  width: 100%;
+  padding: 12px 15px; /* Consistent padding */
+  box-sizing: border-box;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  line-height: 1.5; /* Adjusted for better readability in inputs */
+  color: #2d3748;
+  background-color: #f7fafc;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.userInfoTextarea {
+  min-height: 120px; /* Adjusted default min-height */
+}
+
+.formInput::placeholder,
+.userInfoTextarea::placeholder {
+  color: #a0aec0;
+}
+
+.formInput:focus,
+.userInfoTextarea:focus {
+  border-color: #4caf50;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+  background-color: #ffffff;
+}
+
+.submitButton {
+  padding: 12px 25px;
+  background-color: #4caf50; /* Green accent color */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.submitButton:hover {
+  background-color: #388e3c; /* Darker shade on hover */
+  transform: translateY(-1px);
+}
+
+.submitButton:active {
+  transform: translateY(0px);
+}
+
+/* Styles for messages */
+.errorMessage, .successMessage {
+  padding: 10px 15px;
+  margin: 15px 0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.errorMessage {
+  background-color: #fed7d7; /* Light red */
+  color: #c53030; /* Darker red */
+  border: 1px solid #f56565;
+}
+
+.successMessage {
+  background-color: #c6f6d5; /* Light green */
+  color: #2f855a; /* Darker green */
+  border: 1px solid #68d391;
+}
+
+.loading-state p {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin-top: 20px;
+} 

@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FooterOne from './ComponentsLandingPage/FooterOne';
 import './ComponentsLandingPage/documentation.css';
-import SideNavbar from '../../Components/SideNavbar';
+import { useSidebarContext } from '../../context/SidebarContext.jsx';
 
 const DocumentationPage = () => {
+  const { setActiveSidebarType } = useSidebarContext();
   const [activeSection, setActiveSection] = useState('getting-started');
   const [searchQuery, setSearchQuery] = useState('');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
+  useEffect(() => {
+    setActiveSidebarType('userActions');
+  }, [setActiveSidebarType]);
 
   // Documentation sections data
   const sections = [
@@ -44,22 +44,174 @@ const DocumentationPage = () => {
     },
     {
       id: 'integrations',
-      title: 'Integrations',
+      title: 'Widget Implementation',
       content: `
-        <h1>Integrating SupportHub</h1>
-        <p>SupportHub can be integrated with your existing websites and applications in multiple ways.</p>
+        <h1>How to Add SupportHub Widget to Your Website</h1>
+        <p>Adding the SupportHub AI chat widget to your website is simple and takes just a few minutes. Follow this step-by-step guide to get your support widget up and running.</p>
         
-        <h2>Website Widget</h2>
-        <p>Add the SupportHub chat widget to your website with a simple code snippet:</p>
-        <pre><code>&lt;script src="https://cdn.supporthub.ai/widget.js" 
-  data-key="YOUR_API_KEY"&gt;&lt;/script&gt;</code></pre>
+        <h2>📋 Prerequisites</h2>
+        <div class="prerequisites-checklist">
+          <ul>
+            <li>✅ A SupportHub account (admin access required)</li>
+            <li>✅ Your business set up in SupportHub</li>
+            <li>✅ Access to your website's HTML code</li>
+            <li>✅ Basic knowledge of copy/paste code</li>
+          </ul>
+        </div>
+
+        <h2>🚀 Step-by-Step Implementation</h2>
         
-        <h2>API Integration</h2>
-        <p>For deeper integration, use our comprehensive REST API:</p>
-        <pre><code>curl -X POST https://api.supporthub.ai/v1/query \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"question": "How do I reset my password?"}'</code></pre>
+        <div class="implementation-steps">
+          <div class="step-box">
+            <h3>Step 1: Configure Your AI (5 minutes)</h3>
+            <ol>
+              <li>Log into your SupportHub dashboard</li>
+              <li>Click the <strong>"Widget"</strong> tab in the sidebar</li>
+              <li>Go to <strong>"AI Personalization"</strong></li>
+              <li>Set up your AI's name, personality, and responses</li>
+              <li>Add your company overview to help the AI understand your business</li>
+              <li>Click <strong>"Save Configuration"</strong></li>
+            </ol>
+            <p><em>💡 Tip: Take time to write a good personality description - this helps your AI give more relevant answers!</em></p>
+          </div>
+
+          <div class="step-box">
+            <h3>Step 2: Design Your Widget (3 minutes)</h3>
+            <ol>
+              <li>Stay in the Widget tab and go to <strong>"Widget Designer"</strong></li>
+              <li>Customize the appearance to match your brand:</li>
+              <ul>
+                <li><strong>Colors:</strong> Set primary color (usually your brand color)</li>
+                <li><strong>Position:</strong> Choose where the widget appears (bottom-right is most common)</li>
+                <li><strong>Messages:</strong> Write a welcoming header and greeting</li>
+                <li><strong>Style:</strong> Pick rounded or square corners</li>
+              </ul>
+              <li>Preview your changes in the live preview on the right</li>
+              <li>Click <strong>"Save Configuration"</strong> when happy with the design</li>
+            </ol>
+          </div>
+
+          <div class="step-box">
+            <h3>Step 3: Get Your Widget Code (2 minutes)</h3>
+            <ol>
+              <li>Go to <strong>"Widget Integration"</strong> in the Widget tab</li>
+              <li>If you don't have an API key yet:
+                <ul>
+                  <li>Go to Admin Dashboard → API Key Manager</li>
+                  <li>Click "Generate API Key"</li>
+                  <li>Copy and save your API key securely</li>
+                </ul>
+              </li>
+              <li>Back in Widget Integration, select your API key from the dropdown</li>
+              <li>Copy the generated script code (it looks like this):</li>
+            </ol>
+            <div class="code-example">
+              <pre><code>&lt;!-- SupportHub Widget --&gt;
+&lt;script 
+  src="http://localhost:5175/widget.js"
+  data-api-key="YOUR_API_KEY_HERE"
+  data-business-id="YOUR_BUSINESS_ID"
+  async
+  defer&gt;
+&lt;/script&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="step-box">
+            <h3>Step 4: Add Code to Your Website (5 minutes)</h3>
+            
+            <h4>🌐 For WordPress Users:</h4>
+            <ol>
+              <li>Go to your WordPress admin dashboard</li>
+              <li>Navigate to <strong>Appearance → Theme Editor</strong></li>
+              <li>Open your theme's <strong>footer.php</strong> file</li>
+              <li>Paste the script code just before the closing <code>&lt;/body&gt;</code> tag</li>
+              <li>Click <strong>"Update File"</strong></li>
+            </ol>
+
+            <h4>💻 For HTML/Custom Websites:</h4>
+            <ol>
+              <li>Open your website's HTML files</li>
+              <li>Find the <code>&lt;/body&gt;</code> closing tag</li>
+              <li>Paste the script code just before it</li>
+              <li>Save and upload your files to your web server</li>
+            </ol>
+
+            <h4>⚛️ For React/Vue/Angular Apps:</h4>
+            <ol>
+              <li>Add the script to your main <code>index.html</code> file in the public folder</li>
+              <li>Or use a script loader component to dynamically load it</li>
+              <li>Make sure it loads after your app initializes</li>
+            </ol>
+
+            <h4>🛒 For E-commerce Platforms:</h4>
+            <ul>
+              <li><strong>Shopify:</strong> Go to Online Store → Themes → Actions → Edit Code → theme.liquid</li>
+              <li><strong>WooCommerce:</strong> Follow the WordPress instructions above</li>
+              <li><strong>Magento:</strong> Add to your theme's footer template</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2>✅ Testing Your Widget</h2>
+        <div class="testing-section">
+          <ol>
+            <li>Visit your website in a new browser tab</li>
+            <li>Look for the chat widget (usually in the bottom-right corner)</li>
+            <li>Click on the widget to open the chat</li>
+            <li>Send a test message like "Hello" or "What are your business hours?"</li>
+            <li>Verify the AI responds appropriately</li>
+          </ol>
+          
+          <div class="troubleshooting">
+            <h3>🔧 Not Working? Try These Solutions:</h3>
+            <ul>
+              <li><strong>Widget not appearing:</strong> Check if the script is in the right location (before &lt;/body&gt;)</li>
+              <li><strong>Script errors:</strong> Verify your API key and business ID are correct</li>
+              <li><strong>No AI responses:</strong> Ensure your AI is configured in the dashboard</li>
+              <li><strong>Styling issues:</strong> Check for CSS conflicts with your website's styles</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2>⚙️ Advanced Configuration</h2>
+        <div class="advanced-config">
+          <h3>Custom Positioning</h3>
+          <p>You can modify the widget's position by adding CSS to your website:</p>
+          <pre><code>/* Move widget to bottom-left */
+.support-widget {
+  bottom: 20px !important;
+  left: 20px !important;
+  right: auto !important;
+}
+
+/* Change widget size */
+.support-widget {
+  width: 350px !important;
+  height: 500px !important;
+}</code></pre>
+
+          <h3>Department-Specific Widgets</h3>
+          <p>You can create different widgets for different sections of your website by:</p>
+          <ul>
+            <li>Setting up multiple departments in SupportHub</li>
+            <li>Using different API keys for each department</li>
+            <li>Customizing the AI personality for each use case</li>
+          </ul>
+        </div>
+
+        <h2>📊 Monitor Performance</h2>
+        <p>After implementation, monitor your widget's performance in the SupportHub dashboard:</p>
+        <ul>
+          <li><strong>Analytics:</strong> Track conversations, response times, and satisfaction</li>
+          <li><strong>Questions:</strong> Review common questions to improve your AI training</li>
+          <li><strong>Expert Activity:</strong> See when human experts need to step in</li>
+        </ul>
+
+        <div class="success-banner">
+          <h3>🎉 Congratulations!</h3>
+          <p>Your SupportHub widget is now live! Your customers can get instant AI-powered support 24/7, and complex questions will be routed to your expert team members.</p>
+        </div>
       `
     },
     {
@@ -144,11 +296,8 @@ const DocumentationPage = () => {
     : sections;
 
   return (
-    <div className={`documentation-page ${sidebarCollapsed ? 'collapsed' : ''}`}>
-      <SideNavbar isCollapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
-
-      {/* Documentation Header */}
-      <div className="doc-header">
+    <div className="documentation-container">
+      <header className="documentation-header">
         <div className="container">
           <h1>SupportHub Documentation</h1>
           <p>Everything you need to know about using SupportHub effectively</p>
@@ -167,10 +316,10 @@ const DocumentationPage = () => {
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Documentation Content */}
-      <div className={`doc-content container ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+      <div className={`doc-content container`}>
         {/* Sidebar */}
         <div className="doc-sidebar">
           <nav>

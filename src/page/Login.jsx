@@ -4,7 +4,7 @@ import './Login.css';
 import { auth } from "../services/ApiService";
 import { useUserContext } from "../context/LoginContext";
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -12,6 +12,7 @@ const Login = () => {
     const { login, loading, token } = useUserContext();
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
         if (token) {
@@ -19,7 +20,21 @@ const Login = () => {
             // Clear any previous errors
             setError(null);
         }
-    }, [token]);
+        
+        // Check for password reset success
+        const resetSuccess = searchParams.get('reset');
+        if (resetSuccess === 'success') {
+            setSuccessMessage("Password reset successful! You can now sign in with your new password.");
+            setError(null);
+        }
+        
+        // Check for account activation success
+        const activationSuccess = searchParams.get('activation');
+        if (activationSuccess === 'success') {
+            setSuccessMessage("Account activated successfully! You can now sign in.");
+            setError(null);
+        }
+    }, [token, searchParams]);
 
     const loginNow = async (e) => {
         e.preventDefault();
@@ -63,15 +78,15 @@ const Login = () => {
     return (
         <>
             <Helmet>
-                <title>Login to SupportHub | Access Your Support Dashboard</title>
-                <meta name="description" content="Securely log in to your SupportHub account to access AI-powered customer support tools, analytics, and support management features." />
-                <meta name="keywords" content="login, SupportHub login, customer support login, help desk login" />
-                <link rel="canonical" href="https://yourdomain.com/login" />
+                <title>Sign In to SavvyAI | Access Your AI Support Hub</title>
+                <meta name="description" content="Securely sign in to your SavvyAI account to access AI-powered customer support tools, analytics, and intelligent support management features." />
+                <meta name="keywords" content="login, SavvyAI login, AI customer support login, support hub login" />
+                <link rel="canonical" href="https://savvyai.ai/login" />
                 
                 {/* OpenGraph tags for social sharing */}
-                <meta property="og:title" content="Login to SupportHub | Customer Support Platform" />
-                <meta property="og:description" content="Access your SupportHub account to manage AI-powered customer support" />
-                <meta property="og:url" content="https://yourdomain.com/login" />
+                <meta property="og:title" content="Sign In to SavvyAI | AI-Powered Support Platform" />
+                <meta property="og:description" content="Access your SavvyAI account to manage intelligent customer support" />
+                <meta property="og:url" content="https://savvyai.ai/login" />
                 <meta property="og:type" content="website" />
                 
                 {/* Structured data for login page */}
@@ -80,8 +95,8 @@ const Login = () => {
                     {
                         "@context": "https://schema.org",
                         "@type": "WebPage",
-                        "name": "SupportHub Login",
-                        "description": "Login to access your SupportHub account",
+                        "name": "SavvyAI Sign In",
+                        "description": "Sign in to access your SavvyAI account",
                         "breadcrumb": {
                             "@type": "BreadcrumbList",
                             "itemListElement": [
@@ -89,13 +104,13 @@ const Login = () => {
                                     "@type": "ListItem",
                                     "position": 1,
                                     "name": "Home",
-                                    "item": "https://yourdomain.com"
+                                    "item": "https://savvyai.ai"
                                 },
                                 {
                                     "@type": "ListItem",
                                     "position": 2,
-                                    "name": "Login",
-                                    "item": "https://yourdomain.com/login"
+                                    "name": "Sign In",
+                                    "item": "https://savvyai.ai/login"
                                 }
                             ]
                         }
@@ -104,66 +119,137 @@ const Login = () => {
                 </script>
             </Helmet>
             
-            <div className="login-container" role="main" aria-labelledby="login-heading">
-                <div className="login-title-form-container">
-                    <h1 id="login-heading" className="login-title">Login to SupportHub</h1>
-                    
-                    {/* Form submission handled by onSubmit for cleaner code */}
-                    <form 
-                        className="login-form"
-                        onSubmit={loginNow}
-                        aria-label="Login form"
-                    >
-                        {/* Username input */}
-                        <div className="form-field">
-                            <label htmlFor="email" className="visually-hidden">Email</label>
-                            <input 
-                                id="email"
-                                type="email"
-                                placeholder="Email"
-                                className="login-input"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                aria-required="true"
-                                autoComplete="email"
-                            />
+            <div className="auth-page">
+                <div className="auth-background">
+                    <div className="auth-pattern"></div>
+                </div>
+                
+                <div className="auth-container">
+                    <div className="auth-card">
+                        <div className="auth-header">
+                            <div className="auth-logo">
+                                <div className="logo-icon">
+                                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                        <path d="M16 2L30 9v14L16 30 2 23V9l14-7z" fill="url(#gradient)" />
+                                        <defs>
+                                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stopColor="#3b82f6" />
+                                                <stop offset="100%" stopColor="#1e40af" />
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                </div>
+                                <span className="logo-text">SavvyAI</span>
+                            </div>
+                            <h1 className="auth-title">Welcome back</h1>
+                            <p className="auth-subtitle">Sign in to your account to continue</p>
                         </div>
+
+                        <form className="auth-form" onSubmit={loginNow}>
+                            <div className="form-group">
+                                <label htmlFor="email" className="form-label">Email address</label>
+                                <div className="input-group">
+                                    <div className="input-icon">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                        </svg>
+                                    </div>
+                                    <input 
+                                        id="email"
+                                        type="email"
+                                        placeholder="Enter your email"
+                                        className="form-input"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        aria-required="true"
+                                        autoComplete="email"
+                                    />
+                                </div>
+                            </div>
+                            
+                            <div className="form-group">
+                                <label htmlFor="password" className="form-label">Password</label>
+                                <div className="input-group">
+                                    <div className="input-icon">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <input 
+                                        id="password"
+                                        type="password"
+                                        placeholder="Enter your password"
+                                        className="form-input"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        aria-required="true"
+                                        autoComplete="current-password"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-options">
+                                <label className="checkbox-label">
+                                    <input type="checkbox" className="checkbox" />
+                                    <span className="checkbox-text">Remember me</span>
+                                </label>
+                                <Link to="/forgot-password" className="forgot-link">
+                                    Forgot password?
+                                </Link>
+                            </div>
+                            
+                            <button 
+                                type="submit"
+                                className="auth-button primary"
+                                disabled={loading}
+                                aria-busy={loading}
+                            >
+                                {loading ? (
+                                    <>
+                                        <div className="loading-spinner"></div>
+                                        Signing in...
+                                    </>
+                                ) : (
+                                    <>
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                        Sign In
+                                    </>
+                                )}
+                            </button>
+                            
+                            {/* Success message */}
+                            {successMessage && (
+                                <div className="alert alert-success" role="status">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    {successMessage}
+                                </div>
+                            )}
+                            
+                            {/* Error message */}
+                            {error && (
+                                <div className="alert alert-error" role="alert">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    {error}
+                                </div>
+                            )}
+                        </form>
                         
-                        {/* Password input */}
-                        <div className="form-field">
-                            <label htmlFor="password" className="visually-hidden">Password</label>
-                            <input 
-                                id="password"
-                                type="password"
-                                placeholder="Password"
-                                className="login-input"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                aria-required="true"
-                                autoComplete="current-password"
-                            />
+                        <div className="auth-footer">
+                            <p className="auth-footer-text">
+                                Don't have an account? 
+                                <Link to="/signup" className="auth-link">
+                                    Create one here
+                                </Link>
+                            </p>
                         </div>
-                        
-                        {/* Submit button */}
-                        <button 
-                            type="submit"
-                            className="login-button"
-                            disabled={loading}
-                            aria-busy={loading}
-                        >
-                            {loading ? 'Logging in...' : 'Login'}
-                        </button>
-                        
-                        {/* Success message */}
-                        {successMessage && <p className="success-message" style={{ color: 'green' }} role="status">{successMessage}</p>}
-                        
-                        {/* Error message */}
-                        {error && <p className="error-message" role="alert">{error}</p>}
-                    </form>
-                    
-                    <p className="signup-link">
-                        Don't have an account? <Link to="/signup">Sign up</Link>
-                    </p>
+                    </div>
                 </div>
             </div>
         </>

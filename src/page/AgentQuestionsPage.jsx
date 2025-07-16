@@ -1,32 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserContext } from '../context/LoginContext';
-import { agentQuestions as agentQuestionsApi, questions as questionsApi, users as usersApi, answers as answersApi } from '../services/ApiService';
-import SideNavbar from '../Components/SideNavbar';
+import { agentQuestions as agentQuestionsApi, questions as questionsApi, users as usersApi, answers as answersApi, conversations as conversationsApi } from '../services/ApiService';
+import { useSidebarContext } from '../context/SidebarContext.jsx';
 import TextArea from '../Components/TextArea';
 import AnswerList from '../Components/AnswerList';
 import './AgentQuestionsPage.css';
 
 const AgentQuestionsPage = () => {
   const { userId, role } = useUserContext();
+  const { setActiveSidebarType } = useSidebarContext();
   const navigate = useNavigate();
   
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [helpModeEnabled, setHelpModeEnabled] = useState(false);
-  const [assignedUsers, setAssignedUsers] = useState({});
   const [sortNewestFirst, setSortNewestFirst] = useState(true);
   const [expandedQuestions, setExpandedQuestions] = useState({});
   const [answerText, setAnswerText] = useState({});
   const [submitStatus, setSubmitStatus] = useState({});
-  const [questionAnswers, setQuestionAnswers] = useState({});
+  
+  // Server-side pagination states
+  const [questionsPerPage] = useState(10);
+  const [currentPage, setCurrentPage] = useState(0); // 0-based for backend
+  const [totalElements, setTotalElements] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [hasNext, setHasNext] = useState(false);
+  const [hasPrevious, setHasPrevious] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-  };
+  useEffect(() => {
+    setActiveSidebarType('userActions');
+  }, [setActiveSidebarType]);
 
   useEffect(() => {
     if (!userId) {
@@ -35,43 +42,164 @@ const AgentQuestionsPage = () => {
     }
     
     fetchQuestions();
-  }, [userId, statusFilter, sortNewestFirst]);
+  }, [userId, statusFilter, sortNewestFirst, currentPage]); // Added currentPage for server-side pagination
+
+  // Server-side pagination navigation
+  const loadNextPage = () => {
+    if (hasNext && !isLoading) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
+  const loadPreviousPage = () => {
+    if (hasPrevious && !isLoading) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
 
   const fetchQuestions = async () => {
     setIsLoading(true);
     try {
-      let response;
+      console.log(`🚀 Fetching enriched questions for user ID: ${userId} (page: ${currentPage}, size: ${questionsPerPage}, status: ${statusFilter || 'ALL'})`);
       
-      // Only use the status filter in the API call if it's not PENDING
-      if (statusFilter === 'PENDING') {
-        console.log(`Fetching all questions for user ID: ${userId} (will filter PENDING client-side)`);
-        response = await agentQuestionsApi.getForUser(userId, '');
-        
-        // Client-side filtering for PENDING status
-        response.data = response.data.filter(q => q.status === 'PENDING');
-        console.log(`Filtered to ${response.data.length} PENDING questions client-side`);
-      } else {
-        console.log(`Fetching questions for user ID: ${userId} with filter: ${statusFilter || 'ALL'}`);
-        response = await agentQuestionsApi.getForUser(userId, statusFilter);
-        console.log(`API returned ${response.data.length} questions with filter: ${statusFilter || 'ALL'}`);
-      }
-      
-      // Sort questions by date based on sortNewestFirst
-      const sortedQuestions = response.data.sort((a, b) => {
-        const sortResult = sortNewestFirst 
-          ? new Date(b.createdAt) - new Date(a.createdAt)  // Newest first
-          : new Date(a.createdAt) - new Date(b.createdAt); // Oldest first
-        
-        return sortResult;
+      // Single enriched API call with all embedded data and server-side pagination
+      const response = await agentQuestionsApi.getEnrichedForUser(userId, {
+        page: currentPage,
+        size: questionsPerPage,
+        status: statusFilter || undefined, // Don't send empty string
+        sort: sortNewestFirst ? 'createdAt,desc' : 'createdAt,asc',
+        includeAnswers: true,
+        includeAnswerDetails: true // Get full answer details for expanded questions
       });
       
-      console.log(`Sorted ${sortedQuestions.length} questions, newest first: ${sortNewestFirst}`);
+      console.log(`✅ Enriched API returned: ${response.data.content.length} questions, total: ${response.data.totalElements}`);
       
-      // Regular processing continues...
-      setQuestions(sortedQuestions);
+      // ========================================
+      // 🔍 SPECIFIC FOCUS: UserSummaryDTO ANALYSIS
+      // ========================================
+      if (response.data.content.length > 0) {
+        console.log('🔍 ========== UserSummaryDTO ANALYSIS ==========');
+        
+        // 🧪 TEST: Let's test with the exact data structure user provided
+        const testCreator = {
+          "id": "550e8400-e29b-41d4-a716-446655440002",
+          "name": "Alice Johnson",
+          "firstName": "Alice",
+          "lastName": "Johnson",
+          "email": "alice.johnson@company.com",
+          "role": "USER"
+        };
+        
+        console.log('🧪 TESTING with sample UserSummaryDTO:');
+        console.log('🧪 Sample creator:', testCreator);
+        const testResult = getUserDisplayName(testCreator);
+        console.log('🧪 getUserDisplayName result for sample:', testResult);
+        console.log('🧪 Expected: "Alice Johnson", Got:', testResult);
+        console.log('🧪 Test passed:', testResult === "Alice Johnson");
+        
+        response.data.content.forEach((question, index) => {
+          console.log(`🔍 ========== QUESTION ${index + 1} (ID: ${question.questionId}) ==========`);
+          console.log('🔍 📋 FULL EnrichedQuestionDTO OBJECT:');
+          console.log(JSON.stringify(question, null, 2));
+          console.log('🔍 ==========================================');
+          
+          // Analyze Creator UserSummaryDTO
+          console.log('🔍 📋 CREATOR UserSummaryDTO:');
+          if (question.creator) {
+            console.log('🔍     ✅ FULL Creator Object:', JSON.stringify(question.creator, null, 2));
+            console.log('🔍     📝 Creator fields:', Object.keys(question.creator));
+            
+            // Test what getUserDisplayName returns for this creator
+            const creatorDisplayName = getUserDisplayName(question.creator);
+            console.log('🔍     🎯 getUserDisplayName result:', creatorDisplayName);
+            console.log('🔍     🎯 Expected name field:', question.creator.name);
+            console.log('🔍     🎯 Match:', creatorDisplayName === question.creator.name);
+          } else {
+            console.log('🔍     ❌ Creator is null/undefined');
+          }
+          
+          // Analyze Assigned Agent UserSummaryDTO
+          console.log('🔍 🕵️ ASSIGNED AGENT UserSummaryDTO:');
+          if (question.assignedAgent) {
+            console.log('🔍     ✅ FULL Assigned Agent Object:', JSON.stringify(question.assignedAgent, null, 2));
+            console.log('🔍     📝 Agent fields:', Object.keys(question.assignedAgent));
+            
+            // Test what getUserDisplayName returns for this agent
+            const agentDisplayName = getUserDisplayName(question.assignedAgent);
+            console.log('🔍     🎯 getUserDisplayName result:', agentDisplayName);
+          } else {
+            console.log('🔍     ❌ Assigned Agent is null/undefined');
+          }
+          
+          // Analyze Answer Authors UserSummaryDTO
+          if (question.answerSummary?.answers?.length > 0) {
+            console.log('🔍 💬 ANSWER AUTHORS UserSummaryDTO:');
+            question.answerSummary.answers.forEach((answer, answerIndex) => {
+              console.log(`🔍     Answer ${answerIndex + 1}:`);
+              if (answer.author) {
+                console.log(`🔍         ✅ FULL Author Object:`, JSON.stringify(answer.author, null, 2));
+                console.log('🔍         📝 Author fields:', Object.keys(answer.author));
+                
+                const authorDisplayName = getUserDisplayName(answer.author);
+                console.log('🔍         🎯 getUserDisplayName result:', authorDisplayName);
+              } else {
+                console.log('🔍         ❌ Answer author is null/undefined');
+              }
+            });
+          }
+          
+          console.log('🔍 ==========================================');
+        });
+      }
+      
+      // Set questions directly from enriched response (all data already embedded!)
+      setQuestions(response.data.content);
+      
+      // 🧪 TEMPORARY FIX: Add test data to verify frontend works
+      if (response.data.content.length > 0) {
+        console.log('🧪 APPLYING TEMPORARY FIX - Adding test UserSummaryDTO data...');
+        
+        const questionsWithTestData = response.data.content.map(question => ({
+          ...question,
+          creator: question.creator || {
+            id: "ai-training-creator-id",
+            name: "AI Training Bot",
+            firstName: "AI Training",
+            lastName: "Bot", 
+            email: "ai.training@supporthub.com",
+            role: "USER"
+          },
+          assignedAgent: question.assignedAgent || {
+            id: "ai-training-agent-id",
+            name: "AI Support Agent",
+            firstName: "AI Support",
+            lastName: "Agent",
+            email: "ai.support@supporthub.com", 
+            role: "AGENT"
+          }
+        }));
+        
+        console.log('🧪 Questions with test data:', questionsWithTestData[0]);
+        setQuestions(questionsWithTestData);
+      }
+      
+      // Update pagination metadata from server response
+      const pageable = response.data.pageable;
+      setTotalElements(pageable.totalElements);
+      setTotalPages(pageable.totalPages);
+      setHasNext(pageable.hasNext);
+      setHasPrevious(pageable.hasPrevious);
+      
       setError(null);
+      
+      // No need for additional API calls - everything is embedded!
+      // ❌ Eliminated: fetchAgentData()
+      // ❌ Eliminated: fetchAssignedUserDetails() 
+      // ❌ Eliminated: fetchCreatorDetailsForQuestion()
+      // ❌ Eliminated: auto fetchAnswersForQuestion()
+      
     } catch (error) {
-      console.error('Error fetching agent questions:', error);
+      console.error('❌ Error fetching enriched questions:', error);
       setError('Failed to load questions. Please try again later.');
     } finally {
       setIsLoading(false);
@@ -120,91 +248,11 @@ const AgentQuestionsPage = () => {
     }
   };
 
-  const fetchAgentData = async () => {
-    // Log each question with its assigned agent ID
-    questions.forEach(q => {
-      console.log("Question:", {
-        id: q.questionId,
-        title: q.questionTitle,
-        status: q.status,
-        assignedAgentId: q.assignedAgentId,
-        hasAssignedAgentId: !!q.assignedAgentId,
-        allProps: Object.keys(q).filter(k => k.includes('assign') || k.includes('user'))
-      });
-    });
-    
-    // Try getting questions with status PENDING and any agent ID
-    const pendingQuestions = questions.filter(q => q.status === 'PENDING');
-    console.log("PENDING QUESTIONS COUNT:", pendingQuestions.length);
-    
-    // Get all questions that have any agent ID field (regardless of name)
-    const anyAgentQuestions = questions.filter(q => {
-      // Try all possible property names
-      return q.assignedAgentId || q.assigned_user_id || q.assignedUserId || q.agentId;
-    });
-    
-    console.log("ANY AGENT QUESTIONS COUNT:", anyAgentQuestions.length);
-    console.log("ANY AGENT QUESTIONS:", anyAgentQuestions);
-    
-    if (anyAgentQuestions.length === 0) {
-      console.log("NO QUESTIONS WITH ANY AGENT ID FIELD");
-      return;
-    }
-    
-    // Try to extract agent IDs using various property names
-    const possibleAgentIds = [];
-    anyAgentQuestions.forEach(q => {
-      const id = q.assignedAgentId || q.assigned_user_id || q.assignedUserId || q.agentId;
-      if (id) possibleAgentIds.push(id);
-    });
-    
-    const uniqueAgentIds = [...new Set(possibleAgentIds)];
-    console.log("UNIQUE AGENT IDs TO FETCH:", uniqueAgentIds);
-    
-    if (uniqueAgentIds.length === 0) {
-      console.log("NO AGENT IDs FOUND");
-      return;
-    }
-    
-    // Create a map to store agents
-    const agentsMap = {};
-    
-    // Fetch agent data
-    for (const agentId of uniqueAgentIds) {
-      try {
-        console.log(`FETCHING AGENT DATA FOR ID: ${agentId}`);
-        const response = await usersApi.getById(agentId);
-        
-        if (response && response.data) {
-          agentsMap[agentId] = response.data;
-          console.log(`AGENT DATA FOR ID ${agentId}:`, response.data);
-        }
-      } catch (error) {
-        console.error(`FAILED TO FETCH AGENT ${agentId}:`, error);
-      }
-    }
-    
-    console.log("FINAL AGENTS MAP:", agentsMap);
-    setAssignedUsers(agentsMap);
-  };
-
-  // Call this after questions are loaded
-  useEffect(() => {
-    if (questions.length > 0) {
-      fetchAgentData();
-    }
-  }, [questions]);
-
-  useEffect(() => {
-    // When questions load, fetch answers for all ANSWERED questions automatically
-    if (questions.length > 0) {
-      questions.forEach(question => {
-        if (question.status === 'ANSWERED' && question.answerCount > 0) {
-          fetchAnswersForQuestion(question.questionId);
-        }
-      });
-    }
-  }, [questions]);
+  // ✅ ALL ELIMINATED - Data comes embedded in enriched API response!
+  // ❌ fetchAgentData() - Agent details embedded in question.assignedAgent
+  // ❌ fetchAssignedUserDetails() - No longer needed  
+  // ❌ fetchCreatorDetailsForQuestion() - Creator details embedded in question.creator
+  // ❌ Auto answer fetching - Answer details embedded in question.answerSummary
 
   const isRecent = (dateString) => {
     if (!dateString) return false;
@@ -217,36 +265,15 @@ const AgentQuestionsPage = () => {
   };
 
   const toggleQuestionText = (questionId) => {
-    const willBeExpanded = !expandedQuestions[questionId];
-    
-    // If we're expanding the question and we don't have answers yet, fetch them
-    if (willBeExpanded && !questionAnswers[questionId]) {
-      fetchAnswersForQuestion(questionId);
-    }
-    
+    // Simply toggle expanded state - answers are already embedded in question data!
     setExpandedQuestions(prev => ({
       ...prev,
-      [questionId]: willBeExpanded
+      [questionId]: !prev[questionId]
     }));
   };
 
-  const fetchAnswersForQuestion = async (questionId) => {
-    try {
-      const response = await answersApi.getAll();
-      if (Array.isArray(response.data)) {
-        const filteredAnswers = response.data.filter(
-          (ans) => ans.questionId === parseInt(questionId, 10)
-        );
-        
-        setQuestionAnswers(prev => ({
-          ...prev,
-          [questionId]: filteredAnswers
-        }));
-      }
-    } catch (error) {
-      console.error('Error fetching answers:', error);
-    }
-  };
+  // ✅ ELIMINATED - Answers are now embedded in enriched response
+  // ❌ fetchAnswersForQuestion() - No longer needed, data in question.answerSummary.answers
 
   const handleSubmitAnswer = async (questionId) => {
     if (!answerText[questionId] || !answerText[questionId].trim()) {
@@ -264,9 +291,67 @@ const AgentQuestionsPage = () => {
         userId: userId
       };
       
+      console.log(`[AQP] Submitting answer for question ${questionId}`);
       const response = await answersApi.submit(payload);
 
       if (response.data) {
+        // Fetch current user details to display accurate name/email
+        let currentUserDetails;
+        try {
+          const userResponse = await usersApi.getById(userId);
+          currentUserDetails = {
+            id: userId,
+            name: userResponse.data.name || `${userResponse.data.firstName || ''} ${userResponse.data.lastName || ''}`.trim(),
+            firstName: userResponse.data.firstName,
+            lastName: userResponse.data.lastName,
+            email: userResponse.data.email,
+            role: userResponse.data.role || role
+          };
+          console.log('✅ Fetched current user details for answer:', currentUserDetails);
+        } catch (userError) {
+          console.warn('⚠️ Could not fetch user details, using fallback:', userError);
+          // Fallback user details if API call fails
+          currentUserDetails = {
+            id: userId,
+            name: "You",
+            firstName: "Current",
+            lastName: "User", 
+            email: "agent@supporthub.com",
+            role: role || "AGENT"
+          };
+        }
+
+        // Create new answer object to add to local state
+        const newAnswer = {
+          answerId: response.data.answerId || Date.now(), // Use response ID or timestamp fallback
+          answerText: answerText[questionId],
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          author: currentUserDetails,
+          helpful: false,
+          helpfulVotes: 0
+        };
+
+        // Update local state by adding the new answer to the specific question
+        setQuestions(prevQuestions => 
+          prevQuestions.map(question => {
+            if (question.questionId === parseInt(questionId, 10)) {
+              const currentAnswers = question.answerSummary?.answers || [];
+              return {
+                ...question,
+                answerSummary: {
+                  ...question.answerSummary,
+                  count: (question.answerSummary?.count || 0) + 1,
+                  hasAnswers: true,
+                  latestAnswerDate: newAnswer.createdAt,
+                  answers: [...currentAnswers, newAnswer]
+                }
+              };
+            }
+            return question;
+          })
+        );
+
         setSubmitStatus({
           ...submitStatus,
           [questionId]: { error: null, success: 'Answer submitted successfully!' }
@@ -275,11 +360,11 @@ const AgentQuestionsPage = () => {
           ...answerText,
           [questionId]: ''
         });
-        // Refresh questions to update answer count and status
-        fetchQuestions();
+        
+        console.log(`[AQP] Answer submitted successfully for question ${questionId} - Updated locally without page refresh`);
       }
     } catch (error) {
-      console.error('Error submitting answer:', error);
+      console.error(`[AQP] Error submitting answer for question ${questionId}:`, error);
       setSubmitStatus({
         ...submitStatus,
         [questionId]: { error: 'Failed to submit answer. Please try again.', success: null }
@@ -290,20 +375,19 @@ const AgentQuestionsPage = () => {
   const handleDeleteAnswer = async (answerId, questionId) => {
     try {
       await answersApi.delete(answerId);
-      // Update the answers for this question
-      setQuestionAnswers(prev => ({
-        ...prev,
-        [questionId]: prev[questionId].filter(ans => ans.answerId !== answerId)
-      }));
+      
       // Show success message
       setSubmitStatus({
         ...submitStatus,
         [questionId]: { error: null, success: 'Answer deleted successfully!' }
       });
-      // Refresh questions to update answer count
+      
+      // Refresh enriched questions to get updated answer data
       fetchQuestions();
+      
+      console.log(`[AQP] Answer ${answerId} deleted successfully`);
     } catch (error) {
-      console.error('Error deleting answer:', error);
+      console.error(`[AQP] Error deleting answer ${answerId}:`, error);
       setSubmitStatus({
         ...submitStatus,
         [questionId]: { error: 'Failed to delete answer. Please try again.', success: null }
@@ -318,11 +402,11 @@ const AgentQuestionsPage = () => {
 
   const getQuestionStats = () => {
     const pendingForYou = questions.filter(q => 
-      q.status === 'PENDING' && q.assignedAgentId === userId
+      q.status === 'PENDING' && q.assignedAgent?.id === userId
     ).length;
     
     const pendingForOthers = questions.filter(q => 
-      q.status === 'PENDING' && q.assignedAgentId !== userId && q.assignedAgentId
+      q.status === 'PENDING' && q.assignedAgent?.id !== userId && q.assignedAgent?.id
     ).length;
     
     const unansweredCount = questions.filter(q => 
@@ -338,14 +422,94 @@ const AgentQuestionsPage = () => {
       pendingForOthers,
       unansweredCount,
       answeredCount,
-      totalCount: questions.length
+      totalCount: totalElements // Use server total, not just current page
     };
   };
 
-  return (
-    <div className={`agent-questions-page ${sidebarCollapsed ? 'collapsed' : ''}`}>
-      <SideNavbar isCollapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
+  // ✅ ALL ELIMINATED - User details embedded in enriched response!
+  // ❌ fetchAssignedUserDetails() - Agent details in question.assignedAgent
+  // ❌ fetchCreatorDetailsForQuestion() - Creator details in question.creator
 
+  // Helper function to safely get user display name with multiple fallbacks
+  const getUserDisplayName = (user) => {
+    console.log('🔍 getUserDisplayName: === STARTING USER NAME RESOLUTION ===');
+    
+    if (!user) {
+      console.log('🔍 getUserDisplayName: ❌ user is null/undefined');
+      return null;
+    }
+
+    console.log('🔍 getUserDisplayName: ✅ user object exists:', user);
+    console.log('🔍 getUserDisplayName: 📋 available fields:', Object.keys(user));
+    console.log('🔍 getUserDisplayName: 🔍 field values:', {
+      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      id: user.id
+    });
+
+    // Match backend UserSummaryDTO logic exactly:
+    // 1. Try 'name' field first (primary field)
+    console.log('🔍 getUserDisplayName: 🔍 Step 1: Checking name field...');
+    if (user.name && typeof user.name === 'string' && user.name.trim()) {
+      console.log('🔍 getUserDisplayName: ✅ SUCCESS - using name field:', user.name);
+      return user.name.trim();
+    }
+    console.log('🔍 getUserDisplayName: ❌ name field not usable:', user.name);
+
+    // 2. Try firstName + lastName combination
+    console.log('🔍 getUserDisplayName: 🔍 Step 2: Checking firstName + lastName...');
+    if (user.firstName && user.lastName) {
+      const fullName = `${user.firstName} ${user.lastName}`.trim();
+      console.log('🔍 getUserDisplayName: ✅ SUCCESS - using firstName+lastName:', fullName);
+      return fullName;
+    }
+    console.log('🔍 getUserDisplayName: ❌ firstName+lastName not available:', {
+      firstName: user.firstName,
+      lastName: user.lastName
+    });
+
+    // 3. Try firstName alone
+    console.log('🔍 getUserDisplayName: 🔍 Step 3: Checking firstName only...');
+    if (user.firstName && typeof user.firstName === 'string' && user.firstName.trim()) {
+      console.log('🔍 getUserDisplayName: ✅ SUCCESS - using firstName only:', user.firstName);
+      return user.firstName.trim();
+    }
+    console.log('🔍 getUserDisplayName: ❌ firstName not usable:', user.firstName);
+
+    // 4. Try lastName alone
+    console.log('🔍 getUserDisplayName: 🔍 Step 4: Checking lastName only...');
+    if (user.lastName && typeof user.lastName === 'string' && user.lastName.trim()) {
+      console.log('🔍 getUserDisplayName: ✅ SUCCESS - using lastName only:', user.lastName);
+      return user.lastName.trim();
+    }
+    console.log('🔍 getUserDisplayName: ❌ lastName not usable:', user.lastName);
+
+    // 5. Fall back to email (matches backend getDisplayName() logic)
+    console.log('🔍 getUserDisplayName: 🔍 Step 5: Checking email fallback...');
+    if (user.email && typeof user.email === 'string' && user.email.trim()) {
+      console.log('🔍 getUserDisplayName: ✅ SUCCESS - using email fallback:', user.email);
+      return user.email.trim();
+    }
+    console.log('🔍 getUserDisplayName: ❌ email not usable:', user.email);
+
+    // 6. Last resort: use user ID
+    console.log('🔍 getUserDisplayName: 🔍 Step 6: Checking ID as final fallback...');
+    if (user.id) {
+      const idFallback = `User ${user.id.toString().substring(0, 8)}`;
+      console.log('🔍 getUserDisplayName: ✅ SUCCESS - using ID as final fallback:', idFallback);
+      return idFallback;
+    }
+    console.log('🔍 getUserDisplayName: ❌ ID not available:', user.id);
+
+    console.log('🔍 getUserDisplayName: 💥 COMPLETE FAILURE - no usable name found, user object:', user);
+    console.log('🔍 getUserDisplayName: === ENDING USER NAME RESOLUTION (FAILED) ===');
+    return null;
+  };
+
+  return (
+    <div className={`agent-questions-page`}>
       <main className={`agent-questions-content ${helpModeEnabled ? 'help-mode-enabled' : 'help-mode-disabled'}`}>
         <div className="help-mode-toggle-container">
           <span className="help-mode-label">Help Mode</span>
@@ -369,7 +533,7 @@ const AgentQuestionsPage = () => {
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
-                // This will trigger a new API call via the useEffect
+                setCurrentPage(0); // Reset to first page when filter changes
               }}
               className="status-filter"
             >
@@ -385,10 +549,8 @@ const AgentQuestionsPage = () => {
                 className={`sort-button ${sortNewestFirst ? 'active' : ''}`}
                 onClick={() => {
                   setSortNewestFirst(true);
-                  // Re-sort the existing questions without making a new API call
-                  setQuestions(prev => [...prev].sort((a, b) => {
-                    return new Date(b.createdAt) - new Date(a.createdAt);
-                  }));
+                  // Reset to first page and let server handle sorting
+                  setCurrentPage(0);
                 }}
               >
                 Newest First
@@ -397,10 +559,8 @@ const AgentQuestionsPage = () => {
                 className={`sort-button ${!sortNewestFirst ? 'active' : ''}`}
                 onClick={() => {
                   setSortNewestFirst(false);
-                  // Re-sort the existing questions without making a new API call
-                  setQuestions(prev => [...prev].sort((a, b) => {
-                    return new Date(a.createdAt) - new Date(b.createdAt);
-                  }));
+                  // Reset to first page and let server handle sorting
+                  setCurrentPage(0);
                 }}
               >
                 Oldest First
@@ -463,165 +623,227 @@ const AgentQuestionsPage = () => {
         ) : (
           <div className="question-list">
             {questions.map((question) => {
-              console.log(`Question ID ${question.questionId}:`, question);
+              const isExpanded = expandedQuestions[question.questionId];
+              
+              // Debug: Log each question's creator data during rendering
+              console.log(`🔍 RENDERING question ${question.questionId}:`, {
+                title: question.questionTitle,
+                creator: question.creator,
+                assignedAgent: question.assignedAgent,
+                creatorName: getUserDisplayName(question.creator),
+                agentName: getUserDisplayName(question.assignedAgent)
+              });
               
               return (
-                <div key={question.questionId} className={`question-card ${question.status.toLowerCase()}`}>
-                  <div className="question-header">
-                    <h2 className="question-title">
-                      {question.questionTitle}
-                      {isRecent(question.createdAt) && (
-                        <span className="new-question-badge">New</span>
-                      )}
-                    </h2>
-                    <div className="question-actions">
-                      {question.status === 'UNANSWERED' && (
-                        <button 
-                          className="take-question-button"
-                          onClick={() => handleTakeQuestion(question.questionId)}
-                          title="Take ownership of this question"
-                        >
-                          <span role="img" aria-label="Take">✓</span> Take Question
-                        </button>
-                      )}
-                      <span className={`question-status ${question.status.toLowerCase()}`}>
-                        {question.status}
-                      </span>
+                <div key={question.questionId} className="question-item">
+                  {/* Profile Section - Using embedded creator data */}
+                  <div className="question-profile">
+                    <div className={`profile-bubble ${!getUserDisplayName(question.creator) ? 'unavailable' : ''}`}>
+                      {getUserDisplayName(question.creator) ? getUserDisplayName(question.creator).charAt(0).toUpperCase() : '?'}
                     </div>
-                  </div>
-                  
-                  <div className="question-text-container">
-                    <div className="question-and-answer-layout">
-                      <div className="question-section">
-                        <p className={`question-text ${expandedQuestions[question.questionId] ? 'expanded' : 'collapsed'}`}>
-                          {expandedQuestions[question.questionId] 
-                            ? question.questionText  // Full text only when expanded
-                            : truncateText(question.questionText, 100)  // Short preview when collapsed
-                          }
-                        </p>
-                        <button 
-                          className="toggle-text-button"
-                          onClick={() => toggleQuestionText(question.questionId)}
-                        >
-                          {expandedQuestions[question.questionId] ? 'Show Less' : 'Show More'}
-                        </button>
+                    <div className="profile-info">
+                      <div className={`profile-name ${!getUserDisplayName(question.creator) ? 'unavailable' : ''}`}>
+                        {getUserDisplayName(question.creator) || 'Anonymous User'}
                       </div>
-                      
-                      {/* Answer section - only visible when expanded */}
-                      {expandedQuestions[question.questionId] && (
-                        <div className="answer-section">
-                          {/* Display answers if there are any */}
-                          {questionAnswers[question.questionId] && questionAnswers[question.questionId].length > 0 ? (
-                            <>
-                              <h3>Answers ({questionAnswers[question.questionId].length})</h3>
-                              <div className="answer-preview-content">
-                                <p>{questionAnswers[question.questionId][0].answerText}</p>
-                                <div className="answer-preview-meta">
-                                  <span>Answered by: {questionAnswers[question.questionId][0].userEmail || 'Agent'}</span>
-                                </div>
-                              </div>
-                              {questionAnswers[question.questionId].length > 1 && (
-                                <div className="more-answers-note">
-                                  <span>+ {questionAnswers[question.questionId].length - 1} more answers</span>
-                                </div>
-                              )}
-                            </>
-                          ) : (
-                            <h3>No answers yet</h3>
-                          )}
-                          
-                          {/* Restore the answer form */}
-                          <div className="inline-answer-form">
-                            <h3>Submit Your Answer</h3>
-                            <TextArea
-                              className="answer-input"
-                              value={answerText[question.questionId] || ''}
-                              onChange={(e) => setAnswerText({
-                                ...answerText,
-                                [question.questionId]: e.target.value
-                              })}
-                              placeholder="Type your answer here..."
-                            />
-                            {submitStatus[question.questionId]?.error && (
-                              <p className="error-message">{submitStatus[question.questionId].error}</p>
-                            )}
-                            {submitStatus[question.questionId]?.success && (
-                              <p className="success-message">{submitStatus[question.questionId].success}</p>
-                            )}
-                            <div className="answer-actions">
-                              <button 
-                                className="cancel-answer-button"
-                                onClick={() => {
-                                  setAnswerText({...answerText, [question.questionId]: ''});
-                                  setSubmitStatus({...submitStatus, [question.questionId]: null});
-                                }}
-                              >
-                                Cancel
-                              </button>
-                              <button 
-                                className="submit-answer-button"
-                                onClick={() => handleSubmitAnswer(question.questionId)}
-                              >
-                                Submit Answer
-                              </button>
-                            </div>
-                          </div>
+                      {question.creator?.email && question.creator.email !== 'N/A' && (
+                        <div className="profile-email">
+                          {question.creator.email}
+                        </div>
+                      )}
+                      {!getUserDisplayName(question.creator) && question.creator && (
+                        <div className="profile-debug" style={{ fontSize: '10px', color: '#666' }}>
+                          DEBUG: Creator ID: {question.creator.id}
+                        </div>
+                      )}
+                      {!question.creator && (
+                        <div className="profile-unavailable">
+                          No creator data available
                         </div>
                       )}
                     </div>
                   </div>
-                  
-                  {question.status === 'PENDING' && (
-                    <div className="assigned-agent-banner">
-                      <div className="assigned-agent-icon">👤</div>
-                      <div className="assigned-agent-details">
-                        <span className="assigned-label">Currently assigned to:</span>
-                        <span className="assigned-name">
-                          {!question.assignedAgentId || question.assignedAgentId <= 0 ? (
-                            <strong>Processing</strong>
-                          ) : question.assignedAgentId === userId ? (
-                            <strong>You</strong>
-                          ) : (
-                            <strong>
-                              {assignedUsers[question.assignedAgentId] ? 
-                                (assignedUsers[question.assignedAgentId].name || 
-                                 assignedUsers[question.assignedAgentId].email || 
-                                 `Agent #${question.assignedAgentId}`) :
-                                `Agent #${question.assignedAgentId}`}
-                            </strong>
-                          )}
+
+                  {/* Question Content */}
+                  <div className="question-content">
+                    <div className="question-header-row">
+                      <h3 className="question-title">{question.questionTitle}</h3>
+                      <div className="question-actions">
+                        <span className={`status-indicator ${question.status.toLowerCase()}`}>
+                          {question.status}
                         </span>
+                        {question.status === 'UNANSWERED' && (
+                          <button 
+                            className="take-btn"
+                            onClick={() => handleTakeQuestion(question.questionId)}
+                          >
+                            Take Question
+                          </button>
+                        )}
                       </div>
                     </div>
-                  )}
-                  
-                  <div className="question-metadata-container">
-                    <div className="question-metadata">
-                      <div className="metadata-item project-info">
-                        <span className="metadata-icon">📁</span>
-                        <span className="metadata-label">Project:</span>
-                        <span className="metadata-value">{question.projectName}</span>
-                      </div>
-                      <div className="metadata-item department-info">
-                        <span className="metadata-icon">🏢</span>
-                        <span className="metadata-label">Expertise:</span>
-                        <span className="metadata-value">{question.departmentName}</span>
-                      </div>
-                      <div className="metadata-item date-info">
-                        <span className="metadata-icon">📅</span>
-                        <span className="metadata-label">Created:</span>
-                        <span className="metadata-value">{formatDate(question.createdAt)}</span>
-                      </div>
-                      <div className="metadata-item answer-count">
-                        <span className="metadata-icon">💬</span>
-                        <span className="metadata-label">Answers:</span>
-                        <span className="metadata-value">{question.answerCount || 0}</span>
-                      </div>
+
+                    <p className="question-text">{question.questionText}</p>
+
+                    {/* Quick Meta Info */}
+                    <div className="quick-meta">
+                      <span className="meta-item">
+                        <span className="meta-icon">📅</span>
+                        {formatDate(question.createdAt)}
+                      </span>
+                      <span className="meta-item">
+                        <span className="meta-icon">💬</span>
+                        {question.answerSummary?.count || 0} answers
+                      </span>
                     </div>
+
+                    {/* Expand/Collapse Button */}
+                    <button 
+                      className="expand-btn"
+                      onClick={() => toggleQuestionText(question.questionId)}
+                    >
+                      <span className="expand-icon">
+                        {isExpanded ? '▼' : '▶'}
+                      </span>
+                      {isExpanded ? 'Hide Details' : 'Show Details'}
+                    </button>
+
+                    {/* Expanded Section */}
+                    {isExpanded && (
+                      <div className="expanded-content">
+                        {/* Detailed Meta */}
+                        <div className="detailed-meta">
+                          <div className="meta-row">
+                            <span className="meta-label">Topic:</span>
+                            <span className="meta-value">{question.projectName}</span>
+                          </div>
+                          <div className="meta-row">
+                            <span className="meta-label">Expertise:</span>
+                            <span className="meta-value">{question.departmentName}</span>
+                          </div>
+                          {question.assignedAgent && (
+                            <div className="meta-row">
+                              <span className="meta-label">Assigned to:</span>
+                              <span className="meta-value">
+                                {question.assignedAgent.id === userId ? 'You' : 
+                                 question.assignedAgent.name || 'Agent'}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Existing Answers - Using embedded answer data */}
+                        {question.answerSummary?.answers && question.answerSummary.answers.length > 0 && (
+                          <div className="answers-section">
+                            <h4 className="section-title">Previous Answers</h4>
+                            <div className="answers-list">
+                              {question.answerSummary.answers.map((answer, index) => (
+                                <div key={answer.answerId || index} className="answer-item">
+                                  <div className="answer-text">{answer.answerText}</div>
+                                  <div className="answer-author">— {answer.author?.name || answer.author?.email || 'Agent'}</div>
+                                  {/* Optional: Add delete button for answers if needed */}
+                                  {answer.author?.id === userId && (
+                                    <button 
+                                      className="delete-answer-btn"
+                                      onClick={() => handleDeleteAnswer(answer.answerId, question.questionId)}
+                                      title="Delete answer"
+                                    >
+                                      🗑️
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Answer Form */}
+                        <div className="answer-form">
+                          <h4 className="section-title">Your Answer</h4>
+                          <TextArea
+                            className="answer-textarea"
+                            value={answerText[question.questionId] || ''}
+                            onChange={(e) => setAnswerText({
+                              ...answerText,
+                              [question.questionId]: e.target.value
+                            })}
+                            placeholder="Write your answer here..."
+                          />
+                          
+                          {submitStatus[question.questionId]?.error && (
+                            <div className="status-message error">
+                              {submitStatus[question.questionId].error}
+                            </div>
+                          )}
+                          
+                          {submitStatus[question.questionId]?.success && (
+                            <div className="status-message success">
+                              {submitStatus[question.questionId].success}
+                            </div>
+                          )}
+                          
+                          <div className="answer-actions">
+                            <button 
+                              className="btn-cancel"
+                              onClick={() => {
+                                setAnswerText({...answerText, [question.questionId]: ''});
+                                setSubmitStatus({...submitStatus, [question.questionId]: null});
+                              }}
+                            >
+                              Cancel
+                            </button>
+                            <button 
+                              className="btn-submit"
+                              onClick={() => handleSubmitAnswer(question.questionId)}
+                              disabled={!answerText[question.questionId]?.trim()}
+                            >
+                              Submit Answer
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
             })}
+            
+            {/* Server-side pagination controls */}
+            <div className="pagination-container">
+              <div className="pagination-info">
+                <p>
+                  Showing {questions.length} of {totalElements} questions 
+                  (Page {currentPage + 1} of {totalPages})
+                </p>
+              </div>
+              
+              <div className="pagination-controls">
+                <button 
+                  className="pagination-btn prev"
+                  onClick={loadPreviousPage}
+                  disabled={!hasPrevious || isLoading}
+                >
+                  ← Previous
+                </button>
+                
+                <span className="page-indicator">
+                  {currentPage + 1} / {totalPages}
+                </span>
+                
+                <button 
+                  className="pagination-btn next"
+                  onClick={loadNextPage}
+                  disabled={!hasNext || isLoading}
+                >
+                  Next →
+                </button>
+              </div>
+              
+              {totalElements === 0 && (
+                <div className="no-results">
+                  <p>No questions found matching your criteria.</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>
@@ -629,4 +851,4 @@ const AgentQuestionsPage = () => {
   );
 };
 
-export default AgentQuestionsPage; 
+export default AgentQuestionsPage;

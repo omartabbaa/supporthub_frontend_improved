@@ -282,4 +282,270 @@
     position: static;
     margin-bottom: 2rem;
   }
+}
+
+/* Widget Implementation Guide Specific Styles */
+
+.prerequisites-checklist {
+  background: #f0f9ff;
+  border: 2px solid #0ea5e9;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.prerequisites-checklist ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.prerequisites-checklist li {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.implementation-steps {
+  margin: 30px 0;
+}
+
+.step-box {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #38b2ac;
+}
+
+.step-box h3 {
+  color: #38b2ac;
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-box h4 {
+  color: #2d3748;
+  margin: 20px 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.step-box ol {
+  padding-left: 20px;
+}
+
+.step-box ol li {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.step-box ul {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.step-box ul li {
+  margin: 4px 0;
+}
+
+.step-box em {
+  background: #fef3c7;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #f59e0b;
+  display: block;
+  margin: 12px 0;
+  font-style: normal;
+}
+
+.code-example {
+  background: #1e293b;
+  border-radius: 8px;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+.code-example pre {
+  margin: 0;
+  padding: 20px;
+  color: #e2e8f0;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+
+.code-example code {
+  color: #e2e8f0;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.testing-section {
+  background: #f0fdf4;
+  border: 2px solid #22c55e;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 30px 0;
+}
+
+.testing-section ol {
+  padding-left: 20px;
+}
+
+.testing-section ol li {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.troubleshooting {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.troubleshooting h3 {
+  color: #dc2626;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+
+.troubleshooting ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.troubleshooting li {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.troubleshooting strong {
+  color: #991b1b;
+}
+
+.advanced-config {
+  background: #faf5ff;
+  border: 2px solid #a855f7;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 30px 0;
+}
+
+.advanced-config h3 {
+  color: #7c3aed;
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.advanced-config pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 16px;
+  border-radius: 6px;
+  margin: 12px 0;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.advanced-config code {
+  background: #374151;
+  color: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.success-banner {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 30px 0;
+  text-align: center;
+}
+
+.success-banner h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.success-banner p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+/* Enhanced code blocks throughout documentation */
+.doc-main pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 16px 0;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.doc-main code {
+  background: #374151;
+  color: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+}
+
+.doc-main pre code {
+  background: none;
+  padding: 0;
+  color: #e2e8f0;
+}
+
+/* Responsive improvements for mobile */
+@media (max-width: 768px) {
+  .step-box {
+    padding: 16px;
+    margin: 16px 0;
+  }
+  
+  .step-box h3 {
+    font-size: 18px;
+  }
+  
+  .code-example pre,
+  .advanced-config pre,
+  .doc-main pre {
+    padding: 12px;
+    font-size: 12px;
+  }
+  
+  .success-banner {
+    padding: 20px;
+  }
+  
+  .success-banner h3 {
+    font-size: 20px;
+  }
 } 

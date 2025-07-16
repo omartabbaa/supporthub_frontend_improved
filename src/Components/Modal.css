@@ -1,156 +1,609 @@
-/* Modal.css */
+/* Gmail-Style Modal Design - High Specificity Override */
 
 /* Reset Box Sizing */
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-/* Modal Overlay */
+/* Modal Overlay - Escape all parent positioning and center on full viewport */
+body .modal-overlay,
+html body .modal-overlay,
+div.modal-overlay,
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Ensures modal is on top */
-  padding: 10px; /* Adds padding to prevent content from touching screen edges */
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(32, 33, 36, 0.85) !important;
+  z-index: 99999 !important;
+  backdrop-filter: blur(2px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  transform: none !important;
+  clip: none !important;
+  clip-path: none !important;
+  isolation: isolate !important;
 }
 
-/* Modal Content */
-.modal-content {
-  background-color: #fff;
-  border-radius: 8px;
-
-  width: 100%;
-  max-width: 400px;
-  padding: 20px 25px;
-  position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-out;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centers content horizontally */
-  overflow: hidden; /* Prevents inner content from overflowing */
+/* Modal Content - Perfect viewport centering, independent of parent layouts */
+body .modal-overlay .modal-content,
+html body .modal-overlay .modal-content,
+div.modal-overlay .modal-content,
+.modal-overlay .modal-content {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  background-color: #ffffff !important;
+  border-radius: 12px !important;
+  width: 95vw !important;
+  max-width: 520px !important;
+  min-width: 450px !important;
+  max-height: 95vh !important;
+  min-height: 500px !important;
+  padding: 0 !important;
+  box-shadow: 
+    0 8px 40px rgba(0, 0, 0, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  animation: modalSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+  margin: 0 !important;
+  text-align: left !important;
+  z-index: 100000 !important;
+  isolation: isolate !important;
 }
 
-/* Close Button */
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: transparent;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #aaa;
-  transition: color 0.2s;
+/* Modal Header */
+.modal-header {
+  padding: 20px !important;
+  border-bottom: 1px solid #e8eaed !important;
+  position: relative !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
-.close-button:hover {
-  color: #000;
+/* Close Button - Single, properly positioned with high specificity */
+.modal-overlay .close-button,
+div.modal-overlay .close-button,
+.modal-header .close-button {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  background: transparent !important;
+  border: none !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  font-family: Arial, sans-serif !important;
+  cursor: pointer !important;
+  color: #5f6368 !important;
+  transition: all 0.2s ease !important;
+  z-index: 10 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.modal-overlay .close-button:hover,
+div.modal-overlay .close-button:hover,
+.modal-header .close-button:hover {
+  background-color: #f1f3f4 !important;
+  color: #3c4043 !important;
+}
+
+.modal-overlay .close-button:focus,
+div.modal-overlay .close-button:focus,
+.modal-header .close-button:focus {
+  outline: 2px solid #1a73e8 !important;
+  outline-offset: 2px !important;
+}
+
+/* Ensure the close button text renders properly */
+.modal-overlay .close-button::before,
+div.modal-overlay .close-button::before,
+.modal-header .close-button::before {
+  content: none !important;
+}
+
+.modal-overlay .close-button::after,
+div.modal-overlay .close-button::after,
+.modal-header .close-button::after {
+  content: none !important;
 }
 
 /* Modal Title */
 .modal-title {
-  margin-bottom: 15px;
-  font-size: 20px;
-  color: #333;
-  text-align: center;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 20px !important;
+  font-weight: 400 !important;
+  color: #3c4043 !important;
+  line-height: 1.2 !important;
+  padding-right: 45px !important;
+  width: 100% !important;
 }
 
-/* Modal Form */
+/* Modal Body */
+.modal-body {
+  padding: 20px !important;
+  flex: 1 !important;
+  overflow-y: auto !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Modal Form - Remove all default spacing */
 .modal-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px; /* Space between form groups */
-  overflow-y: auto; /* Makes form scrollable if content exceeds modal height */
-  flex-grow: 1; /* Allows form to take up available space */
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 18px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
-/* Form Group */
+/* Form Group - Ensure no default spacing */
 .form-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
-/* Form Labels */
+/* Form Labels - Remove any browser defaults */
 .form-group label {
-  margin-bottom: 5px;
-  font-size: 14px;
-  color: #555;
+  margin: 0 0 8px 0 !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #3c4043 !important;
+  line-height: 1.4 !important;
+  text-indent: 0 !important;
+  text-align: left !important;
+  width: 100% !important;
 }
 
-/* Form Inputs */
+/* Form Inputs - Remove browser defaults and ensure full width */
 .form-group input,
 .form-group textarea {
-  padding: 8px 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  transition: border-color 0.2s;
+  padding: 12px 16px !important;
+  margin: 0 !important;
+  border: 1px solid #dadce0 !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+  color: #3c4043 !important;
+  background-color: #ffffff !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s ease !important;
+  line-height: 1.4 !important;
+  text-indent: 0 !important;
+  outline: none !important;
+  display: block !important;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #9aa0a6 !important;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
-  border-color: #007bff;
-  outline: none;
+  border-color: #1a73e8 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 1px #1a73e8 !important;
 }
 
-/* Submit Button */
+.form-group input:hover:not(:focus),
+.form-group textarea:hover:not(:focus) {
+  border-color: #5f6368 !important;
+}
+
+.form-group textarea {
+  resize: vertical !important;
+  min-height: 70px !important;
+  font-family: inherit !important;
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 20px !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+  border-top: 1px solid #e8eaed !important;
+  background-color: #fafbfc !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Submit Button - Gmail style */
 .modal-submit-button {
-  padding: 10px;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  color: #fff;
-  transition: background-color 0.3s;
-  width: 100%;
+  padding: 8px 20px !important;
+  border: none !important;
+  border-radius: 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  min-width: 90px !important;
+  line-height: 1.4 !important;
+}
+
+/* Cancel Button */
+.modal-cancel-button {
+  padding: 8px 20px !important;
+  border: 1px solid #dadce0 !important;
+  border-radius: 20px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+  cursor: pointer !important;
+  background-color: #ffffff !important;
+  color: #3c4043 !important;
+  transition: all 0.2s ease !important;
+  min-width: 70px !important;
+  line-height: 1.4 !important;
+}
+
+.modal-cancel-button:hover {
+  background-color: #f8f9fa !important;
+  border-color: #5f6368 !important;
 }
 
 /* Add Button */
 .modal-submit-button.add {
-  background-color: #28a745;
+  background-color: #1a73e8 !important;
+  color: #ffffff !important;
 }
 
 .modal-submit-button.add:hover {
-  background-color: #218838;
+  background-color: #1557b0 !important;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15) !important;
 }
 
 /* Update Button */
 .modal-submit-button.update {
-  background-color: #007bff;
+  background-color: #34a853 !important;
+  color: #ffffff !important;
 }
 
 .modal-submit-button.update:hover {
-  background-color: #0069d9;
+  background-color: #2d8f47 !important;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15) !important;
 }
 
-/* Fade In Animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+.modal-submit-button:disabled {
+  background-color: #f1f3f4 !important;
+  color: #9aa0a6 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Enhanced Animation */
+@keyframes modalSlideIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-32px) scale(0.96); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+  }
 }
 
 /* Responsive Design */
-@media (max-width: 500px) {
-  .modal-content {
-      padding: 15px 20px;
+@media (max-width: 600px) {
+  .modal-overlay,
+  div.modal-overlay {
+    padding: 16px !important;
+  }
+
+  .modal-overlay .modal-content,
+  div.modal-overlay .modal-content {
+    max-width: 100% !important;
+  }
+
+  .modal-header {
+    padding: 20px 20px 12px 20px !important;
   }
 
   .modal-title {
-      font-size: 18px;
+    font-size: 20px !important;
+    padding-right: 44px !important;
   }
 
-  .modal-submit-button {
-      font-size: 14px;
-      padding: 8px;
+  .modal-body {
+    padding: 12px 20px 20px 20px !important;
+  }
+
+  .modal-footer {
+    padding: 12px 20px 20px 20px !important;
+    flex-direction: column-reverse !important;
+  }
+
+  .modal-submit-button,
+  .modal-cancel-button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .modal-overlay .close-button,
+  div.modal-overlay .close-button,
+  .modal-header .close-button {
+    top: 14px !important;
+    right: 14px !important;
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 16px !important;
   }
 }
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .modal-overlay .modal-content,
+  div.modal-overlay .modal-content {
+    border: 2px solid #000000 !important;
+  }
+  
+  .form-group input,
+  .form-group textarea {
+    border: 2px solid #000000 !important;
+  }
+}
+
+/* Image Upload Styles */
+
+/* Upload Mode Toggle */
+.upload-mode-toggle {
+  display: flex !important;
+  gap: 0 !important;
+  margin-bottom: 12px !important;
+  border: 1px solid #dadce0 !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background-color: #f8f9fa !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.mode-toggle-btn {
+  flex: 1 !important;
+  padding: 10px 16px !important;
+  border: none !important;
+  background-color: transparent !important;
+  color: #5f6368 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  border-right: 1px solid #dadce0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.mode-toggle-btn:last-child {
+  border-right: none !important;
+}
+
+.mode-toggle-btn.active {
+  background-color: #1a73e8 !important;
+  color: #ffffff !important;
+}
+
+.mode-toggle-btn:hover:not(.active) {
+  background-color: #e8f0fe !important;
+  color: #1a73e8 !important;
+}
+
+/* File Upload Section */
+.file-upload-section {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* File Drop Area */
+.file-drop-area {
+  border: 2px dashed #dadce0 !important;
+  border-radius: 12px !important;
+  padding: 24px !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  background-color: #fafbfc !important;
+  position: relative !important;
+  min-height: 180px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.file-drop-area:hover,
+.file-drop-area.drag-active {
+  border-color: #1a73e8 !important;
+  background-color: #e8f0fe !important;
+}
+
+.file-drop-area.drag-active {
+  border-style: solid !important;
+  transform: scale(1.02) !important;
+}
+
+/* Upload Placeholder */
+.upload-placeholder {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.upload-icon {
+  font-size: 48px !important;
+  opacity: 0.7 !important;
+}
+
+.upload-text {
+  text-align: center !important;
+}
+
+.upload-text p {
+  margin: 4px 0 !important;
+  color: #5f6368 !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+.upload-text p:first-child {
+  color: #3c4043 !important;
+  font-weight: 500 !important;
+}
+
+/* Image Preview Container */
+.image-preview-container {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.image-preview {
+  width: 100% !important;
+  height: 150px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+}
+
+.image-preview-overlay {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  border-radius: 8px !important;
+}
+
+.image-preview-container:hover .image-preview-overlay {
+  opacity: 1 !important;
+}
+
+.change-image-btn,
+.remove-image-btn {
+  padding: 8px 16px !important;
+  border: 1px solid #ffffff !important;
+  border-radius: 6px !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.change-image-btn:hover,
+.remove-image-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-1px) !important;
+}
+
+.remove-image-btn {
+  border-color: #ea4335 !important;
+  color: #ea4335 !important;
+  background-color: rgba(234, 67, 53, 0.1) !important;
+}
+
+.remove-image-btn:hover {
+  background-color: rgba(234, 67, 53, 0.2) !important;
+}
+
+/* File Info */
+.file-info {
+  margin-top: 12px !important;
+  padding: 12px 16px !important;
+  background-color: #e8f0fe !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 14px !important;
+  color: #1a73e8 !important;
+}
+
+.file-name {
+  font-weight: 500 !important;
+  flex: 1 !important;
+}
+
+.file-size {
+  color: #5f6368 !important;
+  font-size: 12px !important;
+}
+
+/* URL Input Section */
+.url-input-section {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 600px) {
+  .file-drop-area {
+    padding: 16px !important;
+    min-height: 140px !important;
+  }
+  
+  .upload-icon {
+    font-size: 36px !important;
+  }
+  
+  .upload-text p {
+    font-size: 12px !important;
+  }
+  
+  .mode-toggle-btn {
+    font-size: 12px !important;
+    padding: 8px 12px !important;
+  }
+  
+  .image-preview {
+    height: 120px !important;
+  }
+  
+  .change-image-btn,
+  .remove-image-btn {
+    font-size: 11px !important;
+    padding: 6px 12px !important;
+  }
+}
+

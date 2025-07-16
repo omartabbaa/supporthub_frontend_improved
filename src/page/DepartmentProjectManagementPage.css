@@ -1,22 +1,302 @@
+/* More aggressive top spacing removal and compact design */
+
+/* Reset all default browser margins and padding for key elements */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Main page container - make it more compact */
+.DepartmentProjectManagementPage {
+    margin: 0;
+    padding: 0;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    margin: 0;
+    padding: 0; /* No padding since we have the compact header */
+    flex: 1;
+    overflow-y: auto;
+    margin-left: 280px; /* Account for sidebar */
+    transition: margin-left 0.3s ease;
+}
+
+/* When sidebar is collapsed */
+.sidebar-collapsed .main-content {
+    margin-left: 70px;
+}
+
+/* Help Mode Toggle - positioned in top right with minimal space */
+.help-mode-toggle-container {
+    position: absolute;
+    top: 8px;
+    right: 20px;
+    z-index: 10;
+}
+
+.help-mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 4px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.help-mode-toggle input[type="checkbox"] {
+    margin: 0;
+    width: 12px;
+    height: 12px;
+}
+
+.help-mode-label {
+    color: #495057;
+    font-weight: 500;
+}
+
+/* Error and success messages - more compact */
+.operation-error-message,
+.operation-success-message {
+    margin: 8px 20px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    position: relative;
+    font-size: 13px;
+}
+
+.operation-error-message {
+    background-color: #fee;
+    color: #c53030;
+    border: 1px solid #feb2b2;
+}
+
+.operation-success-message {
+    background-color: #f0fff4;
+    color: #2f855a;
+    border: 1px solid #9ae6b4;
+}
+
+.close-button {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    color: inherit;
+    padding: 0;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button:hover {
+    opacity: 0.7;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 30px 20px; /* Reduced padding */
+    margin: 15px 0; /* Reduced margin */
+}
+
+.empty-state h2 {
+    color: #6c757d;
+    font-size: 18px; /* Reduced */
+    margin-bottom: 12px; /* Reduced */
+    font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .consolidated-titles {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .divider-line {
+        width: 30px;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #dee2e6, transparent);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .compact-page-header {
+        padding: 10px 15px;
+    }
+    
+    .help-mode-toggle-container {
+        position: static;
+        margin-top: 8px;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
+
+/* Target and hide/minimize old components that might be adding space */
+.breadcrumb-section,
+.navigation-section,
+.page-navigation,
+.breadcrumb-container {
+    display: none !important;
+}
+
+/* Reset all default browser margins and padding for key elements */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Target the main app container and any wrapper divs */
+#root,
+.App,
+main,
+.main-content,
+.page-container,
+.DepartmentProjectManagementPage,
+.dpm-page-container {
+    margin: 0;
+    padding: 0;
+}
+
+/* Specifically target any top-level navigation or breadcrumb containers */
+nav,
+.nav,
+.navigation,
+.breadcrumb,
+.breadcrumb-container,
+.page-header,
+.top-bar,
+.header-section {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+/* More specific breadcrumb styling */
+.breadcrumb-section,
+.navigation-section,
+.page-navigation {
+    margin: 0;
+    padding: 0 20px;
+    line-height: 1.2; /* Reduce line height to minimize text spacing */
+}
+
+/* Target any potential wrapper around the breadcrumb */
+.content-wrapper,
+.main-wrapper,
+.page-wrapper {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+/* Reduce the Business title section spacing even more */
 .DepartmentProjectManagementPageTitle {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 60px;
     font-weight: bold;
-    margin: 40px;
+    margin: 0 40px 0 40px; /* Removed bottom margin completely */
     font-family: Arial, Helvetica, sans-serif;
     color: #3b3d3a;
 }
-
 
 .DepartmentProjectManagementPageHeader {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 40px;
+    margin: 0 40px 0 40px; /* Removed bottom margin completely */
     background-color: transparent;
-    padding: 20px;
+    padding: 0 20px;
+    border-radius: 10px;
+}
+
+/* Target the business type label specifically */
+.BusinessTypeLabel,
+.ORGANIZATION {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* Remove spacing from department sections */
+.DepartmentHeader {
+    margin: 0; /* Removed all margins */
+    padding: 0; /* Removed all padding */
+}
+
+.DepartmentTitle {
+    font-size: 50px;
+    color: #3b3d3a;
+    margin: 0;
+    padding: 0;
+    line-height: 1; /* Tight line height */
+}
+
+.DepartmentTitleWrapper {
+    margin: 0;
+    padding: 0;
+}
+
+.DepartmentTypeLabel,
+.EXPERTISE.AREA {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+}
+
+/* If there are any flex containers causing spacing */
+.flex-container,
+.content-area {
+    margin: 0;
+    padding: 0;
+}
+
+/* Update the duplicate styles to match */
+.DepartmentProjectManagementPageTitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: bold;
+    margin: 0 40px 0 40px; /* Consistent with above */
+    font-family: Arial, Helvetica, sans-serif;
+    color: #3b3d3a;
+}
+
+.DepartmentProjectManagementPageHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 40px 0 40px; /* Consistent with above */
+    background-color: transparent;
+    padding: 0 20px;
     border-radius: 10px;
 }
 
@@ -44,7 +324,9 @@
     flex-direction: column;
     background-color: rgb(255, 242, 242);
     border-radius: 30px;
-    margin-bottom: 100px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: visible;
 }
 
 .ProjectContainer {
@@ -53,6 +335,7 @@
     flex-wrap: wrap;
     gap: 20px;
     max-width: 100%;
+    margin-top: 5px;
 }
 
 .AddProject {
@@ -88,6 +371,8 @@
 .DepartmentTitle {
     font-size: 50px;
     color: #3b3d3a;
+    margin: 0;
+    padding: 0;
 }
 
 .modal {
@@ -362,7 +647,7 @@
     align-items: center;
     font-size: 60px;
     font-weight: bold;
-    margin: 40px;
+    margin: 0 40px 0 40px; /* Consistent with above */
     font-family: Arial, Helvetica, sans-serif;
     color: #3b3d3a;
 }
@@ -372,9 +657,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 40px;
+    margin: 0 40px 0 40px; /* Consistent with above */
     background-color: transparent;
-    padding: 20px;
+    padding: 0 20px;
     border-radius: 10px;
 }
 
@@ -564,14 +849,14 @@ margin-left: 40px;
   padding: 2rem;
   padding-top: 90px; /* Account for navbar + spacing */
   min-height: 100vh;
-  width: calc(100% - 260px);
-  margin-left: 260px;
-  transition: width 0.3s ease, margin-left 0.3s ease;
+  width: 100%; /* Let it take full width of its parent (.content-area) */
+  transition: width 0.3s ease, margin-left 0.3s ease; /* Transitions for margin-left and width might not be needed here anymore */
 }
 
 .department-page-container.collapsed .department-project-management-page {
-  width: calc(100% - 60px);
-  margin-left: 60px;
+  /* These rules are likely not needed anymore as UserLayout handles collapsed state for .content-area */
+  /* width: calc(100% - 60px); */ /* REMOVE THIS */
+  /* margin-left: 60px; */       /* REMOVE THIS */
 }
 
 /* Add these styles to fix the image display */
@@ -591,8 +876,50 @@ margin-left: 40px;
   transition: transform 0.3s ease;
 }
 
-.project-card:hover .project-image {
+/* Add transition for the card itself for the new hover effect */
+.ProjectCard {
+  /* Ensure project-card has some base styling if not already defined elsewhere,
+     or if this is where it's primarily styled.
+     For example:
+     background-color: #fff;
+     border-radius: 8px;
+     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  */
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; /* Added transform transition */
+  position: relative; /* Good for transformed elements */
+}
+
+.ProjectCard:hover .project-image {
   transform: scale(1.05);
+}
+
+/* Add the upward movement on hover for the entire card - INCREASE SPECIFICITY */
+.ProjectCardContainer .ProjectCard:hover { /* Added .ProjectCardContainer */
+  transform: translateY(-7px); /* Moves the card up by approx. 2cm (76 pixels) */
+  /* Optionally, enhance the shadow on hover for more depth */
+  /* box-shadow: 0 6px 12px rgba(0,0,0,0.15); */
+}
+
+/* Styles for the wrapper around project name and type label */
+.TitleProjectWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center align the text block */
+  padding: 8px 5px 0px 5px; /* padding-top: 8px, padding-horizontal: 5px, padding-bottom: 0px */
+  width: 100%; /* Ensure it takes full width for text-align to work */
+  box-sizing: border-box;
+  flex-grow: 0; /* Prevent this wrapper from expanding to fill extra vertical space */
+}
+
+/* New styles for the "Manage knollgebase Topic:" label */
+.ProjectTypeLabel {
+  font-size: 0.8rem;   /* Smaller text */
+  color: #000000;       /* Black color */
+  text-transform: none;  /* Not uppercase */
+  letter-spacing: normal;/* Default letter spacing */
+  font-weight: normal;   /* Normal font weight */
+  text-align: center;
+  margin-bottom: 6px;  /* Increased space before the project name */
 }
 
 .project-actions {
@@ -630,10 +957,12 @@ margin-left: 40px;
   color: #dc2626;
 }
 
-.project-name {
-  font-size: 1.2rem;
+/* Make the selector more specific */
+.TitleProjectWrapper .project-name {
+  font-size: 1.5rem; /* Increased font size for the project name */
   font-weight: 600;
-  margin: 12px 0 4px;
+  margin: 0 0 0px; /* Reduced bottom margin from 4px to 0px */
+  margin-top: 20px;
   color: #1e293b;
   text-align: center;
 }
@@ -643,6 +972,1199 @@ margin-left: 40px;
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin: 0 0 12px;
+  margin: 0 0 10px; /* Reduced bottom margin, top margin is already small due to project-name */
   text-align: center;
+}
+
+/* Re-add Layout Styles */
+.DPMPageLayout {
+  display: flex;
+  flex-direction: row;
+  gap: 25px; /* Gap between projects grid and knowledge form */
+  padding-top: 10px; /* Padding around the main content area */
+  align-items: flex-start; /* Align items to the top */
+}
+
+.DPMPage-ProjectsGridArea {
+  flex: 3; /* Takes up more space */
+  /* max-width: 70%; */ /* Or use max-width */
+}
+
+.DPMPage-KnowledgeFormArea {
+  flex: 2; /* Takes up less space */
+  position: sticky; /* Make the form sticky */
+  top: 80px; /* Adjust based on your navbar height + desired offset */
+  align-self: flex-start; /* Important for sticky positioning within a flex container */
+  max-height: calc(100vh - 100px); /* Max height to prevent overflow, adjust as needed */
+  overflow-y: auto; /* Allow scrolling within the form area if content is too long */
+  background-color: #f8f9fa; /* Light background for the form area */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  /* padding: 20px; */ /* Padding is now inside AddKnowledgeForm */
+}
+
+.knowledge-form-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  background-color: #fff;
+  color: #6c757d;
+  min-height: 300px; /* Example height, adjust as needed */
+  box-sizing: border-box;
+  margin: 20px; /* Add margin if padding is removed from DPMPage-KnowledgeFormArea */
+}
+
+.knowledge-form-placeholder h4 {
+  font-size: 1.2rem;
+  color: #495057;
+  margin-bottom: 15px;
+}
+
+.knowledge-form-placeholder p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Ensure modal overlay doesn't mess with sticky positioning too much */
+.DPMPageLayout.modal-open .DPMPage-KnowledgeFormArea {
+  /* Consider z-index or temporarily changing position if modal overlay interferes */
+  /* position: static; */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) { /* Adjust breakpoint as needed */
+  .DPMPageLayout {
+    flex-direction: column;
+    align-items: stretch; /* Stretch items to fill width */
+  }
+
+  .DPMPage-KnowledgeFormArea {
+    position: static; /* Remove sticky positioning on smaller screens */
+    max-height: none;
+    margin-top: 20px;
+    width: 100%; /* Full width */
+  }
+}
+
+/* General page container styling */
+.DepartmentProjectManagementPageContainer {
+  padding: 20px 30px; /* Example padding */
+}
+
+.DepartmentProjectManagementPageHeader {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
+}
+.DepartmentProjectManagementPageHeader h1 {
+  font-size: 1.8rem; /* Adjusted for consistency */
+  color: #343a40;
+  margin-bottom: 10px;
+}
+.breadcrumbs {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+.breadcrumbs a {
+  color: #007bff;
+  text-decoration: none;
+}
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+/* Page-level error and success messages */
+.page-error-message, .operation-error-message, .operation-success-message {
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.page-error-message, .operation-error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+.operation-success-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.close-button { /* For operation messages */
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: inherit;
+  padding: 0 5px;
+}
+
+/* Loading Spinner */
+.loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: #6c757d;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3; /* Light grey */
+  border-top: 4px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Generic Modal Overlay - DISABLED to use global Modal.css */
+/* .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+} */
+
+/* Use specific class names for page-specific modals to avoid conflicts */
+.dpm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(32, 33, 36, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* Container for the actual modal content within the overlay */
+.modal-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Specific styling for the upload data modal container if needed */
+.upload-data-modal-container,
+.question-overview-modal-container,
+.manage-agents-modal-container {
+  width: 800px;
+  min-height: 400px;
+}
+
+/* Specific styling for the Question Overview modal container */
+.question-overview-modal-container {
+  max-width: 950px; /* Allow it to be wider */
+  width: 100%;
+  /* QuestionOverviewPage component handles its internal padding and structure */
+}
+
+/* Specific styling for the Manage Agents modal container */
+.manage-agents-modal-container {
+  max-width: 750px; /* Adjust as needed */
+  width: 100%;
+  /* ManageProjectAgentsModal component handles its internal padding and structure */
+}
+
+.DPMPageLayout.modal-open {
+  /* Optional: Prevent background scroll when modal is open */
+   overflow: hidden; /* Apply to body or a higher-level container if this doesn't work */
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the new "Teach AI" button on project cards */
+.project-action-button.upload-data-button {
+  background-color: #20C997; /* A vibrant teal/mint color */
+  color: white;
+  border: none;
+  padding: 8px 12px; /* Adjusted padding */
+  border-radius: 6px; /* Slightly more rounded */
+  font-size: 0.85rem; /* Adjusted font size */
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease;
+  display: inline-flex; /* Helps align icon and text */
+  align-items: center;
+  gap: 6px; /* Space between icon and text */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.project-action-button.upload-data-button:hover {
+  background-color: #1DB386; /* Darker shade on hover */
+  transform: translateY(-1px); /* Slight lift effect */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.project-action-button.upload-data-button:active {
+  background-color: #1AA37A; /* Even darker for active state */
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* If you want the icon to have a slight animation on hover (optional) */
+.project-action-button.upload-data-button:hover > svg,
+.project-action-button.upload-data-button:hover::before { /* if using emoji as ::before content */
+  /* Example: transform: rotate(10deg) scale(1.1); */
+}
+
+/* Style for the new "View Questions" button on project cards */
+.project-action-button.view-questions-button {
+  background-color: #4F46E5; /* Indigo-600 */
+  color: white;
+  /* Other styles can be similar to upload-data-button or customized */
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.project-action-button.view-questions-button:hover {
+  background-color: #4338CA; /* Indigo-700 */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.project-action-button.view-questions-button:active {
+  background-color: #3730A3; /* Indigo-800 */
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the new "Manage Agents" button on project cards */
+.project-action-button.manage-agents-button {
+  background-color: #6366F1; /* Indigo-500 */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out, box-shadow 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.project-action-button.manage-agents-button:hover {
+  background-color: #4F46E5; /* Indigo-600 */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.project-action-button.manage-agents-button:active {
+  background-color: #4338CA; /* Indigo-700 */
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Help mode toggle on DPM page */
+/* Remove the invalid comment below if it exists */
+/* // existing code... */
+
+/* New wrapper for image and actions menu */
+.project-image-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.image-Component {
+    width: 300px;
+    height: 150px;
+    border-radius: 30px 30px 0 0;
+    object-fit: cover;
+    display: block;
+}
+
+/* Container for the 3-dot button and dropdown */
+.project-actions-menu-container {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+}
+
+/* The 3-dot trigger button */
+.project-actions-trigger {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.project-actions-trigger:hover,
+.project-actions-trigger:focus {
+  background-color: rgba(240, 240, 240, 0.9);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.project-actions-trigger svg {
+  width: 20px;
+  height: 20px;
+  fill: #333;
+}
+
+/* The dropdown menu */
+.project-actions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  min-width: 180px;
+  z-index: 100;
+  border: 1px solid #e0e0e0;
+}
+
+.project-actions-dropdown .dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background-color: transparent;
+  border: none;
+  font-size: 0.9rem;
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.project-actions-dropdown .dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+.project-actions-dropdown .dropdown-item.danger {
+  color: #D32F2F;
+}
+
+.project-actions-dropdown .dropdown-item.danger:hover {
+  background-color: #FFEBEE;
+  color: #C62828;
+}
+
+.project-actions-dropdown .dropdown-divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 8px 0;
+}
+
+/* Ensure project info is below the image wrapper */
+.project-info {
+  padding: 15px;
+  border-radius: 0 0 30px 30px;
+}
+
+.project-info h3 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.project-info p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0;
+}
+
+/* Remove or update styles for old individual action buttons if they were styled here */
+/* These can be removed as the buttons are no longer directly rendered */
+/*
+.project-action-button.upload-data-button,
+.project-action-button.view-questions-button,
+.project-action-button.manage-agents-button {
+  /* display: none; */
+  /* Or update their styles if they are used elsewhere */
+/* } */
+
+/* Add this rule to ensure the main page container starts at the very top */
+.DepartmentProjectManagementPage,
+.dpm-page-container {
+    margin: 0;
+    padding: 0;
+}
+
+/* Also reduce the duplicate title styles at the bottom */
+.DepartmentProjectManagementPageTitle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: bold;
+    margin: 0 40px 0 40px; /* Consistent with above */
+    font-family: Arial, Helvetica, sans-serif;
+    color: #3b3d3a;
+}
+
+.DepartmentProjectManagementPageHeader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 40px 0 40px; /* Consistent with above */
+    background-color: transparent;
+    padding: 0 20px;
+    border-radius: 10px;
+}
+
+/* If you want to remove ALL spacing at the top */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Ensure no default margins on main elements */
+main {
+    margin: 0;
+    padding: 0;
+}
+
+/* Reduce spacing in the BusinessTitleWrapper */
+.BusinessTitleWrapper {
+    margin: 0;
+    padding: 0;
+}
+
+.BusinessTypeLabel {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+/* Reduce spacing in department sections */
+.DepartmentHeader {
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-top: 0;
+}
+
+.DepartmentTitleWrapper {
+    margin: 0;
+    padding: 0;
+}
+
+.DepartmentTypeLabel {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+/* If there's a breadcrumb or navigation area, reduce its spacing too */
+.breadcrumb-section,
+.navigation-section {
+    margin: 0;
+    padding: 0 20px;
+}
+
+/* Ultra-compact top header design */
+.compact-page-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #e9ecef 100%);
+    border-bottom: 1px solid #dee2e6;
+    padding: 6px 20px 8px; /* Reduced from 12px */
+    margin: 0;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.breadcrumb-compact {
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Reduced gap */
+    font-size: 9px; /* Smaller */
+    margin-bottom: 4px; /* Reduced margin */
+    color: #6c757d;
+    opacity: 0.8;
+}
+
+.breadcrumb-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    color: #adb5bd;
+    font-weight: 300;
+    margin: 0 2px;
+}
+
+.breadcrumb-current {
+    color: #495057;
+    font-weight: 700;
+}
+
+.consolidated-titles {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px; /* Reduced gap */
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+}
+
+.business-section,
+.department-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px; /* Minimal gap */
+}
+
+.business-name {
+    font-size: 20px; /* Reduced from 24px */
+    font-weight: 800;
+    color: #1a202c;
+    margin: 0;
+    line-height: 0.9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.department-name {
+    font-size: 16px; /* Reduced from 20px */
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+    line-height: 0.9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.section-type {
+    font-size: 7px; /* Reduced from 9px */
+    font-weight: 700;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-top: 1px;
+}
+
+.divider-line {
+    width: 1px;
+    height: 24px; /* Reduced from 30px */
+    background: linear-gradient(to bottom, transparent, #cbd5e0, transparent);
+    opacity: 0.6;
+    position: relative;
+}
+
+.divider-line::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 3px;
+    height: 3px;
+    background: #cbd5e0;
+    border-radius: 50%;
+}
+
+/* Department actions - floating style */
+.department-actions {
+    position: absolute;
+    top: -8px; /* Move up slightly */
+    right: 15px;
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+}
+
+.update-dept-btn,
+.delete-dept-btn {
+    width: 28px; /* Reduced */
+    height: 28px; /* Reduced */
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.95);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px; /* Reduced */
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4px);
+}
+
+.update-dept-btn:hover {
+    background: linear-gradient(135deg, #f7fafc, #edf2f7);
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    border-color: #cbd5e0;
+}
+
+.delete-dept-btn:hover {
+    background: linear-gradient(135deg, #fed7d7, #feb2b2);
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.2);
+    border-color: #fc8181;
+}
+
+/* Projects grid wrapper */
+.projects-grid-wrapper {
+    margin: 0;
+    padding: 15px 20px 0; /* Add some top padding for breathing room */
+}
+
+.department-section {
+    position: relative;
+    margin-bottom: 25px; /* Slightly increased for better separation */
+}
+
+/* Hide the old headers from DepartmentProjectsGrid */
+.DepartmentProjectManagementPageHeader,
+.BusinessTitleWrapper,
+.DepartmentHeader,
+.DepartmentTitleWrapper {
+    display: none !important;
+}
+
+/* Modal Overlay - Base styles */
+.modal-overlay,
+.dpm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(32, 33, 36, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+    overflow: hidden; /* Changed from auto to hidden */
+}
+
+/* Modal Container - Base styles */
+.modal-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    position: relative;
+    margin: auto;
+    width: 100%;
+    max-height: 80vh; /* Reduced from 90vh to 80vh for better centering */
+    overflow-y: auto;
+    animation: modalFadeIn 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Specific modal container styles */
+.upload-data-modal-container,
+.question-overview-modal-container,
+.manage-agents-modal-container {
+    width: 100%;
+    max-width: 800px;
+    height: auto; /* Changed from min-height to height: auto */
+    min-height: 200px; /* Reduced minimum height */
+    max-height: 80vh; /* Added max-height constraint */
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    margin: auto; /* Added margin: auto */
+    position: relative; /* Added position: relative */
+    transform: translateY(0); /* Reset any transform */
+}
+
+/* Question Overview specific styles */
+.question-overview-modal-container {
+    max-width: 950px;
+    height: auto;
+    max-height: 80vh;
+}
+
+/* Manage Agents specific styles */
+.manage-agents-modal-container {
+    max-width: 750px;
+    height: auto;
+    max-height: 80vh;
+}
+
+/* Modal animation */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Ensure content within modals is properly centered */
+.upload-data-modal-container > *,
+.question-overview-modal-container > *,
+.manage-agents-modal-container > * {
+    margin: auto;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-overlay,
+    .dpm-modal-overlay {
+        padding: 10px;
+    }
+
+    .modal-container {
+        max-height: 90vh;
+        margin: 0;
+    }
+    
+    .upload-data-modal-container,
+    .question-overview-modal-container,
+    .manage-agents-modal-container {
+        padding: 16px;
+        max-height: 90vh;
+    }
+}
+
+/* Additional height adjustments for very tall screens */
+@media (min-height: 1000px) {
+    .modal-container {
+        max-height: 70vh;
+    }
+}
+
+/* Additional height adjustments for very short screens */
+@media (max-height: 600px) {
+    .modal-container {
+        max-height: 95vh;
+    }
+}
+
+/* Subscription Refresh Indicator */
+.subscription-refresh-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #3b82f6;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+  font-weight: 500;
+}
+
+.subscription-refresh-indicator span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Current Projects Count Indicator */
+.current-projects-indicator {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background: #10b981;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  font-size: 12px;
+  font-weight: 500;
+  animation: slideIn 0.3s ease-out;
+}
+
+.current-projects-indicator span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Refresh button in current projects indicator */
+.current-projects-indicator .refresh-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+  margin-left: 8px;
+}
+
+.current-projects-indicator .refresh-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.current-projects-indicator .refresh-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sync indicator */
+.current-projects-indicator .sync-indicator {
+  font-size: 10px;
+  color: #3b82f6;
+  margin-left: 8px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Subscription usage display */
+.subscription-usage-display {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 0.75rem;
+  border: 2px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.usage-text {
+  font-weight: 600;
+  color: #495057;
+  font-size: 1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.refresh-button {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.refresh-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+.refresh-button:disabled {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+}
+
+/* Project usage info in grid */
+.project-usage-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.project-usage-info .usage-text {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+/* Project Limit Warning */
+.project-limit-warning {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+/* Comprehensive Usage Counter */
+.comprehensive-usage-counter {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px;
+  border-radius: 12px;
+  margin: 20px 0;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.comprehensive-usage-counter h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  text-align: center;
+  color: white;
+}
+
+.usage-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.usage-metric {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.usage-metric:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.usage-metric.normal {
+  border-left: 4px solid #4ade80;
+}
+
+.usage-metric.near-limit {
+  border-left: 4px solid #fbbf24;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.usage-metric.at-limit {
+  border-left: 4px solid #f87171;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.usage-metric.unlimited {
+  border-left: 4px solid #8b5cf6;
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px rgba(251, 191, 36, 0.5); }
+  to { box-shadow: 0 0 20px rgba(251, 191, 36, 0.8); }
+}
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.metric-icon {
+  font-size: 1.5rem;
+  margin-right: 8px;
+}
+
+.metric-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: white;
+}
+
+.metric-count {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: white;
+}
+
+.metric-progress {
+  position: relative;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.usage-metric.near-limit .progress-bar {
+  background: linear-gradient(90deg, #fbbf24, #f59e0b);
+}
+
+.usage-metric.at-limit .progress-bar {
+  background: linear-gradient(90deg, #f87171, #ef4444);
+}
+
+.progress-text {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: white;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.usage-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.refresh-usage-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.refresh-usage-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.refresh-usage-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refresh-status {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-style: italic;
+}
+
+/* Responsive design for usage counter */
+@media (max-width: 768px) {
+  .usage-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .comprehensive-usage-counter {
+    padding: 16px;
+    margin: 16px 0;
+  }
+  
+  .comprehensive-usage-counter h3 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+  
+  .usage-metric {
+    padding: 12px;
+  }
+  
+  .metric-count {
+    font-size: 1.5rem;
+  }
+  
+  .usage-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.usage-limit-source {
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.limit-source {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 2px solid;
+}
+
+.limit-source.actual {
+  background-color: #dcfce7;
+  color: #166534;
+  border-color: #22c55e;
+}
+
+.limit-source.context {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #f59e0b;
 }

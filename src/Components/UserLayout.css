@@ -1,0 +1,468 @@
+/* CSS Variables for Progressive Mobile Sidebar Widths - THINNER */
+:root {
+  --mobile-sidebar-width-768: 60vw;  /* Reduced from 80vw */
+  --mobile-sidebar-width-640: 55vw;  /* Reduced from 70vw */
+  --mobile-sidebar-width-480: 50vw;  /* Reduced from 60vw */
+  --mobile-sidebar-width-400: 45vw;  /* Reduced from 50vw */
+  --mobile-sidebar-width-360: 40vw;  /* Reduced from 45vw */
+  --mobile-sidebar-max-width-768: 280px;  /* Reduced from 350px */
+  --mobile-sidebar-max-width-640: 250px;  /* Reduced from 320px */
+  --mobile-sidebar-max-width-480: 220px;  /* Reduced from 280px */
+  --mobile-sidebar-max-width-400: 190px;  /* Reduced from 240px */
+  --mobile-sidebar-max-width-360: 160px;  /* Reduced from 200px */
+}
+
+/* Sidebar Switcher Layout */
+.sidebar-switcher-layout-container {
+  display: flex;
+  padding-top: 70px; /* Account for top navbar */
+  height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  font-size: 14px;
+}
+
+/* Primary Switcher Sidebar (narrow, always visible) */
+.primary-switcher-sidebar {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: 80px;
+  height: calc(100vh - 70px);
+  z-index: 1000;
+  background: #ffffff;
+  border-right: 1px solid #e8eaed;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.switcher-header {
+  padding: 16px 0;
+  border-bottom: 1px solid #e8eaed;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.switcher-logo {
+  font-size: 18px;
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.switcher-buttons {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 8px;
+  width: 100%;
+}
+
+.switcher-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #5f6368;
+  width: 100%;
+}
+
+.switcher-button:hover {
+  background-color: #f1f3f4;
+  color: #3c4043;
+}
+
+.switcher-button.active {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+  font-weight: 500;
+}
+
+.switcher-icon {
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+.switcher-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+.switcher-footer {
+  padding: 16px 8px;
+  border-top: 1px solid #e8eaed;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.collapse-toggle {
+  background: none;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #5f6368;
+  transition: background-color 0.2s ease;
+}
+
+.collapse-toggle:hover {
+  background-color: #f1f3f4;
+}
+
+/* Secondary Content Sidebar (shows selected sidebar content) */
+.secondary-content-sidebar {
+  position: fixed;
+  top: 70px;
+  left: 80px;
+  width: 280px;
+  height: calc(100vh - 70px);
+  z-index: 999;
+  background: #ffffff;
+  border-right: 1px solid #e8eaed;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.secondary-content-sidebar.hidden {
+  left: -280px;
+  opacity: 0;
+}
+
+.secondary-content-sidebar.visible {
+  left: 80px;
+  opacity: 1;
+}
+
+/* Main content area */
+.main-content-area {
+  flex-grow: 1;
+  padding: 0;
+  overflow-y: auto;
+  background: #ffffff;
+  min-height: calc(100vh - 70px);
+}
+
+.content-wrapper {
+  padding: 20px;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .sidebar-switcher-layout-container {
+    flex-direction: column;
+  }
+  
+  .primary-switcher-sidebar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    flex-direction: row;
+    z-index: 1001;
+  }
+  
+  .switcher-header {
+    display: none;
+  }
+  
+  .switcher-buttons {
+    flex-direction: row;
+    justify-content: center;
+    padding: 8px;
+  }
+  
+  .switcher-button {
+    flex-direction: row;
+    gap: 8px;
+    padding: 8px 16px;
+    width: auto;
+  }
+  
+  .switcher-label {
+    font-size: 12px;
+  }
+  
+  .switcher-footer {
+    padding: 8px;
+  }
+  
+  .secondary-content-sidebar {
+    position: fixed;
+    top: 130px; /* Below mobile primary sidebar */
+    left: 0;
+    width: var(--mobile-sidebar-width-768); /* 80% of viewport width instead of 100% */
+    max-width: var(--mobile-sidebar-max-width-768); /* Never wider than 350px */
+    height: calc(100vh - 130px);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  }
+  
+    .secondary-content-sidebar.visible {
+    transform: translateX(0); /* Slide in from left */
+    left: 0;
+  }
+
+  .secondary-content-sidebar.hidden {
+    transform: translateX(-100%); /* Slide out to left */
+    left: 0;
+    opacity: 1;
+  }
+
+  
+  
+  .main-content-area {
+    margin-left: 0;
+    margin-top: 60px; /* Space for mobile primary sidebar */
+    width: 100%;
+  }
+}
+
+/* Progressive Mobile: Sidebar gets THINNER as screen gets SMALLER */
+
+/* Large phones and small tablets - 70% width */
+@media (max-width: 640px) {
+  .secondary-content-sidebar {
+    width: var(--mobile-sidebar-width-640); /* 70% of viewport width */
+    max-width: var(--mobile-sidebar-max-width-640);
+  }
+}
+
+/* Medium phones - 60% width */
+@media (max-width: 480px) {
+  .secondary-content-sidebar {
+    width: var(--mobile-sidebar-width-480); /* 60% of viewport width */
+    max-width: var(--mobile-sidebar-max-width-480);
+  }
+
+}
+
+/* Small phones - 50% width */
+@media (max-width: 400px) {
+  .secondary-content-sidebar {
+    width: var(--mobile-sidebar-width-400); /* 50% of viewport width */
+    max-width: var(--mobile-sidebar-max-width-400);
+  }
+}
+
+/* Very small phones - 45% width */
+@media (max-width: 360px) {
+  .secondary-content-sidebar {
+    width: var(--mobile-sidebar-width-360); /* 45% of viewport width */
+    max-width: var(--mobile-sidebar-max-width-360);
+  }
+}
+
+/* Mobile backdrop overlay */
+@media (max-width: 768px) {
+  .mobile-sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .mobile-sidebar-backdrop.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Ensure child sidebars don't override parent container width */
+  .secondary-content-sidebar .widget-process-sidebar,
+  .secondary-content-sidebar .user-actions-sidebar {
+    width: 100% !important; /* Fill the container */
+    position: relative !important; /* Not fixed on mobile */
+    height: 100% !important; /* Fill the container height */
+    transform: none !important; /* No transform needed */
+    box-shadow: none !important; /* Container handles shadow */
+  }
+}
+
+/* Typography */
+.sidebar-switcher-layout-container * {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+.sidebar-switcher-layout-container h1 { font-size: 22px; font-weight: 400; }
+.sidebar-switcher-layout-container h2 { font-size: 16px; font-weight: 500; }
+.sidebar-switcher-layout-container h3 { font-size: 14px; font-weight: 500; }
+.sidebar-switcher-layout-container h4 { font-size: 13px; font-weight: 500; }
+.sidebar-switcher-layout-container h5 { font-size: 12px; font-weight: 500; }
+.sidebar-switcher-layout-container h6 { font-size: 11px; font-weight: 500; }
+
+.sidebar-switcher-layout-container p,
+.sidebar-switcher-layout-container div,
+.sidebar-switcher-layout-container span,
+.sidebar-switcher-layout-container li {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #3c4043;
+}
+
+.sidebar-switcher-layout-container .small-text,
+.sidebar-switcher-layout-container .secondary-text {
+  font-size: 12px;
+  color: #5f6368;
+}
+
+.sidebar-switcher-layout-container .tiny-text {
+  font-size: 11px;
+  color: #5f6368;
+}
+
+/* Legacy styles for backward compatibility - can be removed if not needed */
+.user-layout-container {
+  display: flex;
+  padding-top: 70px;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* Gmail-style layout (deprecated - keeping for fallback) */
+.gmail-style-layout-container {
+  display: flex;
+  padding-top: 70px;
+  height: 100vh;
+  box-sizing: border-box;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  font-size: 14px;
+}
+
+.primary-sidebar-container {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  height: calc(100vh - 70px);
+  z-index: 1000;
+  background: #ffffff;
+  border-right: 1px solid #e8eaed;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+}
+
+.secondary-sidebar-container {
+  position: fixed;
+  top: 70px;
+  left: 240px;
+  height: calc(100vh - 70px);
+  z-index: 999;
+  background: #ffffff;
+  border-right: 1px solid #e8eaed;
+  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  transition: all 0.3s ease;
+}
+
+.secondary-sidebar-container.hidden {
+  left: -280px;
+  opacity: 0;
+}
+
+.secondary-sidebar-container.visible {
+  left: 240px;
+  opacity: 1;
+}
+
+.gmail-main-content {
+  flex-grow: 1;
+  padding: 0;
+  overflow-y: auto;
+  background: #ffffff;
+  min-height: calc(100vh - 70px);
+}
+
+/* Gmail-style typography */
+.gmail-style-layout-container * {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+}
+
+/* Base font sizes similar to Gmail */
+.gmail-style-layout-container h1 { font-size: 22px; font-weight: 400; }
+.gmail-style-layout-container h2 { font-size: 16px; font-weight: 500; }
+.gmail-style-layout-container h3 { font-size: 14px; font-weight: 500; }
+.gmail-style-layout-container h4 { font-size: 13px; font-weight: 500; }
+.gmail-style-layout-container h5 { font-size: 12px; font-weight: 500; }
+.gmail-style-layout-container h6 { font-size: 11px; font-weight: 500; }
+
+/* Body text */
+.gmail-style-layout-container p,
+.gmail-style-layout-container div,
+.gmail-style-layout-container span,
+.gmail-style-layout-container li {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #3c4043;
+}
+
+/* Small text */
+.gmail-style-layout-container .small-text,
+.gmail-style-layout-container .secondary-text {
+  font-size: 12px;
+  color: #5f6368;
+}
+
+/* Very small text */
+.gmail-style-layout-container .tiny-text {
+  font-size: 11px;
+  color: #5f6368;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 20px; /* Or your preferred padding */
+  overflow-y: auto;
+  transition: margin-left 0.3s ease; /* Keep the transition for smooth collapsing */
+  /* margin-left is now set via inline style in UserLayout.jsx */
+  box-sizing: border-box;
+}
+
+/*
+  IMPORTANT:
+  Ensure your individual sidebar CSS files correctly define their own widths.
+  The `sidebarConfig` in `UserLayout.jsx` must match these CSS widths.
+
+  Example for SideNavbar.css:
+  .side-navbar { width: 260px; ... }
+  .side-navbar.collapsed { width: 60px; ... }
+
+  Example for WidgetProcessSidebar.css:
+  .widget-process-sidebar { width: 280px; ... }
+  .widget-process-sidebar.collapsed { width: 70px; ... }
+
+  Example for UserActionsSidebar.css:
+  .user-actions-sidebar { width: 260px; ... }
+  .user-actions-sidebar.collapsed { width: 60px; ... }
+*/ 

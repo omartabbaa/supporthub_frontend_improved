@@ -11,7 +11,9 @@ export const UserProvider = ({ children }) => {
     const [role, setRole] = useState('');
     const [isLogin, setIsLogin] = useState(false);
     const [userId, setUserId] = useState('');
-    const [stateBusinessId, setStateBusinessId] = useState(null); // Changed businessId to stateBusinessId
+    const [stateBusinessId, setStateBusinessId] = useState(null);
+    const [subscriptionPlanId, setSubscriptionPlanId] = useState(null);
+    const [businessName, setBusinessName] = useState('');
 
     useEffect(() => {
         const updateUserFromToken = () => {
@@ -20,21 +22,28 @@ export const UserProvider = ({ children }) => {
                 console.log("Token:", token);
                 
                 const decoded = decodeToken(token);
+                const payload = decoded.payload;
                 
-                setUser(decoded.payload?.sub); 
-                setRole(decoded.payload?.role);
-                setUserId(decoded.payload?.userId);
-                setStateBusinessId(decoded.payload?.businessId); // Updated businessId to stateBusinessId
+                setUser(payload?.sub); 
+                setRole(payload?.role);
+                setUserId(payload?.userId);
+                setStateBusinessId(payload?.businessId);
+                setSubscriptionPlanId(payload?.subscriptionPlanId);
+                setBusinessName(payload?.businessName);
                 
                 setIsLogin(true);
                 
-                console.log("Role:", decoded.payload?.role);
-                console.log("User ID:", decoded.payload?.sub);
-                console.log("State Business ID:", decoded.payload?.businessId); // Updated log to stateBusinessId
+                console.log("Role:", payload?.role);
+                console.log("User ID:", payload?.sub);
+                console.log("State Business ID:", payload?.businessId);
+                console.log("Subscription Plan ID:", payload?.subscriptionPlanId);
+                console.log("Business Name:", payload?.businessName);
             } else {
                 localStorage.removeItem("token");
                 setUser(null);
                 setIsLogin(false);
+                setSubscriptionPlanId(null);
+                setBusinessName('');
                 console.log("Login status updated: User is not logged in");
             }
             setLoading(false);
@@ -42,10 +51,11 @@ export const UserProvider = ({ children }) => {
         updateUserFromToken();
     }, [token]);
 
-    // Log stateBusinessId whenever it changes to see updates
+    // Log state changes
     useEffect(() => {
         console.log("Updated State Business ID:", stateBusinessId);
-    }, [stateBusinessId]);
+        console.log("Updated Subscription Plan ID:", subscriptionPlanId);
+    }, [stateBusinessId, subscriptionPlanId]);
 
     const login = (newToken) => {
         setLoading(true);
@@ -57,6 +67,8 @@ export const UserProvider = ({ children }) => {
         setLoading(true);
         setToken(null);
         setIsLogin(false);
+        setSubscriptionPlanId(null);
+        setBusinessName('');
         console.log("Logout function called: User is logged out");
     };
 
@@ -69,7 +81,9 @@ export const UserProvider = ({ children }) => {
         login,
         logout,
         loading,
-        isLogin
+        isLogin,
+        subscriptionPlanId,
+        businessName
     };
 
     return (

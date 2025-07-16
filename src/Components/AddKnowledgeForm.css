@@ -1,0 +1,494 @@
+.add-knowledge-form {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  height: 100%; /* Try to fill column height */
+  box-sizing: border-box;
+}
+
+.add-knowledge-form h4 {
+  color: #2d3748;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 10px;
+  text-align: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+}
+
+.form-section {
+  margin-bottom: 15px;
+}
+
+.form-section label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 0.9rem;
+}
+
+.topic-input-disabled {
+  width: 100%;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background-color: #f7fafc;
+  color: #718096;
+  cursor: not-allowed;
+}
+
+.file-drop-zone {
+  border: 2px dashed #cbd5e0;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #f7fafc;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+
+.file-drop-zone.drag-active {
+  background-color: #e2e8f0;
+  border-color: #38B2AC;
+}
+
+.upload-icon-container {
+  margin-bottom: 8px;
+}
+
+.upload-icon {
+  font-size: 2rem;
+  color: #38B2AC;
+}
+
+.upload-primary-text {
+  font-weight: 500;
+  color: #2d3748;
+  margin: 5px 0;
+}
+
+.file-types {
+  font-size: 0.8rem;
+  color: #718096;
+  margin: 0;
+}
+
+.selected-files-preview {
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+.files-header-preview {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+  color: #4a5568;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.total-size-preview {
+  color: #718096;
+}
+
+.file-list-preview {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 100px; /* Limit height if many files */
+  overflow-y: auto;
+}
+
+.file-item-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  color: #2d3748;
+}
+.file-name-preview {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+}
+
+.remove-file-preview-btn {
+  background: none;
+  border: none;
+  color: #e53e3e;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0 5px;
+}
+
+.text-content-input {
+  width: 100%;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #2d3748;
+  background-color: #fff;
+  transition: border-color 0.2s ease;
+  min-height: 80px;
+}
+
+.text-content-input:focus {
+  border-color: #38B2AC;
+  outline: none;
+}
+
+.save-knowledge-button {
+  width: 100%;
+  padding: 10px 15px;
+  background-color: #38B2AC; /* Teal */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.save-knowledge-button:hover {
+  background-color: #319795; /* Darker teal */
+}
+
+.save-knowledge-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+.error-message-form, .success-message-form {
+  padding: 8px 12px;
+  margin: 10px 0 0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.error-message-form {
+  background-color: #fed7d7;
+  color: #c53030;
+  border: 1px solid #f56565;
+}
+
+.success-message-form {
+  background-color: #c6f6d5;
+  color: #2f855a;
+  border: 1px solid #68d391;
+}
+
+.add-knowledge-form-widget {
+  padding: 20px;
+  background-color: #fff; /* Widget background */
+  border-radius: 8px; /* Match parent container if DPMPage-KnowledgeFormArea has it */
+  /* box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Optional shadow if not provided by parent */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-height: calc(100vh - 120px); /* Adjust based on sticky top and padding */
+  overflow-y: auto;
+}
+
+.add-knowledge-form-widget h4 {
+  font-size: 1.1rem;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 10px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.add-knowledge-form-widget .form-section {
+  margin-bottom: 15px;
+}
+
+.add-knowledge-form-widget .topic-label,
+.add-knowledge-form-widget label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #454545;
+}
+
+.add-knowledge-form-widget .topic-input-disabled {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  color: #555;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+
+/* New style for editable topic input */
+.add-knowledge-form-widget .topic-input-widget {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+}
+.add-knowledge-form-widget .topic-input-widget:disabled {
+  background-color: #f0f0f0;
+  color: #555;
+  cursor: not-allowed;
+}
+
+.knowledge-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Styles from UploadYourOwnData.css, adapted for widget */
+.file-drop-zone-widget {
+  border: 2px dashed #007bff;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100px;
+}
+
+.file-drop-zone-widget.drag-active {
+  background-color: #e9ecef;
+  border-color: #0056b3;
+}
+
+.upload-icon-container-widget {
+  margin-bottom: 8px;
+}
+
+.upload-icon-widget {
+  font-size: 2rem;
+  color: #007bff;
+}
+
+.upload-text-widget .upload-primary-text-widget {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.upload-text-widget .file-types-widget {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.selected-files-preview-widget {
+  margin-top: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 10px;
+  background-color: #fdfdfd;
+}
+
+.files-header-preview-widget {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.total-size-preview-widget {
+  color: #007bff;
+}
+
+.file-list-widget {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 150px; /* Limit height and allow scroll if many files */
+  overflow-y: auto;
+}
+
+.file-item-widget {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f5f5f5;
+}
+.file-item-widget:last-child {
+  border-bottom: none;
+}
+
+.file-icon-widget {
+  margin-right: 8px;
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+}
+
+.file-info-widget {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.file-name-widget {
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+}
+
+.file-size-widget {
+  color: #777;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  margin-left: 10px;
+}
+
+.remove-file-button-widget {
+  background: none;
+  border: none;
+  color: #dc3545;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 5px;
+  line-height: 1;
+}
+.remove-file-button-widget:hover {
+  color: #a71d2a;
+}
+
+.text-content-input-widget {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  min-height: 80px; /* Adjusted for widget */
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.error-message-form-widget,
+.success-message-form-widget {
+  padding: 8px 12px;
+  margin: 10px 0 0 0;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.error-message-form-widget {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.success-message-form-widget {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.upload-progress-widget {
+  margin-top: 15px;
+}
+
+.progress-bar-widget {
+  width: 100%;
+  background-color: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 10px; /* Slimmer progress bar */
+}
+
+.progress-fill-widget {
+  height: 100%;
+  background-color: #007bff;
+  transition: width 0.3s ease;
+  border-radius: 4px;
+}
+
+.progress-text-widget {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #495057;
+  margin-top: 5px;
+}
+
+.form-actions-widget {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  justify-content: flex-end; /* Align buttons to the right */
+}
+
+.save-knowledge-button-widget,
+.clear-button-widget {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.save-knowledge-button-widget {
+  background-color: #28a745; /* Green for save */
+  color: white;
+}
+.save-knowledge-button-widget:hover {
+  background-color: #218838;
+}
+.save-knowledge-button-widget:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
+
+.clear-button-widget {
+  background-color: #6c757d; /* Grey for clear/cancel */
+  color: white;
+}
+.clear-button-widget:hover {
+  background-color: #5a6268;
+}
+.clear-button-widget:disabled {
+  background-color: #adb5bd;
+  cursor: not-allowed;
+} 

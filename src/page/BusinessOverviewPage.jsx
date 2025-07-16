@@ -6,12 +6,14 @@ import Fuse from 'fuse.js';
 import SearchBar from '../Components/Searchbar';
 import BusinessList from '../Components/BusinessList';
 import Tooltip from '../Components/Tooltip';
+import { useSidebarContext } from '../context/SidebarContext.jsx';
 
 const BusinessOverviewPage = () => {
   const [businesses, setBusinesses] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredBusinesses, setFilteredBusinesses] = useState([]);
   const [helpModeEnabled, setHelpModeEnabled] = useState(false);
+  const { setActiveSidebarType } = useSidebarContext();
 
   useEffect(() => {
     console.log("Attempting to fetch businesses...");

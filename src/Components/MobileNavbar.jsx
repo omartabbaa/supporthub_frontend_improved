@@ -4,36 +4,26 @@ import logo from '../assets/Logo/navbarLogo.png';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import BusinessIcon from '../assets/Button/navbar/BusinessIcon.png';
-import AdminIcon from '../assets/Button/navbar/AdminIcon.png';
-import NotificationIcon from '../assets/Button/navbar/NotificationIcon.png';
 import { useState, useEffect, useRef } from 'react';
 import { useUserContext } from "../context/LoginContext";
-import axios from 'axios';
 import ProfileDropdown from './ProfileDropdown';
-import { departments as departmentsApi } from '../services/ApiService';
-
+import { businesses, departments } from '../services/ApiService';
 
 const MobileNavbar = () => {
-    const { logout, isLogin, role, stateBusinessId } = useUserContext();
+    const { logout, isLogin, stateBusinessId } = useUserContext();
     
-    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [businessName, setBusinessName] = useState('');
-    const notificationRef = useRef(null);
     const profileRef = useRef(null);
     const [expertiseAreas, setExpertiseAreas] = useState([]);
 
-    const toggleNotification = () => setIsNotificationOpen(prev => !prev);
     const toggleProfile = () => setIsProfileOpen(prev => !prev);
     const toggleMenu = () => setIsMenuOpen(prev => !prev);
 
     const closeDropdowns = (event) => {
         if (profileRef.current && !profileRef.current.contains(event.target)) {
             setIsProfileOpen(false);
-        }
-        if (notificationRef.current && !notificationRef.current.contains(event.target)) {
-            setIsNotificationOpen(false);
         }
     };
 
@@ -46,7 +36,7 @@ const MobileNavbar = () => {
         if (!stateBusinessId) return;
         
         try {
-            const response = await axios.get(`http://localhost:8080/api/businesses/${stateBusinessId}`);
+            const response = await businesses.getById(stateBusinessId);
             setBusinessName(response.data.name);
         } catch (error) {
             console.error("Error fetching business:", error);
@@ -55,10 +45,8 @@ const MobileNavbar = () => {
 
     const fetchExpertiseAreas = async () => {
         try {
-            const response = await departmentsApi.getAll();
-            const filteredAreas = response.data.filter(
-                dept => dept.businessId === parseInt(stateBusinessId)
-            ).map(dept => ({
+            const response = await departments.getByBusinessId(stateBusinessId);
+            const filteredAreas = response.data.map(dept => ({
                 id: dept.departmentId || dept.id,
                 name: dept.departmentName || dept.name || 'Unnamed Area'
             }));
@@ -84,20 +72,14 @@ const MobileNavbar = () => {
     // Build navigation items array for structured data
     const navigationItems = [
         { name: "Home", url: "/" },
-        { name: "Business Overview", url: "/business-overview" },
-        { name: "Documentation", url: "/documentation" }
+        { name: "Business Overview", url: "/business-overview" }
     ];
     
     if (stateBusinessId && businessName) {
         navigationItems.push({ 
-            name: businessName, 
+            name: `${businessName} Home`, 
             url: `/department-project-management/${stateBusinessId}/${businessName}` 
         });
-    }
-    
-    if (role === "ROLE_ADMIN") {
-        navigationItems.push({ name: "Admin Dashboard", url: "/admin-dashboard" });
-        navigationItems.push({ name: "API Key Manager", url: "/api-key-manager" });
     }
 
     return (
@@ -157,74 +139,15 @@ const MobileNavbar = () => {
                             Business
                         </Link>
 
-                        {stateBusinessId && (
+                        {stateBusinessId && businessName && (
                             <Link 
-                                className='mn-navbar__link' 
+                                className='mn-navbar__link mn-navbar__link--business-home' 
                                 to={`/department-project-management/${stateBusinessId}/${businessName}`} 
                                 onClick={() => setIsMenuOpen(false)}
                                 role="menuitem"
-                                title={`Manage departments and projects for ${businessName}`}
+                                title={`Access ${businessName} dashboard`}
                             >
-                                {businessName || "My Business"}
-                            </Link>
-                        )}
-                        
-                        <Link 
-                            className='mn-navbar__link' 
-                            to="/documentation" 
-                            onClick={() => setIsMenuOpen(false)}
-                            role="menuitem"
-                            title="Implementation guides and API documentation"
-                        >
-                            Documentation
-                        </Link>
-                    
-                        {isLogin && stateBusinessId && (
-                            <Link 
-                                className='mn-navbar__link' 
-                                to="/business-overview" 
-                                onClick={() => setIsMenuOpen(false)}
-                                role="menuitem"
-                                title="Browse all expertise areas"
-                            >
-                                Expertise Areas
-                            </Link>
-                        )}
-
-                        {role === "ROLE_ADMIN" && (
-                            <>
-                                <Link 
-                                    className='mn-navbar__link' 
-                                    to="/admin-dashboard" 
-                                    onClick={() => setIsMenuOpen(false)}
-                                    role="menuitem"
-                                    title="Admin dashboard for system management"
-                                >
-                                    <img className='mn-navbar__icon' src={AdminIcon} alt="" aria-hidden="true" width="16" height="16" />
-                                    Dashboard 
-                                </Link>
-                                <Link 
-                                    className='mn-navbar__link' 
-                                    to="/api-key-manager" 
-                                    onClick={() => setIsMenuOpen(false)}
-                                    role="menuitem"
-                                    title="Manage API keys for integration"
-                                >
-                                    <img className='mn-navbar__icon' src={AdminIcon} alt="" aria-hidden="true" width="16" height="16" />
-                                    API Keys
-                                </Link>
-                            </>
-                        )}
-
-                        {stateBusinessId && businessName && expertiseAreas.length > 0 && (
-                            <Link 
-                                className='mn-navbar__link' 
-                                to={`/expertise-area/${Math.min(...expertiseAreas.map(area => area.id))}`}
-                                onClick={() => setIsMenuOpen(false)}
-                                role="menuitem"
-                                title={`View the main expertise area for ${businessName}`}
-                            >
-                                <span className="nav-icon">🏢</span>
+                                <span className="mn-navbar__business-icon">🏢</span>
                                 {businessName} Home
                             </Link>
                         )}

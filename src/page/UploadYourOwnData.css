@@ -413,6 +413,50 @@
   line-height: 1.5;
 }
 
+/* Upload in progress message */
+.upload-in-progress-message {
+  display: flex;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #e6fffa 0%, #f0fff4 100%);
+  border: 1px solid #38b2ac;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.upload-progress-icon {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+  animation: uploadPulse 2s infinite;
+}
+
+.upload-progress-text {
+  flex: 1;
+}
+
+.upload-progress-text p {
+  margin: 0 0 0.5rem 0;
+  line-height: 1.4;
+  color: #2d3748;
+}
+
+.upload-progress-text p:last-child {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+  color: #4a5568;
+}
+
+.upload-progress-text strong {
+  color: #1a202c;
+}
+
+@keyframes uploadPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
 .upload-progress {
   margin-bottom: 2rem;
 }
@@ -649,4 +693,652 @@
   .upload-icon {
     font-size: 2rem;
   }
+}
+
+/* Styles for when UploadYourOwnData is used in a modal */
+.upload-data-modal-content {
+  background-color: #fff;
+  padding: 0; 
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 700px; 
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; 
+}
+
+.upload-data-modal-content .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb; /* gray-200 */
+}
+
+.upload-data-modal-content .modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #111827; /* gray-900 */
+  font-weight: 600;
+}
+
+.upload-data-modal-content .modal-close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #6b7280; /* gray-500 */
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+}
+.upload-data-modal-content .modal-close-button:hover {
+  color: #111827; /* gray-900 */
+}
+
+
+.upload-form-modal {
+  padding: 1.5rem;
+  overflow-y: auto; 
+  flex-grow: 1;
+}
+
+.upload-form-modal .form-section {
+  margin-bottom: 1.5rem;
+}
+.upload-form-modal .form-section h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151; /* gray-700 */
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+
+.upload-form-modal .form-actions {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Success message specific to modal */
+.success-message-modal {
+  padding: 1rem;
+  margin: 1rem 0;
+  background-color: #F0FDF4; /* Tailwind green-50 */
+  border: 1px solid #A7F3D0; /* Tailwind green-200 */
+  border-radius: 6px;
+  text-align: center;
+  color: #065F46; /* Tailwind green-800 */
+}
+.success-message-modal .success-icon {
+  font-size: 1.5rem;
+  color: #10B981; /* Tailwind green-500 */
+  margin-bottom: 0.5rem;
+}
+.success-message-modal h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.success-message-modal p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Ensure file upload box is not overly large in modal */
+.upload-form-modal .file-upload-box {
+  padding: 1.5rem; 
+}
+.upload-form-modal .upload-icon-container {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 0.5rem;
+}
+.upload-form-modal .upload-icon {
+  font-size: 1.5rem;
+}
+.upload-form-modal .upload-primary-text {
+  font-size: 0.9rem;
+}
+.upload-form-modal .file-types {
+  font-size: 0.8rem;
+}
+
+/* Adjust selected files list in modal */
+.upload-form-modal .selected-files {
+  margin-top: 1rem;
+}
+.upload-form-modal .files-header h3 {
+  font-size: 0.95rem;
+}
+.upload-form-modal .file-list .file-item {
+  padding: 0.6rem 0.8rem;
+}
+.upload-form-modal .file-name {
+  font-size: 0.85rem;
+}
+.upload-form-modal .file-size {
+  font-size: 0.75rem;
+}
+
+/* Ensure error messages in modal are visible */
+.upload-form-modal .error-message {
+  margin-top: 1rem; /* Add some space above */
+  /* Existing error styles should apply */
+}
+
+/* AI Learning Animation Styles */
+.ai-learning-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 20px;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+  min-height: 500px;
+}
+
+.ai-learning-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(107, 70, 193, 0.03) 0%, transparent 70%);
+  animation: backgroundPulse 8s ease-in-out infinite;
+}
+
+.ai-learning-animation {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+/* Neural Network Background */
+.neural-network {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.neural-node {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: linear-gradient(45deg, #6B46C1, #8B5CF6);
+  border-radius: 50%;
+  animation: neuralPulse 2s ease-in-out infinite;
+}
+
+.neural-node::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 12px;
+  height: 12px;
+  background: rgba(107, 70, 193, 0.2);
+  border-radius: 50%;
+  animation: nodeGlow 2s ease-in-out infinite;
+}
+
+.node-pulse {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(107, 70, 193, 0.3);
+  border-radius: 50%;
+  animation: ripple 1.5s ease-out infinite;
+}
+
+/* Neural node positions */
+.node-0 { top: 20%; left: 30%; animation-delay: 0s; }
+.node-1 { top: 15%; right: 25%; animation-delay: 0.3s; }
+.node-2 { right: 20%; top: 40%; animation-delay: 0.6s; }
+.node-3 { right: 30%; bottom: 25%; animation-delay: 0.9s; }
+.node-4 { bottom: 20%; left: 35%; animation-delay: 1.2s; }
+.node-5 { left: 20%; bottom: 40%; animation-delay: 1.5s; }
+.node-6 { left: 25%; top: 45%; animation-delay: 1.8s; }
+.node-7 { top: 35%; right: 40%; animation-delay: 2.1s; }
+
+/* Neural connections */
+.neural-connection {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(107, 70, 193, 0.4), transparent);
+  animation: connectionFlow 3s ease-in-out infinite;
+}
+
+.connection-0 { top: 25%; left: 25%; width: 15%; transform: rotate(45deg); animation-delay: 0s; }
+.connection-1 { top: 20%; right: 30%; width: 12%; transform: rotate(-30deg); animation-delay: 0.4s; }
+.connection-2 { right: 25%; top: 35%; width: 18%; transform: rotate(60deg); animation-delay: 0.8s; }
+.connection-3 { right: 25%; bottom: 30%; width: 14%; transform: rotate(-45deg); animation-delay: 1.2s; }
+.connection-4 { bottom: 25%; left: 30%; width: 16%; transform: rotate(30deg); animation-delay: 1.6s; }
+.connection-5 { left: 25%; bottom: 35%; width: 13%; transform: rotate(-60deg); animation-delay: 2.0s; }
+.connection-6 { left: 30%; top: 40%; width: 17%; transform: rotate(15deg); animation-delay: 2.4s; }
+.connection-7 { top: 30%; right: 35%; width: 15%; transform: rotate(-15deg); animation-delay: 2.8s; }
+.connection-8 { top: 50%; left: 35%; width: 20%; transform: rotate(0deg); animation-delay: 3.2s; }
+.connection-9 { right: 45%; top: 55%; width: 12%; transform: rotate(75deg); animation-delay: 3.6s; }
+.connection-10 { bottom: 45%; left: 40%; width: 14%; transform: rotate(-75deg); animation-delay: 4.0s; }
+.connection-11 { left: 45%; top: 25%; width: 18%; transform: rotate(105deg); animation-delay: 4.4s; }
+
+/* Central AI Brain */
+.ai-brain-container {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ai-brain-outer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid rgba(107, 70, 193, 0.2);
+  border-radius: 50%;
+  animation: brainRotate 15s linear infinite;
+}
+
+.ai-brain-outer::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border: 1px solid rgba(107, 70, 193, 0.1);
+  border-radius: 50%;
+  animation: brainGlow 4s ease-in-out infinite;
+}
+
+.ai-brain-middle {
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  top: 10%;
+  left: 10%;
+  border: 2px solid rgba(139, 92, 246, 0.3);
+  border-radius: 50%;
+  animation: brainRotate 12s linear infinite reverse;
+}
+
+.ai-brain-inner {
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+  border: 2px solid rgba(56, 178, 172, 0.4);
+  border-radius: 50%;
+  animation: brainRotate 8s linear infinite;
+}
+
+.ai-brain-core {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #6B46C1 0%, #8B5CF6 50%, #38B2AC 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: coreGlow 2s ease-in-out infinite;
+  box-shadow: 0 0 30px rgba(107, 70, 193, 0.4);
+}
+
+.brain-symbol {
+  font-size: 24px;
+  animation: symbolPulse 1.5s ease-in-out infinite;
+}
+
+/* Floating Particles */
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: linear-gradient(45deg, #6B46C1, #38B2AC);
+  border-radius: 50%;
+  animation: particleFloat 4s ease-in-out infinite;
+}
+
+.particle-0 { top: 10%; left: 10%; animation-delay: 0s; animation-duration: 3s; }
+.particle-1 { top: 15%; right: 15%; animation-delay: 0.2s; animation-duration: 3.5s; }
+.particle-2 { right: 10%; top: 30%; animation-delay: 0.4s; animation-duration: 4s; }
+.particle-3 { right: 20%; bottom: 20%; animation-delay: 0.6s; animation-duration: 3.2s; }
+.particle-4 { bottom: 15%; left: 25%; animation-delay: 0.8s; animation-duration: 3.8s; }
+.particle-5 { left: 15%; bottom: 30%; animation-delay: 1s; animation-duration: 3.3s; }
+.particle-6 { left: 30%; top: 35%; animation-delay: 1.2s; animation-duration: 3.7s; }
+.particle-7 { top: 25%; right: 30%; animation-delay: 1.4s; animation-duration: 3.1s; }
+.particle-8 { top: 45%; left: 5%; animation-delay: 1.6s; animation-duration: 3.9s; }
+.particle-9 { right: 5%; top: 55%; animation-delay: 1.8s; animation-duration: 3.4s; }
+.particle-10 { bottom: 5%; left: 45%; animation-delay: 2s; animation-duration: 3.6s; }
+.particle-11 { left: 55%; top: 5%; animation-delay: 2.2s; animation-duration: 3.2s; }
+.particle-12 { top: 65%; right: 45%; animation-delay: 2.4s; animation-duration: 4.1s; }
+.particle-13 { right: 55%; bottom: 45%; animation-delay: 2.6s; animation-duration: 3.3s; }
+.particle-14 { bottom: 35%; left: 65%; animation-delay: 2.8s; animation-duration: 3.8s; }
+.particle-15 { left: 75%; top: 75%; animation-delay: 3s; animation-duration: 3.5s; }
+
+/* Data Streams */
+.data-streams {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.data-stream {
+  position: absolute;
+  width: 2px;
+  height: 40px;
+  background: linear-gradient(180deg, transparent, rgba(107, 70, 193, 0.6), transparent);
+  animation: streamFlow 2s ease-in-out infinite;
+}
+
+.stream-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #38B2AC;
+  border-radius: 50%;
+  top: -3px;
+  left: -2px;
+  animation: streamParticle 2s ease-in-out infinite;
+}
+
+.stream-0 { top: 0; left: 50%; animation-delay: 0s; }
+.stream-1 { top: 25%; right: 0; transform: rotate(90deg); animation-delay: 0.3s; }
+.stream-2 { bottom: 0; right: 50%; transform: rotate(180deg); animation-delay: 0.6s; }
+.stream-3 { bottom: 25%; left: 0; transform: rotate(270deg); animation-delay: 0.9s; }
+.stream-4 { top: 15%; left: 15%; transform: rotate(45deg); animation-delay: 1.2s; }
+.stream-5 { bottom: 15%; right: 15%; transform: rotate(225deg); animation-delay: 1.5s; }
+
+/* Progress Ring */
+.progress-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.progress-circle {
+  transform: rotate(-90deg);
+}
+
+.progress-fill-circle {
+  transition: stroke-dashoffset 0.5s ease;
+  filter: drop-shadow(0 0 8px rgba(107, 70, 193, 0.5));
+}
+
+.progress-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: 700;
+  color: #2d3748;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* AI Learning Status */
+.ai-learning-status {
+  text-align: center;
+  max-width: 600px;
+  z-index: 10;
+  position: relative;
+}
+
+.learning-phase {
+  margin-bottom: 2rem;
+}
+
+.phase-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.phase-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.phase-dot.active {
+  background: linear-gradient(45deg, #6B46C1, #8B5CF6);
+}
+
+.phase-dot.current {
+  animation: currentPhasePulse 1s ease-in-out infinite;
+}
+
+.phase-dot.current::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(107, 70, 193, 0.3);
+  border-radius: 50%;
+  animation: ripple 1.5s ease-out infinite;
+}
+
+.phase-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #6B46C1 0%, #38B2AC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.phase-description {
+  font-size: 1rem;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+/* Learning Metrics */
+.learning-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.metric {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.metric:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.metric-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #718096;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2d3748;
+  animation: counterAnimation 0.5s ease-out;
+}
+
+/* Keyframe Animations */
+@keyframes backgroundPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes neuralPulse {
+  0%, 100% { 
+    opacity: 0.6; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.2); 
+  }
+}
+
+@keyframes nodeGlow {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes connectionFlow {
+  0% { opacity: 0; transform: scaleX(0); }
+  50% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(0); }
+}
+
+@keyframes brainRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes brainGlow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(107, 70, 193, 0.2); 
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(107, 70, 193, 0.4); 
+  }
+}
+
+@keyframes coreGlow {
+  0%, 100% { 
+    box-shadow: 0 0 30px rgba(107, 70, 193, 0.4);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(107, 70, 193, 0.6);
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+@keyframes symbolPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes particleFloat {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: 0.4;
+  }
+  25% {
+    transform: translateY(-10px) translateX(5px);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-15px) translateX(-3px);
+    opacity: 1;
+  }
+  75% {
+    transform: translateY(-8px) translateX(8px);
+    opacity: 0.6;
+  }
+}
+
+@keyframes streamFlow {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes streamParticle {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+@keyframes currentPhasePulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(107, 70, 193, 0.4);
+  }
+  50% { 
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(107, 70, 193, 0.6);
+  }
+}
+
+@keyframes counterAnimation {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 } 

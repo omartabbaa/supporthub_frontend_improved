@@ -342,4 +342,62 @@
     top: 70px;
     right: 10px;
   }
+}
+
+/* Modal styles for ExpertiseAreaPage - DISABLED to use global Modal.css */
+/* .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+} */
+
+/* Use specific class names for page-specific modals to avoid conflicts */
+.expertise-area-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(32, 33, 36, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-container {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.upload-data-modal-container {
+  width: 800px;
+}
+
+.question-overview-modal-container {
+  width: 1000px;
+}
+
+.manage-agents-modal-container {
+  width: 600px;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
 } 

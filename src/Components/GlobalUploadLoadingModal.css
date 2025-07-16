@@ -1,0 +1,463 @@
+/* Global Upload Loading Modal */
+.global-upload-modal-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  pointer-events: none;
+  animation: slideUpFromBottom 0.3s ease-out;
+}
+
+/* EXODUS WALLET-INSPIRED ULTRA-THIN SINGLE ROW MODAL */
+.global-upload-modal {
+  background: linear-gradient(145deg, #ffffff, #f8fafc);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.04), 0 -2px 4px -1px rgba(0, 0, 0, 0.02);
+  padding: 8px 12px;
+  max-width: 700px; /* Wider to accommodate one row */
+  margin: 0 auto;
+  position: relative;
+  backdrop-filter: blur(10px);
+  border-bottom: none;
+  transition: all 0.15s ease;
+  
+  /* FORCE EVERYTHING INTO ONE ROW */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.global-upload-modal.completed {
+  background: linear-gradient(145deg, #f0fff4, #e6fffa);
+  border-color: #38a169;
+  box-shadow: 0 -20px 25px -5px rgba(56, 161, 105, 0.15), 0 -10px 10px -5px rgba(56, 161, 105, 0.1);
+}
+
+/* HEADER AS FLEX ITEM IN SINGLE ROW */
+.upload-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0; /* Don't shrink */
+  margin: 0; /* No margins for one row */
+}
+
+.upload-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap; /* Prevent text wrapping */
+}
+
+.upload-icon {
+  font-size: 16px;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+.upload-text-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.upload-text-info h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a202c;
+  white-space: nowrap;
+}
+
+.upload-text-info p {
+  margin: 0;
+  font-size: 10px;
+  color: #718096;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* Hide the progress text (percentage) completely */
+.upload-progress-text {
+  display: none;
+}
+
+.completion-countdown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.completion-countdown > div:first-child {
+  font-size: 24px;
+  color: #38a169;
+  animation: checkmarkPop 0.6s ease-out;
+}
+
+.countdown-text {
+  font-size: 12px;
+  color: #4a5568;
+  font-weight: normal;
+}
+
+/* INLINE PROGRESS BAR - Part of single row */
+.upload-progress-bar {
+  width: 150px; /* Fixed width for inline */
+  height: 2px;
+  background-color: #f1f5f9; 
+  border-radius: 1px; 
+  overflow: hidden;
+  margin: 0; /* No margins for inline */
+  flex-shrink: 0;
+}
+
+.upload-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6B46C1, #8B5CF6, #38B2AC);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  animation: progressShimmer 2s infinite;
+}
+
+.upload-progress-fill.completed {
+  background: linear-gradient(90deg, #38a169, #48bb78, #68d391) !important;
+  animation: completedPulse 1s ease-in-out;
+}
+
+/* AI SECTION AS FLEX ITEM IN SINGLE ROW */
+.ai-learning-container-global {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ai-learning-animation-global {
+  position: relative;
+  width: 32px; /* Smaller for inline */
+  height: 32px; /* Smaller for inline */
+  flex-shrink: 0;
+}
+
+/* Neural Network */
+.neural-network-global {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.neural-node-global {
+  position: absolute;
+  width: 3px; /* Ultra-tiny nodes */
+  height: 3px; /* Ultra-tiny nodes */
+  background: #6B46C1;
+  border-radius: 50%;
+  opacity: 0.3; /* Very subtle */
+}
+
+.neural-node-global.node-0 { top: 20%; left: 20%; animation: nodeGlow 2s infinite 0s; }
+.neural-node-global.node-1 { top: 20%; right: 20%; animation: nodeGlow 2s infinite 0.3s; }
+.neural-node-global.node-2 { bottom: 20%; left: 20%; animation: nodeGlow 2s infinite 0.6s; }
+.neural-node-global.node-3 { bottom: 20%; right: 20%; animation: nodeGlow 2s infinite 0.9s; }
+.neural-node-global.node-4 { top: 50%; left: 10%; animation: nodeGlow 2s infinite 1.2s; }
+.neural-node-global.node-5 { top: 50%; right: 10%; animation: nodeGlow 2s infinite 1.5s; }
+
+.node-pulse-global {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #8B5CF6;
+  border-radius: 50%;
+  animation: nodePulse 2s infinite;
+}
+
+.neural-connection-global {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #8B5CF6, transparent);
+  opacity: 0.4;
+  animation: connectionFlow 3s infinite;
+}
+
+.neural-connection-global.connection-0 { top: 25%; left: 25%; width: 50%; transform: rotate(45deg); }
+.neural-connection-global.connection-1 { top: 25%; left: 25%; width: 50%; transform: rotate(-45deg); }
+.neural-connection-global.connection-2 { bottom: 25%; left: 25%; width: 50%; transform: rotate(-45deg); }
+.neural-connection-global.connection-3 { bottom: 25%; left: 25%; width: 50%; transform: rotate(45deg); }
+.neural-connection-global.connection-4 { top: 50%; left: 15%; width: 70%; animation-delay: 0.5s; }
+.neural-connection-global.connection-5 { top: 30%; left: 20%; width: 60%; transform: rotate(30deg); animation-delay: 1s; }
+.neural-connection-global.connection-6 { top: 70%; left: 20%; width: 60%; transform: rotate(-30deg); animation-delay: 1.5s; }
+.neural-connection-global.connection-7 { top: 50%; left: 20%; width: 60%; transform: rotate(90deg); animation-delay: 2s; }
+
+/* Central AI Brain */
+.ai-brain-container-global {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px; /* Proportional to 32px animation */
+  height: 16px; /* Proportional to 32px animation */
+}
+
+.ai-brain-outer-global {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #6B46C1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: brainRotate 4s linear infinite;
+}
+
+.ai-brain-inner-global {
+  width: 70%;
+  height: 70%;
+  background: linear-gradient(45deg, #6B46C1, #8B5CF6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: brainPulse 2s ease-in-out infinite;
+}
+
+.brain-symbol-global {
+  font-size: 8px; /* Proportional to 16px brain */
+  filter: brightness(0) invert(1);
+}
+
+/* Floating Particles */
+.particle-global {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #38B2AC;
+  border-radius: 50%;
+  animation: particleFloat 4s infinite;
+}
+
+.particle-global.particle-0 { top: 10%; left: 10%; animation-delay: 0s; }
+.particle-global.particle-1 { top: 10%; right: 10%; animation-delay: 0.5s; }
+.particle-global.particle-2 { bottom: 10%; left: 10%; animation-delay: 1s; }
+.particle-global.particle-3 { bottom: 10%; right: 10%; animation-delay: 1.5s; }
+.particle-global.particle-4 { top: 30%; left: 5%; animation-delay: 2s; }
+.particle-global.particle-5 { top: 70%; right: 5%; animation-delay: 2.5s; }
+.particle-global.particle-6 { top: 50%; left: 80%; animation-delay: 3s; }
+.particle-global.particle-7 { top: 80%; left: 50%; animation-delay: 3.5s; }
+
+/* Data Streams */
+.data-streams-global {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.data-stream-global {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  overflow: hidden;
+}
+
+.data-stream-global.stream-0 { top: 25%; transform: rotate(0deg); }
+.data-stream-global.stream-1 { top: 50%; transform: rotate(45deg); }
+.data-stream-global.stream-2 { top: 75%; transform: rotate(90deg); }
+.data-stream-global.stream-3 { top: 50%; transform: rotate(-45deg); }
+
+.stream-particle-global {
+  width: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #38B2AC, transparent);
+  animation: streamFlow 2s linear infinite;
+}
+
+/* AI Learning Status */
+.ai-learning-status-global {
+  flex: 1;
+}
+
+.learning-phase-global {
+  text-align: left;
+}
+
+/* LEARNING STATUS AS PART OF AI SECTION */
+.ai-learning-status-global {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.learning-phase-global {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.phase-indicator-global {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.phase-dot-global {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  transition: all 0.15s ease;
+}
+
+.phase-dot-global.active {
+  background-color: #6B46C1;
+}
+
+.phase-dot-global.current {
+  background-color: #38B2AC;
+  animation: currentPhasePulse 1.5s infinite;
+}
+
+.phase-title-global {
+  font-size: 11px;
+  font-weight: 500;
+  color: #1a202c;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.phase-description-global {
+  display: none; /* Hide for single row */
+}
+
+/* Animations */
+@keyframes slideUpFromBottom {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes progressShimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+@keyframes nodeGlow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes nodePulse {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.5); }
+}
+
+@keyframes connectionFlow {
+  0% { opacity: 0; }
+  50% { opacity: 0.6; }
+  100% { opacity: 0; }
+}
+
+@keyframes brainRotate {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes brainPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes particleFloat {
+  0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.4; }
+  25% { transform: translateY(-10px) translateX(5px); opacity: 0.8; }
+  50% { transform: translateY(-5px) translateX(-5px); opacity: 0.6; }
+  75% { transform: translateY(-15px) translateX(3px); opacity: 0.9; }
+}
+
+@keyframes streamFlow {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes currentPhasePulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(56, 178, 172, 0.4); }
+  50% { transform: scale(1.2); box-shadow: 0 0 0 6px rgba(56, 178, 172, 0); }
+}
+
+@keyframes completedPulse {
+  0% { transform: scaleX(1); }
+  50% { transform: scaleX(1.02); }
+  100% { transform: scaleX(1); }
+}
+
+@keyframes checkmarkPop {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* MOBILE SINGLE ROW - Maintains horizontal layout */
+@media (max-width: 768px) {
+  .global-upload-modal {
+    padding: 4px 8px;
+    margin: 0 4px;
+    max-width: 95vw; /* Use more screen width on mobile */
+    gap: 8px; /* Smaller gaps on mobile */
+  }
+  
+  .upload-modal-header {
+    gap: 4px;
+  }
+  
+  .upload-text-info h3 {
+    font-size: 11px;
+  }
+  
+  .upload-text-info p {
+    font-size: 8px;
+  }
+  
+  .upload-progress-bar {
+    width: 100px; /* Shorter on mobile */
+  }
+  
+  .ai-learning-animation-global {
+    width: 24px; /* Smaller on mobile */
+    height: 24px;
+  }
+  
+  .ai-brain-container-global {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .brain-symbol-global {
+    font-size: 6px;
+  }
+  
+  .phase-title-global {
+    font-size: 9px;
+  }
+  
+  .ai-learning-container-global {
+    gap: 4px;
+  }
+} 

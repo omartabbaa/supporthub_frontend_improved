@@ -2,16 +2,18 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import './QuestionDetailPage.css';
-import { permissions as permissionsApi, answers as answersApi } from "../services/ApiService";
+import { questions as questionsApi, answers as answersApi, users as usersApi, setAuthToken } from '../services/ApiService';
 import { useUserContext } from "../context/LoginContext";
 import TextArea from '../Components/TextArea';
 import AnswerList from '../Components/AnswerList';
 import Tooltip from '../Components/Tooltip';
+import { useSidebarContext } from '../context/SidebarContext.jsx';
 
 const QuestionDetailPage = () => {
   const { businessName, department, project, questionId, title, question, projectId } = useParams();
   const { userId } = useUserContext();
   const navigate = useNavigate();
+  const { setActiveSidebarType } = useSidebarContext();
 
   const decodedTitle = decodeURIComponent(title);
   const decodedQuestion = decodeURIComponent(question);
@@ -67,17 +69,20 @@ const QuestionDetailPage = () => {
     const fetchAnswers = async () => {
       setLoadingAnswers(true);
       setError('');
+      console.log(`[QDP] Fetching answers for question ${questionId}`);
+      
       try {
-        const response = await answersApi.getAll();
+        // Use the optimized method with caching
+        const response = await answersApi.getAnswersForQuestion(questionId);
+        
         if (Array.isArray(response.data)) {
-          const filteredAnswers = response.data.filter(
-            (ans) => ans.questionId === parseInt(questionId, 10)
-          );
-          setAnswers(filteredAnswers);
+          setAnswers(response.data);
+          console.log(`[QDP] Successfully fetched ${response.data.length} answers for question ${questionId}`);
         } else {
           setError('Unexpected response format.');
         }
       } catch (error) {
+        console.error(`[QDP] Error fetching answers for question ${questionId}:`, error);
         if (error.response && error.response.status === 404) {
           setError('Answers not found.');
         } else {
@@ -106,7 +111,7 @@ const QuestionDetailPage = () => {
     
     try {
       // Log the data we're about to send
-      console.log("Submitting answer with notification for question ID:", questionId);
+      console.log(`[QDP] Submitting answer for question ${questionId}`);
       
       const payload = {
         // Don't include answerId - let the server generate it
@@ -115,21 +120,26 @@ const QuestionDetailPage = () => {
         userId: userId
       };
       
-      console.log("Sending answer payload:", payload);
+      console.log(`[QDP] Sending answer payload:`, payload);
       
       // Use the submit method instead of create to trigger email notifications
       const response = await answersApi.submit(payload);
 
       if (response.data) {
-        console.log("Answer submitted successfully with notification:", response.data);
+        console.log(`[QDP] Answer submitted successfully:`, response.data);
+        
+        // Invalidate cache for this question
+        answersApi.invalidateQuestionCache(questionId);
+        
         setAnswers([...answers, response.data]);
         setSubmitSuccess('Answer submitted successfully with notification sent!');
         setAnswer(''); // Clear the input field
+        setSubmitError(''); // Clear any previous errors
       } else {
         setSubmitError('Failed to submit answer - no data returned.');
       }
     } catch (error) {
-      console.error('Error submitting answer:', error);
+      console.error(`[QDP] Error submitting answer:`, error);
       
       let errorMessage = 'Error submitting answer. Please try again.';
       
@@ -153,11 +163,19 @@ const QuestionDetailPage = () => {
 
   const handleDeleteAnswer = async (answerId) => {
     try {
+      console.log(`[QDP] Deleting answer ${answerId}`);
       await answersApi.delete(answerId);
+      
+      // Invalidate cache for this question
+      answersApi.invalidateQuestionCache(questionId);
+      
       setAnswers(answers.filter(ans => ans.answerId !== answerId));
       setSubmitSuccess('Answer deleted successfully!');
+      setSubmitError(''); // Clear any previous errors
+      
+      console.log(`[QDP] Answer ${answerId} deleted successfully`);
     } catch (error) {
-      console.error('Error deleting answer:', error);
+      console.error(`[QDP] Error deleting answer ${answerId}:`, error);
       setSubmitError('Failed to delete answer. Please try again.');
     }
   };
